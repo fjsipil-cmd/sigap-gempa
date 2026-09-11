@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#03162b">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="SIGAP Gempa">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <meta charset="UTF-8">
+  <style>
+    :root{--green:#14532d;--green2:#166534;--lime:#dcfce7;--gold:#d4a72c;--red:#b91c1c;--bg:#f5f7f6;--ink:#17211b;--muted:#65736a;--line:#dce5df;--white:#fff}
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+    button,input,select,textarea{font:inherit}.top{position:sticky;top:0;z-index:30;background:linear-gradient(135deg,var(--green),#0b3d22);color:#fff;box-shadow:0 3px 16px #0002}
+    .topin{max-width:1180px;margin:auto;padding:12px 18px;display:flex;align-items:center;gap:12px}.brand{flex:1}.brand b{font-size:18px}.brand small{display:block;opacity:.8;margin-top:2px}
+    .nav{display:flex;gap:8px}.btn{border:0;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:700}.btn.light{background:#fff;color:var(--green)}.btn.gold{background:var(--gold);color:#302300}.btn.green{background:var(--green2);color:#fff}.btn.red{background:#fee2e2;color:#991b1b}.btn.ghost{background:#eef4f0;color:var(--green)}
+    .wrap{max-width:1180px;margin:22px auto;padding:0 16px 60px}.hero{background:linear-gradient(135deg,#fff,#ecfdf5);border:1px solid var(--line);border-radius:18px;padding:22px;display:flex;gap:18px;align-items:center;box-shadow:0 10px 30px #0000000a}.hero h1{font-size:25px;margin:0 0 8px}.hero p{margin:0;color:var(--muted)}
+    .badge{display:inline-flex;padding:6px 10px;border-radius:999px;background:var(--lime);color:var(--green);font-size:12px;font-weight:800;margin-bottom:8px}
+    .card{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 5px 20px #0000000a;margin-top:16px;overflow:hidden}.cardhead{padding:14px 18px;background:#f8fbf9;border-bottom:1px solid var(--line);font-weight:800}.cardbody{padding:18px}
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px}.c12{grid-column:span 12}.c8{grid-column:span 8}.c6{grid-column:span 6}.c4{grid-column:span 4}.c3{grid-column:span 3}.c2{grid-column:span 2}
+    label{display:block;font-size:12px;font-weight:800;margin-bottom:6px;color:#38473e}.req:after{content:' *';color:#b91c1c}.field{width:100%;border:1px solid #cfdad3;border-radius:10px;padding:10px 11px;background:#fff;outline:none}.field:focus{border-color:#4f8f67;box-shadow:0 0 0 3px #dcfce7}.hint{font-size:11px;color:var(--muted);margin-top:5px}
+    .checks{display:flex;flex-wrap:wrap;gap:8px}.check{display:flex;align-items:center;gap:7px;padding:9px 11px;background:#f7faf8;border:1px solid var(--line);border-radius:10px;font-size:13px}.check input{accent-color:var(--green2)}
+    .coord{display:flex;gap:8px;align-items:end}.coord>div{flex:1}.status{font-size:12px;margin-top:7px;color:var(--muted)}
+    .damageWrap{overflow:auto;border:1px solid var(--line);border-radius:12px}.damageTable{width:100%;border-collapse:collapse;min-width:760px}.damageTable th,.damageTable td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top;text-align:left;font-size:12px}.damageTable th{background:#eef6f1;position:sticky;top:0}.damageTable tr:last-child td{border-bottom:0}.damageTable select{width:100%}.damageWeight{font-size:16px;font-weight:900;color:var(--green2);white-space:nowrap}.totalWeight{margin-top:12px;display:flex;justify-content:flex-end;align-items:center;gap:10px;padding:12px 14px;background:#ecfdf5;border:1px solid #bbf7d0;border-radius:12px}.totalWeight strong{font-size:22px;color:var(--green2)}
+    .photoGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.upload{position:relative;border:1px dashed #9fb4a7;border-radius:12px;padding:12px;background:#fafcfb}.upload b{font-size:13px}.preview{height:105px;background:#eef3ef;border-radius:9px;margin-top:9px;display:flex;align-items:center;justify-content:center;overflow:hidden;color:#7b8a80;font-size:12px}.preview img{width:100%;height:100%;object-fit:cover}.photoActions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}.removePhoto{position:absolute;right:8px;top:8px;border:0;border-radius:999px;width:28px;height:28px;cursor:pointer;background:#fee2e2;color:#991b1b;font-weight:900}.uploadProgress{font-size:12px;color:var(--muted);margin-top:8px}
+    .submitbar{display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;margin-top:18px}.netbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:12px 0}.netdot{width:9px;height:9px;border-radius:999px;background:#16a34a}.netdot.off{background:#dc2626}.draftbox{padding:10px 12px;border:1px solid #bfdbfe;background:#eff6ff;color:#1e3a8a;border-radius:10px;font-size:12px}.editbox{padding:11px 13px;border:1px solid #facc15;background:#fefce8;color:#713f12;border-radius:10px;font-size:13px;margin:10px 0}.notice{padding:11px 13px;border-radius:10px;font-size:13px;margin:10px 0}.notice.ok{background:#dcfce7;color:#14532d}.notice.err{background:#fee2e2;color:#991b1b}.hide{display:none!important}
+    .modal{position:fixed;inset:0;background:#0008;z-index:100;display:flex;align-items:center;justify-content:center;padding:16px}.modalbox{width:min(980px,100%);max-height:92vh;overflow:auto;background:#fff;border-radius:16px;box-shadow:0 20px 70px #0006}.modalhead{position:sticky;top:0;background:#fff;padding:14px 18px;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:center;z-index:2}.modalhead b{flex:1}.modalbody{padding:18px}
+    .loginbox{width:min(430px,100%)}.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px}.stat small{color:var(--muted)}.stat strong{display:block;font-size:26px;margin-top:5px}
+    .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.toolbar input{flex:1;min-width:220px}.tableWrap{overflow:auto;background:#fff;border:1px solid var(--line);border-radius:14px}.table{border-collapse:collapse;width:100%;min-width:950px}.table th,.table td{padding:10px;border-bottom:1px solid var(--line);font-size:12px;text-align:left}.table th{background:#f1f7f3;position:sticky;top:0}.pill{display:inline-block;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:800}.p-ok{background:#dcfce7;color:#166534}.p-wait{background:#fff7d6;color:#7c5b00}.p-heavy{background:#fee2e2;color:#991b1b}.p-mid{background:#ffedd5;color:#9a3412}.p-light{background:#dbeafe;color:#1d4ed8}.link{color:#166534;font-weight:700;text-decoration:none}
+    .detailGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.kv{padding:10px;background:#f8faf9;border-radius:10px}.kv small{display:block;color:var(--muted);margin-bottom:4px}.kv b{font-size:13px;word-break:break-word}.damageList{margin:0;padding-left:18px}.damageList li{margin:7px 0;font-size:12px}
+    @media(max-width:760px){.topin{align-items:flex-start}.nav{flex-direction:column}.hero{display:block}.hero h1{font-size:21px}.grid{grid-template-columns:1fr}.grid>[class^=c]{grid-column:1!important}.photoGrid{grid-template-columns:1fr 1fr}.stats{grid-template-columns:1fr 1fr}.detailGrid{grid-template-columns:1fr}.coord{display:block}.coord .btn{width:100%;margin-top:8px}}
+    @media(max-width:430px){.photoGrid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.brand b{font-size:15px}.btn{padding:9px 10px}}
+  
+    .pwaActions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.syncBadge{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:#fff7d6;color:#7c5b00;font-size:11px;font-weight:800}.syncBadge.ok{background:#dcfce7;color:#166534}.syncBadge.err{background:#fee2e2;color:#991b1b}.offlineHero{padding:11px 13px;background:#eff6ff;color:#1e3a8a;border:1px solid #bfdbfe;border-radius:12px;margin-top:12px;font-size:12px}.settingsRow{display:flex;gap:8px;align-items:end}.settingsRow>div{flex:1}.localTag{display:inline-block;padding:3px 7px;border-radius:999px;background:#e0f2fe;color:#075985;font-size:10px;font-weight:800}.queuedTag{display:inline-block;padding:3px 7px;border-radius:999px;background:#fef3c7;color:#92400e;font-size:10px;font-weight:800}
+  </style>
+
+<style id="lapor-jalan-inspired-theme">
+  :root{--navy:#03162b;--navy2:#061f39;--navy3:#082a49;--cyan:#22bdf5;--cyan2:#0d86bd;--gold:#ffd12f;--gold2:#eeb619;--ink:#eef8ff;--muted:#9fb7cb;--line:rgba(34,189,245,.55);--panel:rgba(5,31,55,.88);--panel2:rgba(8,42,73,.76);--green2:#16a3c7;--green:#0f6f92;--bg:#03162b;--white:#fff;--red:#ef4444;--lime:#163d4c}
+  html{background:var(--navy);scroll-behavior:smooth}
+  body{min-height:100vh;background:
+    radial-gradient(circle at 17% 18%,rgba(34,189,245,.10),transparent 24%),
+    radial-gradient(circle at 82% 33%,rgba(255,209,47,.05),transparent 18%),
+    linear-gradient(180deg,#021326 0%,#031b32 46%,#03162b 100%);color:var(--ink);position:relative;overflow-x:hidden}
+  body:before{content:"";position:fixed;z-index:-1;inset:32% 0 0;background:
+    linear-gradient(145deg,transparent 0 19%,rgba(20,71,98,.32) 20% 27%,transparent 28%),
+    linear-gradient(35deg,transparent 0 35%,rgba(7,58,86,.45) 36% 48%,transparent 49%),
+    linear-gradient(160deg,transparent 0 63%,rgba(8,50,73,.38) 64% 75%,transparent 76%);opacity:.8;pointer-events:none}
+  button,input,select,textarea{font:inherit}.hide{display:none!important}
+  .top{position:sticky;top:10px;z-index:40;width:min(1180px,calc(100% - 28px));margin:12px auto 0;background:linear-gradient(180deg,rgba(5,29,52,.97),rgba(3,22,43,.96));border:1px solid var(--line);border-radius:9px;box-shadow:0 0 0 1px rgba(34,189,245,.08),0 9px 34px rgba(0,0,0,.32),inset 0 0 25px rgba(34,189,245,.04);backdrop-filter:blur(14px)}
+  .topin{max-width:none;padding:7px 9px;gap:10px}.brand{display:flex;align-items:center;gap:9px;min-width:260px}.brandMark,.heroSeal{display:grid;place-items:center;background:linear-gradient(145deg,#fff16b,var(--gold2));color:#07304a;font-weight:950;border:2px solid rgba(255,255,255,.55);box-shadow:0 0 0 2px rgba(255,209,47,.16),0 0 18px rgba(255,209,47,.18)}
+  .brandMark{width:34px;height:34px;border-radius:7px;font-size:11px}.brandCopy{display:block}.brand b{font-size:13px;letter-spacing:.02em}.brand small{font-size:9px;color:#a9c7da;opacity:1;margin-top:1px}
+  .nav{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.btn{border-radius:7px;padding:8px 11px;font-size:11px;font-weight:850;transition:.18s ease;box-shadow:none}.btn:hover{transform:translateY(-1px);filter:brightness(1.06)}
+  .btn.light,.btn.ghost{background:rgba(5,39,68,.92);color:#eaf8ff;border:1px solid rgba(34,189,245,.45)}.btn.gold{background:linear-gradient(180deg,#ffe04e,#ffc626);color:#10283a;border:1px solid #ffe778}.btn.green{background:linear-gradient(180deg,#0ea7d7,#087fae);color:#fff;border:1px solid #27c9ff}.btn.red{background:#5a1d2a;color:#ffd9df;border:1px solid #a63b51}
+  .wrap{max-width:1180px;margin:14px auto 0;padding:0 14px 44px}
+  #publicView{display:grid;grid-template-columns:minmax(300px,.9fr) minmax(500px,1.35fr);gap:13px;align-items:start}
+  #publicView>.hero{grid-column:1;grid-row:1;margin:0;min-height:620px;position:sticky;top:78px;background:
+    radial-gradient(circle at 70% 4%,rgba(34,189,245,.18),transparent 34%),
+    linear-gradient(180deg,rgba(6,31,55,.95),rgba(3,25,45,.92));border:1px solid var(--line);border-radius:11px;padding:20px 17px;box-shadow:0 0 0 1px rgba(34,189,245,.05),0 16px 45px rgba(0,0,0,.28),inset 0 0 40px rgba(34,189,245,.035);overflow:hidden}
+  #publicView>.hero:after{content:"";position:absolute;left:-12%;right:-10%;bottom:0;height:45%;background:
+    linear-gradient(152deg,transparent 0 18%,rgba(14,56,81,.88) 19% 39%,transparent 40%),
+    linear-gradient(28deg,transparent 0 31%,rgba(8,48,72,.90) 32% 56%,transparent 57%),
+    linear-gradient(154deg,transparent 0 61%,rgba(9,63,89,.62) 62% 73%,transparent 74%);opacity:.72;pointer-events:none}
+  .heroInner{position:relative;z-index:1;display:flex;flex-direction:column;min-height:575px}.heroSeal{width:54px;height:54px;border-radius:10px;margin:7px 0 17px;font-size:16px}
+  .badge{align-self:flex-start;padding:6px 9px;border-radius:999px;background:#113a4a;border:1px solid rgba(255,209,47,.42);color:var(--gold);font-size:9px;letter-spacing:.08em;margin:0 0 11px}.hero h1{font-size:31px;line-height:.94;margin:0 0 12px;letter-spacing:-.04em;text-transform:uppercase}.hero h1 em{display:block;font-style:normal;color:var(--gold);font-size:1.18em}.hero p{max-width:410px;color:#a9c3d6;line-height:1.55;font-size:11px;margin:0 0 16px}
+  .heroFeatures{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:4px 0 13px}.heroFeatures>div{min-height:73px;padding:8px;border:1px solid rgba(34,189,245,.28);background:rgba(5,37,62,.74);border-radius:8px}.heroFeatures span{display:block;color:var(--cyan);font-weight:900;margin-bottom:4px}.heroFeatures b{display:block;font-size:9px;margin-bottom:2px}.heroFeatures small{display:block;font-size:8px;line-height:1.35;color:#86a8be}
+  .heroStats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:auto;position:relative;z-index:2}.heroStats>div{padding:9px 8px;border:1px solid rgba(34,189,245,.35);border-radius:8px;background:linear-gradient(180deg,rgba(8,45,75,.84),rgba(4,30,53,.9))}.heroStats strong{display:block;font-size:16px;color:var(--gold);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.heroStats small{display:block;color:#8caabe;font-size:8px;margin-top:2px;line-height:1.2}
+  .netbar{position:relative;z-index:2;display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:8px 0 0;padding:8px 9px;border:1px solid rgba(34,189,245,.22);border-radius:8px;background:rgba(2,24,44,.72)}.netbar b{font-size:10px}.netbar .hint{font-size:8px;flex:1;min-width:180px}.netdot{width:7px;height:7px;box-shadow:0 0 10px #16a34a}.netdot.off{box-shadow:0 0 10px #ef4444}
+  .syncBadge{position:relative;z-index:2;display:inline-flex;margin-top:7px;border-radius:7px;background:rgba(111,80,0,.30);border:1px solid rgba(255,209,47,.3);color:#ffe57b;padding:7px 9px;font-size:9px}.syncBadge.ok{background:rgba(6,79,89,.35);border-color:rgba(34,189,245,.28);color:#aeeaff}.syncBadge.err{background:rgba(99,24,39,.45);color:#ffd1da}
+  .offlineHero{position:relative;z-index:2;margin-top:7px;padding:8px 9px;border-radius:8px;background:rgba(4,39,65,.74);border:1px solid rgba(34,189,245,.22);color:#98b9cc;font-size:9px;line-height:1.45}.offlineHero b{color:#eaf8ff}
+  #draftBanner,#editModeBanner,#msg{grid-column:1}.draftbox,.editbox,.notice{border-radius:8px;background:rgba(8,45,75,.88);color:#dff5ff;border:1px solid rgba(34,189,245,.38);font-size:10px}.notice.ok{background:rgba(7,68,74,.72);color:#c9fbff;border-color:rgba(34,189,245,.38)}.notice.err{background:rgba(100,25,39,.68);color:#ffd4dc;border-color:rgba(255,92,123,.35)}
+  #reportForm{grid-column:2;grid-row:1 / span 8;margin:0;padding:10px;border:1px solid var(--line);border-radius:11px;background:linear-gradient(180deg,rgba(5,31,55,.95),rgba(4,25,46,.93));box-shadow:0 15px 44px rgba(0,0,0,.30),inset 0 0 35px rgba(34,189,245,.025)}
+  .formTitle{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:1px 2px 9px;border-bottom:1px solid rgba(34,189,245,.22)}.formTitle>div{display:flex;gap:8px;align-items:center}.formIcon{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:rgba(255,209,47,.14);color:var(--gold);border:1px solid rgba(255,209,47,.42)}.formTitle b{display:block;font-size:13px;color:#fff}.formTitle small{display:block;font-size:8px;color:#8caabe;margin-top:1px}.formState{font-size:8px;padding:5px 7px;border:1px solid rgba(34,189,245,.35);border-radius:999px;color:#9edfff;background:rgba(8,50,82,.55)}
+  .card{background:rgba(6,37,63,.74);border:1px solid rgba(34,189,245,.34);border-radius:9px;box-shadow:none;margin-top:9px;overflow:hidden}.cardhead{padding:10px 11px;background:linear-gradient(90deg,rgba(12,60,91,.65),rgba(6,37,63,.25));border-bottom:1px solid rgba(34,189,245,.25);font-weight:850;color:#eaf8ff;font-size:11px}.cardhead:before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 10px rgba(255,209,47,.65);margin-right:7px;vertical-align:1px}.cardbody{padding:11px}.grid{gap:9px}
+  label{color:#dcefff;font-size:9px;font-weight:800;margin-bottom:4px}.req:after{color:var(--gold)}.hint,.status{color:#779bb2;font-size:8px;line-height:1.4}.field{background:#062743;color:#eef8ff;border:1px solid #1776a4;border-radius:5px;padding:8px 9px;font-size:10px;box-shadow:inset 0 0 0 1px rgba(34,189,245,.02)}.field:focus{border-color:var(--cyan);box-shadow:0 0 0 2px rgba(34,189,245,.13)}.field[readonly]{background:#08233a;color:#a5c0d2}select.field option{background:#072640;color:#eef8ff}textarea.field{line-height:1.45}
+  .checks{gap:6px}.check{padding:7px 9px;background:#062743;border:1px solid rgba(34,189,245,.26);border-radius:6px;color:#cfe8f8;font-size:9px}.check input{accent-color:var(--gold)}
+  .coord{gap:7px}.coord .btn{min-height:32px}.damageWrap{border:1px solid rgba(34,189,245,.28);border-radius:7px;background:#041f37}.damageTable{min-width:730px}.damageTable th,.damageTable td{padding:8px;border-bottom:1px solid rgba(34,189,245,.14);font-size:9px;color:#cae3f3}.damageTable th{background:#082e4c;color:#eaf8ff}.damageTable tr:hover td{background:rgba(34,189,245,.025)}.damageWeight{color:var(--gold);font-size:13px}.totalWeight{margin-top:9px;padding:9px 11px;background:rgba(8,62,76,.55);border:1px solid rgba(34,189,245,.28);border-radius:7px}.totalWeight span{font-size:9px}.totalWeight strong{font-size:18px;color:var(--gold)}
+  .photoGrid{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.upload{border:1px dashed rgba(34,189,245,.50);border-radius:7px;padding:8px;background:#052640}.upload b{font-size:9px;color:#dff4ff}.preview{height:86px;background:#041d32;border-radius:5px;color:#6e91a8;font-size:8px}.photoActions{gap:7px;margin-top:8px}.removePhoto{width:23px;height:23px;right:5px;top:5px;font-size:10px;background:#6b2231;color:#ffdfe5}.uploadProgress{color:#8aaac0;font-size:9px}
+  .submitbar{gap:7px;margin-top:10px}.submitbar .btn{font-size:9px;padding:8px 10px}
+  #publicHistoryCard{grid-column:1/-1;margin-top:0;background:transparent;border:0;box-shadow:none;overflow:visible}.#publicHistoryCard{}#publicHistoryCard>.cardhead{background:transparent;border:0;padding:7px 0 9px;font-size:18px;display:flex;flex-direction:column;gap:3px}#publicHistoryCard>.cardhead:before{display:none}#publicHistoryCard>.cardhead span{color:#fff}#publicHistoryCard>.cardhead span::first-letter{color:var(--gold)}#publicHistoryCard>.cardhead small{font-size:9px;font-weight:500;color:#7699b0}#publicHistoryCard>.cardbody{display:grid;grid-template-columns:330px 1fr;gap:9px;padding:0;background:transparent}#publicHistoryCard>.cardbody>p,#publicHistoryCard>.cardbody>.grid,#publicHistoryCard>.cardbody>.submitbar,#publicHistoryCard>.cardbody>#lookupMsg{grid-column:1;background:rgba(6,37,63,.78)}#publicHistoryCard>.cardbody>p{margin:0;padding:10px 11px 0;border:1px solid rgba(34,189,245,.30);border-bottom:0;border-radius:9px 9px 0 0}#publicHistoryCard>.cardbody>.grid{padding:9px 11px;border-left:1px solid rgba(34,189,245,.30);border-right:1px solid rgba(34,189,245,.30)}#publicHistoryCard>.cardbody>.submitbar{margin:0;padding:0 11px 11px;border:1px solid rgba(34,189,245,.30);border-top:0;border-radius:0 0 9px 9px;justify-content:stretch}#publicHistoryCard>.cardbody>.submitbar .btn{width:100%;background:linear-gradient(180deg,#ffe14e,#ffc928);color:#10283a;border-color:#ffe776}#publicHistoryCard #lookupResults{grid-column:2;grid-row:1 / span 4;margin-top:0!important;padding:10px;border:1px solid rgba(34,189,245,.30);border-radius:9px;background:rgba(6,37,63,.78);min-height:148px}#publicHistoryCard #lookupResults.hide{display:flex!important;align-items:center;justify-content:center}#publicHistoryCard #lookupResults.hide:before{content:"Hasil pencarian akan muncul di sini";color:#7899af;font-size:10px}#publicHistoryCard #lookupResults.hide>*{display:none!important}
+  .tableWrap{background:#041f37;border:1px solid rgba(34,189,245,.28);border-radius:7px}.table th,.table td{padding:8px;border-bottom:1px solid rgba(34,189,245,.14);font-size:9px;color:#cbe4f4}.table th{background:#082e4c;color:#fff}.link{color:#6ed8ff}.pill{font-size:8px;border:1px solid rgba(255,255,255,.08)}.p-ok{background:#0a4b58;color:#b7f6ff}.p-wait{background:#5f4d09;color:#ffe77d}.p-heavy{background:#662334;color:#ffd1db}.p-mid{background:#663b15;color:#ffd4a1}.p-light{background:#134769;color:#bfe8ff}
+  #adminView{display:block}#adminView.hide{display:none!important}#adminView .hero{position:relative;min-height:auto;padding:18px;background:linear-gradient(180deg,rgba(6,31,55,.95),rgba(3,25,45,.92));border:1px solid var(--line);border-radius:10px}#adminView .hero h1{font-size:24px}.stats{gap:8px}.stat{background:#062743;border:1px solid rgba(34,189,245,.28);border-radius:8px;padding:11px;color:#dff4ff}.stat small{color:#7f9fb5;font-size:8px}.stat strong{font-size:22px;color:var(--gold)}.toolbar{padding:10px;background:rgba(6,37,63,.78);border:1px solid rgba(34,189,245,.28);border-radius:8px}.modal{background:rgba(0,8,19,.78);backdrop-filter:blur(5px)}.modalbox{background:#041d33;color:#eef8ff;border:1px solid rgba(34,189,245,.45);border-radius:10px}.modalhead{background:#062743;border-bottom:1px solid rgba(34,189,245,.25)}.kv{background:#062743}.kv small{color:#7e9fb4}.kv b{color:#e7f6ff}
+  @media(max-width:980px){#publicView{grid-template-columns:1fr}#publicView>.hero{grid-column:1;grid-row:auto;position:relative;top:auto;min-height:auto}#reportForm{grid-column:1;grid-row:auto}.heroInner{min-height:auto}.heroStats{margin-top:18px}#draftBanner,#editModeBanner,#msg{grid-column:1}#publicHistoryCard>.cardbody{grid-template-columns:1fr}#publicHistoryCard>.cardbody>p,#publicHistoryCard>.cardbody>.grid,#publicHistoryCard>.cardbody>.submitbar,#publicHistoryCard>.cardbody>#lookupMsg,#publicHistoryCard #lookupResults{grid-column:1;grid-row:auto}.photoGrid{grid-template-columns:repeat(3,1fr)}}
+  @media(max-width:700px){.top{top:4px;width:calc(100% - 12px);margin-top:6px}.topin{align-items:center}.brand{min-width:0}.brandCopy small{display:none}.nav{gap:4px}.nav .btn{padding:7px 8px;font-size:9px}.wrap{padding:0 7px 30px;margin-top:8px}.hero{border-radius:9px}.hero h1{font-size:27px}.heroFeatures{grid-template-columns:1fr 1fr 1fr}.heroFeatures small{display:none}.heroStats strong{font-size:14px}.formTitle{align-items:flex-start}.formState{display:none}.grid{grid-template-columns:1fr}.grid>[class^=c]{grid-column:1!important}.photoGrid{grid-template-columns:1fr 1fr}.damageWrap{margin-right:-2px}.cardbody{padding:9px}.btn{touch-action:manipulation}}
+  @media(max-width:430px){.brandMark{width:30px;height:30px}.brand b{font-size:11px}.nav .btn:nth-child(1){display:none}.heroFeatures{grid-template-columns:1fr}.heroFeatures small{display:block}.heroStats{grid-template-columns:repeat(3,1fr)}.heroStats strong{font-size:12px}.photoGrid{grid-template-columns:1fr 1fr}.top{position:sticky}.submitbar{justify-content:stretch}.submitbar .btn{flex:1}.formTitle b{font-size:11px}}
+
+  /* ===== TAMPILAN SIGAP GEMPA FLORES - LOGO RESMI KABUPATEN MANGGARAI ===== */
+  .brandMark{width:38px!important;height:38px!important;object-fit:contain!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;filter:drop-shadow(0 2px 5px rgba(0,0,0,.35))}
+  .heroSeal{width:112px!important;height:auto!important;max-height:126px!important;object-fit:contain!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;margin:5px 0 8px!important;filter:drop-shadow(0 5px 10px rgba(0,0,0,.38))}
+  .brandCopy b{font-size:15px!important}.brandCopy b::first-line{color:#fff}.brandCopy small{font-size:9px!important;color:#b7d0df!important}
+  .hero .badge{font-size:8.5px!important;letter-spacing:.035em!important;padding:6px 10px!important;color:#ffe563!important;background:rgba(6,37,63,.76)!important;border-color:rgba(255,209,47,.62)!important}
+  .hero h1{font-size:40px!important;line-height:.92!important;margin-top:8px!important}.hero h1 em{font-size:1em!important;color:#ffd12f!important}
+  .heroSubtitle{font-size:16px;line-height:1.22;margin:0 0 10px;color:#edf9ff;font-weight:800;max-width:390px}
+  .heroFeatures{grid-template-columns:repeat(2,1fr)!important}.heroFeatures>div{min-height:64px!important}.heroFeatures span{font-size:16px!important}.heroFeatures b{font-size:9px!important}
+  .heroQuote{position:relative;z-index:2;margin-top:11px;padding-top:9px;border-top:1px solid rgba(34,189,245,.18);color:#a7c6d8;font-size:9px;font-style:italic}
+  #reportForm{border-color:rgba(34,189,245,.68)!important;box-shadow:0 17px 48px rgba(0,0,0,.34),0 0 24px rgba(34,189,245,.05)!important}
+  .formTitle{padding:4px 3px 11px!important}.formIcon{border-radius:7px!important;width:32px!important;height:32px!important;font-size:16px!important}.formTitle b{font-size:14px!important;color:#ffd12f!important}.formTitle small{font-size:8.5px!important}.formState{color:#ffe77a!important;border-color:rgba(255,209,47,.45)!important;background:rgba(94,72,5,.24)!important}
+  #publicHistoryCard>.cardhead span{font-size:19px!important}#publicHistoryCard>.cardhead span:after{content:"  Laporan";color:#ffd12f}
+  @media(max-width:700px){.heroSeal{width:92px!important}.hero h1{font-size:32px!important}.heroSubtitle{font-size:14px}.brandMark{width:34px!important;height:34px!important}.heroFeatures{grid-template-columns:1fr 1fr!important}}
+  @media(max-width:430px){.heroFeatures{grid-template-columns:1fr!important}.heroSeal{width:82px!important}.hero h1{font-size:29px!important}.brandCopy b{font-size:11px!important}}
+</style>
+</head>
+<body>
+  <header class="top"><div class="topin"><div class="brand"><img class="brandMark" src="logo-manggarai.png" alt="Logo Kabupaten Manggarai"><span class="brandCopy"><b>SIGAP GEMPA FLORES</b><small>Sistem Informasi Pendataan Kerusakan Rumah Akibat Gempa</small></span></div><div class="nav"><button class="btn light" onclick="showPublic()">⌂ Beranda</button><button id="installBtn" class="btn light hide" onclick="installPwa()">⬇ Instal Aplikasi</button><button class="btn light" onclick="syncPendingReports()">↻ Sinkron Data</button><button class="btn light" onclick="openPwaSettings()">⚙ Server</button><button class="btn gold" onclick="openAdminLogin()">🔐 Admin</button></div></div></header>
+
+  <main id="publicView" class="wrap">
+    <section class="hero"><div class="heroInner"><img class="heroSeal" src="logo-manggarai.png" alt="Logo Kabupaten Manggarai"><span class="badge">PEMERINTAH KABUPATEN MANGGARAI</span><h1>SIGAP <em>GEMPA FLORES</em></h1><h2 class="heroSubtitle">Sistem Informasi Pendataan Kerusakan Rumah Akibat Gempa</h2><p>Bersama kita data, bersama kita bangun kembali Manggarai yang lebih tangguh. Aplikasi dapat digunakan untuk pendataan lapangan termasuk saat jaringan internet tidak tersedia.</p><div class="heroFeatures"><div><span>✓</span><b>Mudah Digunakan</b><small>Form lapangan ringkas dan terstruktur.</small></div><div><span>◉</span><b>Bisa Offline (PWA)</b><small>Data dan foto tersimpan di perangkat.</small></div><div><span>⌖</span><b>Koordinat Fleksibel</b><small>GPS otomatis atau input manual.</small></div><div><span>▣</span><b>Data Aman</b><small>Sinkron ke Google Sheet dan Drive.</small></div></div><div class="heroStats"><div><strong id="heroLocalCount">0</strong><small>Total laporan di perangkat</small></div><div><strong id="heroPendingCount">0</strong><small>Menunggu sinkronisasi</small></div><div><strong id="heroNetState">Online</strong><small>Status jaringan</small></div></div><div class="netbar"><span id="netDot" class="netdot"></span><b id="netText">Online</b><span class="hint">Setelah aplikasi terpasang, form tetap dapat dibuka tanpa internet.</span></div><div id="syncStatus" class="syncBadge">Memeriksa data offline...</div><div class="offlineHero"><b>Mode Offline aktif.</b> Laporan, foto dan penilaian dapat disimpan di perangkat dan disinkronkan ke server saat jaringan tersedia.</div><div class="heroQuote">“Data yang akurat, langkah awal untuk Manggarai yang lebih kuat.”</div></div></section>
+    <div id="draftBanner" class="draftbox hide"></div>
+    <div id="editModeBanner" class="editbox hide"></div>
+    <div id="msg"></div>
+    <form id="reportForm" onsubmit="submitReport(event)"><div class="formTitle"><div><span class="formIcon">▤</span><div><b>Form Laporan Kerusakan Rumah</b><small>Lengkapi data berikut untuk pendataan kerusakan rumah akibat gempa</small></div></div><span class="formState">PWA • OFFLINE READY</span></div>
+      <section class="card"><div class="cardhead">1. Wilayah dan kewenangan</div><div class="cardbody"><div class="grid">
+        <div class="c4"><label>Provinsi</label><input id="provinsi" class="field" value="Nusa Tenggara Timur" readonly></div>
+        <div class="c4"><label>Kabupaten</label><input id="kabKota" class="field" value="Kabupaten Manggarai" readonly></div>
+        <div class="c4"><label class="req">Kecamatan</label><select id="kecamatan" class="field" required onchange="updateDesaOptions()"><option value="">Pilih Kecamatan</option></select></div>
+        <div class="c12"><label class="req">Desa/Kelurahan</label><select id="desa" class="field" required disabled><option value="">Pilih Kecamatan terlebih dahulu</option></select><div class="hint">Daftar desa/kelurahan otomatis menyesuaikan kecamatan.</div></div>
+        <div class="c12"><label>Kewenangan</label><div class="checks" id="kewenanganChecks"></div></div>
+      </div></div></section>
+
+      <section class="card"><div class="cardhead">2. Identitas pemilik dan lokasi rumah</div><div class="cardbody"><div class="grid">
+        <div class="c4"><label class="req">Nama Pemilik</label><input id="namaPemilik" class="field" required></div>
+        <div class="c4"><label>NIK</label><input id="nik" class="field" inputmode="numeric" maxlength="16"></div>
+        <div class="c4"><label>No. KK</label><input id="noKK" class="field" inputmode="numeric" maxlength="16"></div>
+        <div class="c12"><label class="req">Alamat (RT, RW, DUSUN)</label><textarea id="alamat" class="field" rows="2" required placeholder="Contoh: RT 001, RW 002, Dusun Lada"></textarea><div class="hint">Tuliskan RT, RW, dan nama dusun secara lengkap.</div></div>
+        <div class="c12"><label>Koordinat</label><div class="coord"><div><label>Latitude</label><input id="latitude" class="field" inputmode="decimal" placeholder="Contoh: -8.612345"></div><div><label>Longitude</label><input id="longitude" class="field" inputmode="decimal" placeholder="Contoh: 120.456789"></div><button type="button" class="btn green" onclick="getLocation()">📍 Ambil Lokasi Saat Ini</button></div><div id="locStatus" class="status">Koordinat dapat diambil otomatis dari GPS perangkat atau diisi manual.</div></div>
+      </div></div></section>
+
+      <section class="card"><div class="cardhead">3. Foto dan dokumen</div><div class="cardbody">
+        <label class="req">Foto Rumah/Kerusakan</label>
+        <div id="damagePhotoGrid" class="photoGrid">
+          <div class="upload" data-photo-card="1"><b>Foto Kerusakan 1 *</b><input id="foto1" data-photo-index="1" type="file" accept="image/*" capture="environment" class="field damage-photo-input" onchange="previewFile(this,'pv1')"><div id="pv1" class="preview">Belum ada foto</div></div>
+          <div class="upload" data-photo-card="2"><b>Foto Kerusakan 2 *</b><input id="foto2" data-photo-index="2" type="file" accept="image/*" capture="environment" class="field damage-photo-input" onchange="previewFile(this,'pv2')"><div id="pv2" class="preview">Belum ada foto</div></div>
+        </div>
+        <div class="photoActions"><button type="button" class="btn ghost" onclick="addDamagePhoto()">➕ Tambahkan Foto</button><span class="hint">Minimal 2 foto. Jumlah foto tambahan tidak dibatasi oleh form dan tidak ada batas MB yang ditetapkan aplikasi. Foto gambar dioptimalkan sebelum dikirim.</span></div>
+        <div id="uploadProgress" class="uploadProgress"></div>
+        <div class="photoGrid" style="margin-top:14px">
+          <div class="upload"><b>Foto/Scan KTP</b><input id="ktp" type="file" accept="image/*,application/pdf" class="field"><div class="hint">Opsional</div></div>
+          <div class="upload"><b>Foto/Scan KK</b><input id="kk" type="file" accept="image/*,application/pdf" class="field"><div class="hint">Opsional</div></div>
+        </div>
+      </div></section>
+
+      <section class="card"><div class="cardhead">4. Data kerusakan bangunan</div><div class="cardbody"><p class="hint" style="margin-top:0">Untuk setiap <b>bagian bangunan hanya dapat dipilih satu jenis kerusakan</b>. Setelah jenis kerusakan dan jumlah komponen dipilih, bobot langsung dihitung otomatis. <b>Tingkat kerusakan tetap hanya ditentukan oleh admin.</b></p><div class="damageWrap"><table class="damageTable"><thead><tr><th style="width:190px">Bagian Bangunan</th><th>Jenis Kerusakan — pilih satu</th><th style="width:155px">Jumlah Komponen</th><th style="width:100px">Bobot (%)</th></tr></thead><tbody id="damageRows"></tbody></table></div><div class="totalWeight"><span>Total Bobot Kerusakan</span><strong id="totalDamageWeight">0%</strong></div></div></section>
+
+      <section class="card"><div class="cardhead">5. Petugas dan kepemilikan aset</div><div class="cardbody"><div class="grid">
+        <div class="c6"><label class="req">Nama Petugas</label><input id="namaPetugas" class="field" list="petugasHistoryList" required autocomplete="off" oninput="applyPetugasHistory()" placeholder="Pilih dari histori atau ketik nama baru"><datalist id="petugasHistoryList"></datalist><div class="hint" id="petugasHistoryHint">Setelah Kecamatan dipilih, nama petugas dari histori kecamatan tersebut akan tersedia sebagai pilihan.</div></div>
+        <div class="c6"><label class="req">No. HP Petugas</label><input id="noHpPetugas" class="field" inputmode="tel" required placeholder="Terisi otomatis bila nama petugas ditemukan pada histori"><div class="hint">Nomor telepon akan terbaca otomatis dari histori petugas sebelumnya dan tetap dapat diperbarui bila diperlukan.</div></div>
+        <div class="c6"><label>Kepemilikan Bangunan</label><select id="kepemilikanBangunan" class="field"><option value="">Pilih</option><option>Sendiri</option><option>Pihak Lain</option></select></div>
+        <div class="c6"><label>Kepemilikan Tanah</label><select id="kepemilikanTanah" class="field"><option value="">Pilih</option><option>Sendiri</option><option>Pihak Lain</option></select></div>
+      </div><div class="submitbar"><button type="button" class="btn ghost" onclick="saveOfflineDraft(true)">💾 Simpan Draft Offline</button><button id="cancelEditBtn" type="button" class="btn red hide" onclick="cancelEdit()">Batalkan Edit</button><button type="button" class="btn ghost" onclick="clearFormAndDraft()">Bersihkan</button><button id="submitBtn" type="submit" class="btn green">Simpan Laporan</button></div><div class="hint">Jika internet tidak tersedia, tombol Simpan Laporan menyimpan laporan lengkap beserta foto ke perangkat. Gunakan tombol Sinkron setelah jaringan kembali tersedia.</div></div></section>
+    </form>
+
+    <section class="card" id="publicHistoryCard"><div class="cardhead"><span>6. Cek Data Terinput</span><small>Temukan laporan berdasarkan kecamatan dan nama petugas</small></div><div class="cardbody">
+      <p class="hint" style="margin-top:0">Pilih <b>Kecamatan</b>. Daftar <b>Nama Petugas</b> akan muncul otomatis berdasarkan histori laporan pada kecamatan tersebut.</p>
+      <div class="grid">
+        <div class="c6"><label class="req">Kecamatan</label><select id="lookupKecamatan" class="field" onchange="loadLookupPetugas()"><option value="">Pilih Kecamatan</option></select></div>
+        <div class="c6"><label class="req">Nama Petugas</label><select id="lookupPetugas" class="field" disabled><option value="">Pilih Kecamatan terlebih dahulu</option></select><div class="hint" id="lookupPetugasHint">Nama petugas diambil dari data yang pernah berhasil diinput pada kecamatan terpilih.</div></div>
+      </div>
+      <div class="submitbar"><button id="lookupBtn" type="button" class="btn green" onclick="lookupPublicReports()">Lihat Data Terinput</button></div>
+      <div id="lookupMsg"></div>
+      <div id="lookupResults" class="hide" style="margin-top:12px">
+        <div id="lookupSummary" class="notice ok"></div>
+        <div class="tableWrap"><table class="table" style="min-width:900px"><thead><tr><th>ID Laporan</th><th>Tanggal Input</th><th>Nama Pemilik</th><th>Desa/Kelurahan</th><th>Alamat (RT, RW, DUSUN)</th><th>Foto</th><th>Status Verifikasi</th><th>Aksi</th></tr></thead><tbody id="lookupRows"></tbody></table></div>
+        <div class="hint" style="margin-top:8px">Laporan dapat diedit oleh petugas selama statusnya belum diverifikasi admin. Setelah terverifikasi, tombol Edit otomatis dikunci. NIK, No. KK, nomor HP, foto/dokumen, bobot, dan tingkat kerusakan tidak ditampilkan pada daftar ini.</div>
+      </div>
+    </div></section>
+  </main>
+
+  <main id="adminView" class="wrap hide">
+    <section class="hero"><div><span class="badge">DASHBOARD ADMIN</span><h1>Verifikasi Laporan Kerusakan Rumah</h1><p>Admin dapat melihat bobot kerusakan, menetapkan tingkat kerusakan, tanggal verifikasi, serta rekap jumlah laporan per desa.</p></div></section>
+    <div id="adminStats" class="stats" style="margin-top:16px"></div>
+    <div class="toolbar"><input id="searchAdmin" class="field" placeholder="Cari ID, nama, NIK, desa, alamat, petugas..." onkeydown="if(event.key==='Enter')loadAdmin()"><button class="btn green" onclick="loadAdmin()">Cari / Refresh</button><button class="btn ghost" onclick="showVillageSummary()">Rekap Desa</button><button class="btn gold" id="exportExcelBtn" onclick="exportAdminExcel()">⬇ Export Excel</button><button class="btn ghost" onclick="showSystemInfo()">Database</button><button class="btn ghost" onclick="openChangePassword()">Ganti Password</button><button class="btn red" onclick="adminLogout()">Logout</button></div>
+    <div class="tableWrap"><table class="table"><thead><tr><th>ID</th><th>Tanggal</th><th>Nama Pemilik</th><th>Desa/Kelurahan</th><th>Petugas</th><th>Bobot (%)</th><th>Tingkat Kerusakan</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="adminRows"></tbody></table></div>
+  </main>
+
+  <div id="modalRoot"></div>
+
+
+<script>
+// ===== SIGAP GEMPA FLORES: OFFLINE-FIRST PWA LAYER =====
+const PWA_OFFLINE_CONFIG = {
+  appName:'SIGAP GEMPA FLORES - Formulir Rumah',
+  defaults:{provinsi:'Nusa Tenggara Timur',kabKota:'Kabupaten Manggarai'},
+  regions:{
+  "Satar Mese": ["Gara", "Golo Lambo", "Golo Muntas", "Iteng", "Jaong", "Koak", "Langgo", "Legu", "Lolang", "Lungar", "Mocok", "Ngkaer", "Paka", "Papang", "Ponggeok", "Pongkor", "Satar Loung", "Tado", "Tal", "Ulu Belang", "Umung", "Wae Ajang", "Wewo"],
+  "Satar Mese Barat": ["Bea Kondo", "Borik", "Cambir Leca", "Ceka Luju", "Golo Ropong", "Hilihintir", "Nuca Molas", "Satar Lenda", "Satar Luju", "Satar Ruwuk", "Terong", "Wongka"],
+  "Satar Mese Utara": ["Cireng", "Gulung", "Kole", "Lia", "Ling", "Mata Wae", "Nao", "Popo", "Renda", "Ruang", "Todo"],
+  "Langke Rembong": ["Bangka Leda", "Bangka Nekang", "Carep", "Compang Carep", "Compang Tuke", "Golo Dukal", "Karot", "Laci Carep", "Lawir", "Mbaumuku", "Pau", "Pitak", "Poco Mal", "Rowang", "Satar Tacik", "Tadong", "Tenda", "Wali", "Waso", "Watu"],
+  "Ruteng": ["Bangka Lao", "Bea Kakor", "Belang Turi", "Benteng Kuwu", "Beo Rahong", "Bulan", "Compang Dalo", "Compang Namut", "Cumbi", "Golo Worok", "Kakor", "Meler", "Poco Likang", "Pong Lale", "Pong Lao", "Pong Leko", "Pong Murung", "Rai", "Wae Belang"],
+  "Wae Rii": ["Bangka Jong", "Bangka Kenda", "Benteng Poco", "Compang Ndehes", "Golo Cador", "Golo Mendo", "Golo Watu", "Golo Wuas", "Lalong", "Longko", "Ndehes", "Poco", "Ranaka", "Ranggi", "Satar Ngkeling", "Wae Mulu", "Wae Rii"],
+  "Lelak": ["Bangka Dese", "Bangka Lelak", "Bangka Tonggur", "Gelong", "Ketang", "Lentang", "Nati", "Ndiwar", "Pong Umpu", "Urang"],
+  "Rahong Utara": ["Bangka Ajang", "Bangka Ruang", "Benteng Tubi", "Buar", "Compang Dari", "Dimpong", "Golo Langkok", "Liang Bua", "Manong", "Pong Lengor", "Tengku Lese", "Wae Mantang"],
+  "Cibal": ["Barang", "Bea Mese", "Gapong", "Golo", "Golo Ncuang", "Kentol", "Ladur", "Lando", "Langkas", "Nenu", "Pagal", "Perak", "Pinggang", "Rado", "Riung", "Welu", "Wudi"],
+  "Cibal Barat": ["Bangka Ara", "Bere", "Compang Cibal", "Golo Lanak", "Golo Woi", "Latung", "Lenda", "Timbu", "Wae Codi", "Wae Renca"],
+  "Reok": ["Bajak", "Baru", "Mata Air", "Reo", "Robek", "Ruis", "Salama", "Wangkung", "Watu Baur", "Watu Tango"],
+  "Reok Barat": ["Kajong", "Lante", "Lemarang", "Loce", "Nggalak", "Para Lando", "Rura", "Sambi", "Toe", "Torong Koe"],
+},
+  damageCatalog:[
+  {id:'P1', part:'Pondasi/Sloof (beton/kayu)', text:'Retak terlihat jelas pada permukaan pondasi/sloof (lebar retakan ± 1–2 mm)', weights:[3,4,5]},
+  {id:'P2', part:'Pondasi/Sloof (beton/kayu)', text:'Kehancuran beton/kayu sangat nyata dengan tulangan beton terlihat', weights:[5,8,11]},
+  {id:'P3', part:'Pondasi/Sloof (beton/kayu)', text:'Penurunan dan/atau pondasi hancur', weights:[11,14,15]},
+  {id:'K1', part:'Kolom/Balok (beton/kayu)', text:'Retak rambut terlihat jelas pada permukaan kolom/balok (lebar retakan ± 0,2–1 mm)', weights:[7,9,11]},
+  {id:'K2', part:'Kolom/Balok (beton/kayu)', text:'Retakan yang sangat jelas (lebar retakan ± 1–2 mm)', weights:[7,9,11]},
+  {id:'K3', part:'Kolom/Balok (beton/kayu)', text:'Kehancuran kolom/balok, tulangan/rangka terlihat deformasi', weights:[12,26,35]},
+  {id:'A1', part:'Rangka Atap/Kuda-kuda', text:'Reng dan/atau usuk hancur sebagian atau seluruh', weights:[3,5,11]},
+  {id:'A2', part:'Rangka Atap/Kuda-kuda', text:'Kuda-kuda roboh sebagian atau seluruh', weights:[11,14,15]},
+  {id:'PA1', part:'Penutup Atap', text:'Berjatuhan menyebar sebagian atau seluruh', weights:[5,10,10]},
+  {id:'D1', part:'Dinding (tembok/papan)', text:'Plesteran terkelupas', weights:[3,4,5]},
+  {id:'D2', part:'Dinding (tembok/papan)', text:'Retakan dapat terlihat jelas atau tembus', weights:[5,8,11]},
+  {id:'D3', part:'Dinding (tembok/papan)', text:'Dinding jatuh sebagian atau menyeluruh', weights:[11,14,15]},
+  {id:'L1', part:'Lantai', text:'Retak rambut menyebar sebagian atau seluruh', weights:[2,3,3]},
+  {id:'L2', part:'Lantai', text:'Retak besar/terbelah/hancur menyebar sebagian atau seluruh', weights:[8,9,10]}
+]
+};
+const PWA_DB='sigap_gempa_pwa_v1', PWA_REPORT_STORE='reports';
+const PWA_BACKEND_KEY='sigap_backend_exec_url';
+let PWA_DEFERRED_PROMPT=null, PWA_BRIDGE_FRAME=null, PWA_BRIDGE_READY=false, PWA_BRIDGE_SOURCE=null, PWA_BRIDGE_TOKEN='', PWA_BRIDGE_ORIGIN='*', PWA_RPC_SEQ=0;
+const PWA_RPC_PENDING=new Map();
+
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();PWA_DEFERRED_PROMPT=e;const b=document.getElementById('installBtn');if(b)b.classList.remove('hide')});
+window.addEventListener('appinstalled',()=>{const b=document.getElementById('installBtn');if(b)b.classList.add('hide');PWA_DEFERRED_PROMPT=null});
+window.addEventListener('load',()=>{if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});setTimeout(pwaRefreshSyncStatus,800)});
+window.addEventListener('online',()=>{pwaRefreshSyncStatus();setTimeout(()=>syncPendingReports(true),1200)});
+window.addEventListener('offline',pwaRefreshSyncStatus);
+
+function installPwa(){if(!PWA_DEFERRED_PROMPT){alert('Gunakan menu browser “Tambahkan ke layar utama/Install app” bila tombol instal belum tersedia.');return}PWA_DEFERRED_PROMPT.prompt();PWA_DEFERRED_PROMPT.userChoice.finally(()=>{PWA_DEFERRED_PROMPT=null;const b=document.getElementById('installBtn');if(b)b.classList.add('hide')})}
+function pwaBackendUrl(){return (localStorage.getItem(PWA_BACKEND_KEY)||'').trim()}
+function pwaSetBackendUrl(u){u=String(u||'').trim();if(u&& !/\/exec(?:\?|$)/.test(u))throw new Error('Gunakan URL deployment Google Apps Script yang berakhir /exec.');localStorage.setItem(PWA_BACKEND_KEY,u);PWA_BRIDGE_READY=false;PWA_BRIDGE_SOURCE=null;PWA_BRIDGE_TOKEN='';PWA_BRIDGE_ORIGIN='*';if(PWA_BRIDGE_FRAME){PWA_BRIDGE_FRAME.remove();PWA_BRIDGE_FRAME=null}}
+function openPwaSettings(){const u=pwaBackendUrl();modal(`<div class="modalbox loginbox"><div class="modalhead"><b>Pengaturan Server & Offline</b><button class="btn ghost" onclick="closeModal()">✕</button></div><div class="modalbody"><p class="hint">Aplikasi tetap dapat dipakai tanpa server saat offline. URL server hanya diperlukan untuk sinkronisasi ke Google Sheet/Drive dan Dashboard Admin.</p><label>URL Web App Google Apps Script (/exec)</label><input id="pwaBackendInput" class="field" value="${escAttr(u)}" placeholder="https://script.google.com/macros/s/.../exec"><div class="submitbar"><button class="btn ghost" onclick="testPwaServer()">Tes Server</button><button class="btn green" onclick="savePwaServer()">Simpan</button></div><div id="pwaServerMsg"></div><hr style="border:0;border-top:1px solid #ddd;margin:16px 0"><button class="btn ghost" onclick="syncPendingReports()">↻ Sinkronkan Data Offline Sekarang</button></div></div>`)}
+function savePwaServer(){try{pwaSetBackendUrl(document.getElementById('pwaBackendInput').value);document.getElementById('pwaServerMsg').innerHTML='<div class="notice ok">URL server tersimpan di perangkat ini.</div>';pwaRefreshSyncStatus()}catch(e){document.getElementById('pwaServerMsg').innerHTML=`<div class="notice err">${esc(e.message)}</div>`}}
+async function testPwaServer(){const m=document.getElementById('pwaServerMsg');try{pwaSetBackendUrl(document.getElementById('pwaBackendInput').value);m.innerHTML='<div class="hint">Menghubungkan...</div>';const c=await pwaRemoteRpc('getPublicConfig',[]);m.innerHTML=`<div class="notice ok">Server terhubung: ${esc(c.appName||'SIGAP GEMPA FLORES')}</div>`}catch(e){m.innerHTML=`<div class="notice err">${esc(e.message||String(e))}</div>`}}
+
+function pwaOpenDb(){return new Promise((resolve,reject)=>{const r=indexedDB.open(PWA_DB,1);r.onupgradeneeded=()=>{const db=r.result;if(!db.objectStoreNames.contains(PWA_REPORT_STORE))db.createObjectStore(PWA_REPORT_STORE,{keyPath:'localId'})};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
+async function pwaPutReport(obj){const db=await pwaOpenDb();return new Promise((resolve,reject)=>{const tx=db.transaction(PWA_REPORT_STORE,'readwrite');tx.objectStore(PWA_REPORT_STORE).put(obj);tx.oncomplete=()=>{db.close();resolve(obj)};tx.onerror=()=>{db.close();reject(tx.error)}})}
+async function pwaGetReports(){const db=await pwaOpenDb();return new Promise((resolve,reject)=>{const tx=db.transaction(PWA_REPORT_STORE,'readonly'),r=tx.objectStore(PWA_REPORT_STORE).getAll();r.onsuccess=()=>resolve(r.result||[]);r.onerror=()=>reject(r.error);tx.oncomplete=()=>db.close()})}
+async function pwaGetReportByAnyId(id){const all=await pwaGetReports();return all.find(x=>x.localId===id||x.serverId===id)||null}
+function pwaMakeLocalId(){const d=new Date(),p=n=>String(n).padStart(2,'0');return `OFF-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}-${Math.random().toString(36).slice(2,6).toUpperCase()}`}
+async function pwaQueueNewReport(payload,damagePhotos,ktpFile,kkFile){const localId=pwaMakeLocalId();const obj={localId,serverId:'',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),syncState:'pending',verificationStatus:'Belum Diverifikasi',payload,damagePhotos:damagePhotos.map(x=>x.file),ktpFile:ktpFile||null,kkFile:kkFile||null,photoCount:damagePhotos.length,lastSyncError:''};await pwaPutReport(obj);await pwaRefreshSyncStatus();return obj}
+async function pwaUpdateLocalReport(localId,payload,newPhotos,ktpFile,kkFile){const r=await pwaGetReportByAnyId(localId);if(!r)throw new Error('Laporan lokal tidak ditemukan.');r.payload=payload;r.updatedAt=new Date().toISOString();if(r.syncState==='pending'){r.damagePhotos=(r.damagePhotos||[]).concat(newPhotos.map(x=>x.file));r.photoCount=r.damagePhotos.length;if(ktpFile)r.ktpFile=ktpFile;if(kkFile)r.kkFile=kkFile}else{r.extraDamagePhotos=(r.extraDamagePhotos||[]).concat(newPhotos.map(x=>x.file));r.extraKtpFile=ktpFile||r.extraKtpFile||null;r.extraKkFile=kkFile||r.extraKkFile||null;r.syncState='updatePending'}await pwaPutReport(r);await pwaRefreshSyncStatus();return r}
+async function pwaRefreshSyncStatus(){const el=document.getElementById('syncStatus');let all=[];try{all=await pwaGetReports()}catch(e){}const n=all.filter(x=>x.syncState==='pending'||x.syncState==='updatePending').length;const backend=!!pwaBackendUrl();if(el){el.className='syncBadge '+(n?'':'ok');el.textContent=n?`${n} laporan menunggu sinkronisasi${navigator.onLine?'':' • offline'}`:(backend?'Semua data lokal sudah tersinkron':'Mode offline siap • server belum diatur')}const lc=document.getElementById('heroLocalCount'),pc=document.getElementById('heroPendingCount'),ns=document.getElementById('heroNetState');if(lc)lc.textContent=String(all.length);if(pc)pc.textContent=String(n);if(ns)ns.textContent=navigator.onLine?'Online':'Offline'}
+
+async function pwaLocalPetugas(kecamatan){const all=await pwaGetReports(),m=new Map();for(const r of all){const p=r.payload||{};if(normText(p.kecamatan)!==normText(kecamatan))continue;const key=normText(p.namaPetugas);if(key&&!m.has(key))m.set(key,{nama:p.namaPetugas,noHp:p.noHpPetugas||''})}return {kecamatan,petugas:[...m.values()].sort((a,b)=>a.nama.localeCompare(b.nama,'id'))}}
+async function pwaLocalSubmitted(kecamatan,petugas){const all=await pwaGetReports();const rows=all.filter(r=>normText(r.payload?.kecamatan)===normText(kecamatan)&&normText(r.payload?.namaPetugas)===normText(petugas)).map(r=>({id:r.serverId||r.localId,timestamp:new Date(r.createdAt).toLocaleString('id-ID'),namaPemilik:r.payload.namaPemilik,desa:r.payload.desa,alamat:r.payload.alamat,jumlahFoto:r.photoCount||0,canEdit:r.verificationStatus!=='Terverifikasi',local:true,syncState:r.syncState}));return {kecamatan,petugas,rows}}
+async function pwaLocalEditable(id){const r=await pwaGetReportByAnyId(id);if(!r)throw new Error('Laporan ini belum tersimpan di perangkat dan memerlukan internet.');if(r.verificationStatus==='Terverifikasi')throw new Error('Laporan sudah terverifikasi dan terkunci.');return {editToken:'LOCAL:'+r.localId,localId:r.localId,existingPhotoCount:Number(r.photoCount||0),record:{kecamatan:r.payload.kecamatan,desa:r.payload.desa,kewenangan:(r.payload.kewenangan||[]).join(', '),namaPemilik:r.payload.namaPemilik,nik:r.payload.nik,noKK:r.payload.noKK,alamat:r.payload.alamat,latitude:r.payload.latitude,longitude:r.payload.longitude,petugas:r.payload.namaPetugas,noHpPetugas:r.payload.noHpPetugas,kepemilikanBangunan:r.payload.kepemilikanBangunan,kepemilikanTanah:r.payload.kepemilikanTanah,damage:r.payload.damage||{},jumlahFoto:r.photoCount||0}}}
+
+function pwaMakeBridgeToken(){try{if(window.crypto&&crypto.randomUUID)return crypto.randomUUID()}catch(e){}return 'br_'+Date.now()+'_'+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2)}
+function pwaEnsureBridge(){return new Promise((resolve,reject)=>{const url=pwaBackendUrl();if(!url)return reject(new Error('Server belum diatur. Buka ⚙ Server dan masukkan URL Web App /exec.'));if(!navigator.onLine)return reject(new Error('Tidak ada koneksi internet.'));if(PWA_BRIDGE_READY&&PWA_BRIDGE_SOURCE)return resolve();if(PWA_BRIDGE_FRAME){PWA_BRIDGE_FRAME.remove();PWA_BRIDGE_FRAME=null}PWA_BRIDGE_READY=false;PWA_BRIDGE_SOURCE=null;PWA_BRIDGE_ORIGIN='*';const token=pwaMakeBridgeToken();PWA_BRIDGE_TOKEN=token;const f=document.createElement('iframe');f.style.position='fixed';f.style.width='1px';f.style.height='1px';f.style.opacity='0';f.style.pointerEvents='none';f.style.border='0';f.setAttribute('aria-hidden','true');f.src=url+(url.includes('?')?'&':'?')+'mode=bridge&bridgeToken='+encodeURIComponent(token)+'&t='+Date.now();PWA_BRIDGE_FRAME=f;const timer=setTimeout(()=>{window.removeEventListener('message',onmsg);reject(new Error('Server tidak merespons. Bridge Apps Script terbuka, tetapi belum dapat berkomunikasi dengan PWA. Pastikan Code.gs dan Bridge.html memakai versi FIX V2 lalu deploy sebagai New version.'))},20000);const onmsg=e=>{const d=e.data;if(!d||d.type!=='sigap-bridge-ready'||d.bridgeToken!==token)return;clearTimeout(timer);window.removeEventListener('message',onmsg);PWA_BRIDGE_SOURCE=e.source;PWA_BRIDGE_ORIGIN=(e.origin&&e.origin!=='null')?e.origin:'*';PWA_BRIDGE_READY=true;resolve()};window.addEventListener('message',onmsg);document.body.appendChild(f)})}
+window.addEventListener('message',e=>{const d=e.data;if(!d||d.type!=='sigap-rpc-result'||d.bridgeToken!==PWA_BRIDGE_TOKEN||!PWA_RPC_PENDING.has(d.id))return;if(PWA_BRIDGE_SOURCE&&e.source!==PWA_BRIDGE_SOURCE)return;const p=PWA_RPC_PENDING.get(d.id);PWA_RPC_PENDING.delete(d.id);clearTimeout(p.timer);d.ok?p.resolve(d.value):p.reject(new Error(d.error||'Kesalahan server'))});
+async function pwaRemoteRpc(method,args){await pwaEnsureBridge();return new Promise((resolve,reject)=>{const id='rpc_'+(++PWA_RPC_SEQ)+'_'+Date.now();const timer=setTimeout(()=>{PWA_RPC_PENDING.delete(id);reject(new Error('Waktu koneksi ke server habis.'))},120000);PWA_RPC_PENDING.set(id,{resolve,reject,timer});try{PWA_BRIDGE_SOURCE.postMessage({type:'sigap-rpc-call',bridgeToken:PWA_BRIDGE_TOKEN,id,method,args},PWA_BRIDGE_ORIGIN||'*')}catch(e){PWA_RPC_PENDING.delete(id);clearTimeout(timer);reject(new Error('Gagal mengirim perintah ke bridge server: '+(e.message||e)))}})}
+async function pwaRpc(method,args){
+  if(method==='getPublicConfig')return PWA_OFFLINE_CONFIG;
+  if(method==='getPetugasHistoryByKecamatan'){const local=await pwaLocalPetugas(args[0]);if(navigator.onLine&&pwaBackendUrl()){try{const rem=await pwaRemoteRpc(method,args),m=new Map();[...(rem.petugas||[]),...(local.petugas||[])].forEach(x=>m.set(normText(x.nama),x));return {kecamatan:args[0],petugas:[...m.values()]}}catch(e){}}return local}
+  if(method==='getPublicSubmittedReports'){const local=await pwaLocalSubmitted(args[0],args[1]);if(navigator.onLine&&pwaBackendUrl()){try{const rem=await pwaRemoteRpc(method,args);const seen=new Set((rem.rows||[]).map(x=>x.id));return {...rem,rows:[...(local.rows||[]).filter(x=>!seen.has(x.id)),...(rem.rows||[])]}}catch(e){}}return local}
+  if(method==='getPublicEditableReport'){const local=await pwaGetReportByAnyId(args[2]);if(local)return pwaLocalEditable(args[2]);return pwaRemoteRpc(method,args)}
+  return pwaRemoteRpc(method,args);
+}
+
+// google.script.run-compatible adapter for the static PWA.
+(function(){
+  const make=(s,f)=>new Proxy({},{get(t,p){if(p==='withSuccessHandler')return fn=>make(fn,f);if(p==='withFailureHandler')return fn=>make(s,fn);return (...args)=>{pwaRpc(String(p),args).then(v=>s&&s(v)).catch(e=>f?f(e):console.error(e))}}});
+  window.google=window.google||{};window.google.script=window.google.script||{};window.google.script.run=make(null,null);
+})();
+
+async function syncPendingReports(silent=false){
+  if(!navigator.onLine){if(!silent)alert('Tidak ada koneksi internet. Data tetap aman di perangkat.');return}
+  if(!pwaBackendUrl()){if(!silent)openPwaSettings();return}
+  let all=await pwaGetReports(), pending=all.filter(x=>x.syncState==='pending'||x.syncState==='updatePending');
+  if(!pending.length){await pwaRefreshSyncStatus();if(!silent)alert('Tidak ada laporan yang menunggu sinkronisasi.');return}
+  const st=document.getElementById('syncStatus');let ok=0,fail=0;
+  for(let i=0;i<pending.length;i++){const r=pending[i];if(st)st.textContent=`Sinkronisasi ${i+1}/${pending.length}: ${r.payload?.namaPemilik||r.localId}`;
+    try{
+      if(r.syncState==='pending'){
+        const created=await pwaRemoteRpc('saveReport',[r.payload]);
+        for(let j=0;j<(r.damagePhotos||[]).length;j++){const fp=await fileToPayload(r.damagePhotos[j],true);await pwaRemoteRpc('uploadReportFile',[created.id,created.uploadKey,'damage',j+1,fp])}
+        if(r.ktpFile)await pwaRemoteRpc('uploadReportFile',[created.id,created.uploadKey,'ktp',1,await fileToPayload(r.ktpFile,true)]);
+        if(r.kkFile)await pwaRemoteRpc('uploadReportFile',[created.id,created.uploadKey,'kk',1,await fileToPayload(r.kkFile,true)]);
+        const fin=await pwaRemoteRpc('finalizeReportUpload',[created.id,created.uploadKey]);r.serverId=fin.id;r.photoCount=fin.photoCount;r.syncState='synced';r.syncedAt=new Date().toISOString();r.damagePhotos=[];r.ktpFile=null;r.kkFile=null;r.lastSyncError='';
+      } else {
+        if(!r.serverId)throw new Error('ID server laporan tidak ditemukan.');
+        const ed=await pwaRemoteRpc('getPublicEditableReport',[r.payload.kecamatan,r.payload.namaPetugas,r.serverId]);
+        const created=await pwaRemoteRpc('updatePublicReport',[ed.editToken,r.serverId,r.payload]);
+        const extras=r.extraDamagePhotos||[];for(let j=0;j<extras.length;j++){const fp=await fileToPayload(extras[j],true);await pwaRemoteRpc('uploadReportFile',[created.id,created.uploadKey,'damage',Number(created.existingPhotoCount||r.photoCount||0)+j+1,fp])}
+        if(r.extraKtpFile)await pwaRemoteRpc('uploadReportFile',[created.id,created.uploadKey,'ktp',1,await fileToPayload(r.extraKtpFile,true)]);
+        if(r.extraKkFile)await pwaRemoteRpc('uploadReportFile',[created.id,created.uploadKey,'kk',1,await fileToPayload(r.extraKkFile,true)]);
+        const fin=await pwaRemoteRpc('finalizeReportUpload',[created.id,created.uploadKey]);r.photoCount=fin.photoCount;r.syncState='synced';r.syncedAt=new Date().toISOString();r.extraDamagePhotos=[];r.extraKtpFile=null;r.extraKkFile=null;r.lastSyncError='';
+      }
+      await pwaPutReport(r);ok++;
+    }catch(e){r.lastSyncError=e.message||String(e);await pwaPutReport(r);fail++}
+  }
+  await pwaRefreshSyncStatus();
+  if(!silent)alert(`Sinkronisasi selesai. Berhasil: ${ok}. Gagal: ${fail}.${fail?' Periksa koneksi/server lalu coba lagi.':''}`);
+  try{if(document.getElementById('lookupKecamatan')?.value&&document.getElementById('lookupPetugas')?.value)await lookupPublicReports()}catch(e){}
+}
+</script>
+
+<script>
+let CONFIG=null, ADMIN_TOKEN='', ADMIN_DATA=null, PHOTO_SEQ=2, EDIT_CONTEXT=null;
+let OFFLINE_DRAFT_FILES={damage:{},ktp:null,kk:null};
+const DRAFT_DB='sigap_gempa_draft_db', DRAFT_STORE='drafts', DRAFT_KEY='current', CONFIG_CACHE_KEY='sigap_config_v1', TEXT_DRAFT_KEY='sigap_text_draft_v1';
+let AUTO_DRAFT_TIMER=null;
+const $=id=>document.getElementById(id);
+
+document.addEventListener('DOMContentLoaded',()=>{
+  buildChecks('kewenanganChecks',['Pusat','Provinsi','Kab/Kota','Masyarakat','Swasta'],'kewenangan');
+  updateNetworkStatus();
+  window.addEventListener('online',updateNetworkStatus); window.addEventListener('offline',updateNetworkStatus);
+  $('reportForm').addEventListener('input',scheduleTextDraft); $('reportForm').addEventListener('change',scheduleTextDraft);
+  document.addEventListener('change',e=>{
+    const el=e.target;if(!el||el.type!=='file')return;
+    if(el.classList.contains('damage-photo-input')){const i=Number(el.dataset.photoIndex);if(el.files&&el.files[0])OFFLINE_DRAFT_FILES.damage[i]=el.files[0];}
+    else if(el.id==='ktp'&&el.files&&el.files[0])OFFLINE_DRAFT_FILES.ktp=el.files[0];
+    else if(el.id==='kk'&&el.files&&el.files[0])OFFLINE_DRAFT_FILES.kk=el.files[0];
+    saveOfflineDraft(false).catch(()=>{});
+  });
+  const useConfig=cfg=>{CONFIG=cfg;try{localStorage.setItem(CONFIG_CACHE_KEY,JSON.stringify(cfg))}catch(e){};$('provinsi').value=cfg.defaults.provinsi||'Nusa Tenggara Timur';$('kabKota').value=cfg.defaults.kabKota||'Kabupaten Manggarai';buildRegionDropdowns(cfg.regions||{});buildDamageRows(cfg.damageCatalog);checkOfflineDraft();};
+  google.script.run.withSuccessHandler(useConfig).withFailureHandler(e=>{
+    try{const cached=JSON.parse(localStorage.getItem(CONFIG_CACHE_KEY)||'null');if(cached){useConfig(cached);showMsg('Aplikasi memakai konfigurasi tersimpan di perangkat karena jaringan/server tidak dapat dijangkau. Anda tetap dapat mengisi dan menyimpan draft offline.',true);return}}catch(x){}
+    showError(e);
+  }).getPublicConfig();
+});
+
+function buildRegionDropdowns(regions){
+  const options='<option value="">Pilih Kecamatan</option>'+Object.keys(regions).map(x=>`<option value="${escAttr(x)}">${esc(x)}</option>`).join('');
+  const kec=$('kecamatan');if(kec)kec.innerHTML=options;
+  const lookup=$('lookupKecamatan');if(lookup)lookup.innerHTML=options;
+  updateDesaOptions();
+}
+function updateDesaOptions(){
+  const kecamatan=v('kecamatan');
+  const desa=$('desa');
+  const list=(CONFIG&&CONFIG.regions&&CONFIG.regions[kecamatan])||[];
+  desa.innerHTML=list.length?'<option value="">Pilih Desa/Kelurahan</option>'+list.map(x=>`<option value="${escAttr(x)}">${esc(x)}</option>`).join(''):'<option value="">Pilih Kecamatan terlebih dahulu</option>';
+  desa.disabled=!list.length;
+  loadEntryPetugasHistory();
+}
+
+
+let ENTRY_PETUGAS_HISTORY=[];
+
+async function loadEntryPetugasHistory(){
+  const kecamatan=v('kecamatan');
+  ENTRY_PETUGAS_HISTORY=[];
+  const dl=$('petugasHistoryList'), hint=$('petugasHistoryHint');
+  if(dl)dl.innerHTML='';
+  if(!kecamatan){if(hint)hint.textContent='Setelah Kecamatan dipilih, nama petugas dari histori kecamatan tersebut akan tersedia sebagai pilihan.';return}
+  if(hint)hint.textContent='Memuat histori petugas...';
+  try{
+    const r=await gsCall('getPetugasHistoryByKecamatan',kecamatan);
+    ENTRY_PETUGAS_HISTORY=(r.petugas||[]);
+    if(dl)dl.innerHTML=ENTRY_PETUGAS_HISTORY.map(x=>`<option value="${escAttr(x.nama)}">${esc(x.noHp||'')}</option>`).join('');
+    if(hint)hint.textContent=ENTRY_PETUGAS_HISTORY.length?`${ENTRY_PETUGAS_HISTORY.length} nama petugas ditemukan pada histori Kecamatan ${kecamatan}. Pilih nama untuk mengisi nomor HP otomatis.`:`Belum ada histori petugas pada Kecamatan ${kecamatan}. Nama dan nomor HP dapat diisi sebagai petugas baru.`;
+    applyPetugasHistory();
+  }catch(e){if(hint)hint.textContent='Histori petugas belum dapat dimuat. Nama dan nomor HP tetap dapat diisi manual.'}
+}
+
+function applyPetugasHistory(){
+  const name=v('namaPetugas').toLowerCase().replace(/\s+/g,' ');
+  const found=ENTRY_PETUGAS_HISTORY.find(x=>String(x.nama||'').trim().toLowerCase().replace(/\s+/g,' ')===name);
+  if(found && found.noHp)$('noHpPetugas').value=found.noHp;
+}
+
+async function loadLookupPetugas(selectedName=''){
+  const kecamatan=v('lookupKecamatan'), sel=$('lookupPetugas'), hint=$('lookupPetugasHint');
+  $('lookupResults').classList.add('hide');$('lookupRows').innerHTML='';$('lookupMsg').innerHTML='';
+  if(!kecamatan){sel.disabled=true;sel.innerHTML='<option value="">Pilih Kecamatan terlebih dahulu</option>';if(hint)hint.textContent='Nama petugas diambil dari data yang pernah berhasil diinput pada kecamatan terpilih.';return}
+  sel.disabled=true;sel.innerHTML='<option value="">Memuat nama petugas...</option>';if(hint)hint.textContent='Membaca histori petugas...';
+  try{
+    const r=await gsCall('getPetugasHistoryByKecamatan',kecamatan);
+    const items=(r.petugas||[]);
+    sel.innerHTML='<option value="">Pilih Nama Petugas</option>'+items.map(x=>`<option value="${escAttr(x.nama)}">${esc(x.nama)}</option>`).join('');
+    sel.disabled=!items.length;
+    if(selectedName && items.some(x=>normText(x.nama)===normText(selectedName)))sel.value=items.find(x=>normText(x.nama)===normText(selectedName)).nama;
+    if(hint)hint.textContent=items.length?`${items.length} petugas ditemukan pada Kecamatan ${kecamatan}.`:`Belum ada nama petugas dari laporan yang berhasil diinput pada Kecamatan ${kecamatan}.`;
+  }catch(e){sel.innerHTML='<option value="">Gagal memuat petugas</option>';if(hint)hint.textContent=errText(e)}
+}
+function normText(x){return String(x||'').trim().replace(/\s+/g,' ').toLowerCase()}
+
+function buildChecks(id,items,name){$(id).innerHTML=items.map(x=>`<label class="check"><input type="checkbox" name="${name}" value="${esc(x)}"> ${esc(x)}</label>`).join('')}
+function buildDamageRows(items){
+  const groups=[];
+  (items||[]).forEach(item=>{
+    let g=groups.find(x=>x.part===item.part);
+    if(!g){g={part:item.part,items:[]};groups.push(g)}
+    g.items.push(item);
+  });
+  $('damageRows').innerHTML=groups.map((g,i)=>`<tr data-damage-part="${i}"><td><b>${esc(g.part)}</b></td><td><select class="field" data-damage-type="${i}" onchange="damageTypeChanged(${i})"><option value="">Tidak ada kerusakan</option>${g.items.map(x=>`<option value="${escAttr(x.id)}">${esc(x.text)}</option>`).join('')}</select></td><td><select class="field" data-damage-count="${i}" onchange="updateDamageWeight(${i})" disabled><option value="0">-</option><option value="1">1 komponen</option><option value="2">2 komponen</option><option value="3">≥ 3 komponen</option></select></td><td><span id="damageWeight${i}" class="damageWeight">0%</span></td></tr>`).join('');
+  $('totalDamageWeight').textContent='0%';
+}
+function damageTypeChanged(i){
+  const type=document.querySelector(`[data-damage-type="${i}"]`);
+  const count=document.querySelector(`[data-damage-count="${i}"]`);
+  if(!type||!count)return;
+  if(type.value){count.disabled=false;if(Number(count.value||0)===0)count.value='1'}else{count.value='0';count.disabled=true}
+  updateDamageWeight(i);
+}
+function damageItemById(id){return (CONFIG&&CONFIG.damageCatalog||[]).find(x=>String(x.id)===String(id))||null}
+function currentPartWeight(i){
+  const type=document.querySelector(`[data-damage-type="${i}"]`);
+  const count=document.querySelector(`[data-damage-count="${i}"]`);
+  if(!type||!count||!type.value)return 0;
+  const item=damageItemById(type.value), n=Math.max(0,Math.min(3,Number(count.value||0)));
+  return item&&n?Number((item.weights||[])[n-1]||0):0;
+}
+function updateDamageWeight(i){
+  const w=currentPartWeight(i), el=$('damageWeight'+i);if(el)el.textContent=w+'%';
+  updateTotalDamageWeight();
+}
+function updateTotalDamageWeight(){
+  let total=0;document.querySelectorAll('[data-damage-part]').forEach((_,i)=>total+=currentPartWeight(i));
+  $('totalDamageWeight').textContent=total+'%';
+}
+
+function getLocation(){const s=$('locStatus'); if(!navigator.geolocation){s.textContent='Perangkat/browser tidak mendukung GPS. Silakan isi manual.';return} s.textContent='Mengambil koordinat...';navigator.geolocation.getCurrentPosition(p=>{$('latitude').value=p.coords.latitude.toFixed(6);$('longitude').value=p.coords.longitude.toFixed(6);s.textContent=`Lokasi berhasil diambil. Akurasi ±${Math.round(p.coords.accuracy)} meter.`},e=>{s.textContent='GPS tidak dapat diambil: '+e.message+'. Silakan isi koordinat manual.'},{enableHighAccuracy:true,timeout:15000,maximumAge:0})}
+
+function previewFile(input,id){const f=input.files&&input.files[0];const p=$(id);if(!p)return;if(!f){p.textContent='Belum ada foto';return}if(f.type.startsWith('image/')){const u=URL.createObjectURL(f);p.innerHTML=`<img src="${u}">`}else p.textContent=f.name}
+
+function addDamagePhoto(){
+  PHOTO_SEQ++;
+  const n=PHOTO_SEQ;
+  const card=document.createElement('div');
+  card.className='upload';card.dataset.photoCard=String(n);
+  card.innerHTML=`<button type="button" class="removePhoto" title="Hapus foto" onclick="removeDamagePhoto(${n})">×</button><b>Foto Kerusakan ${n}</b><input id="foto${n}" data-photo-index="${n}" type="file" accept="image/*" capture="environment" class="field damage-photo-input" onchange="previewFile(this,'pv${n}')"><div id="pv${n}" class="preview">Belum ada foto</div>`;
+  $('damagePhotoGrid').appendChild(card);
+}
+function removeDamagePhoto(n){const card=document.querySelector(`[data-photo-card="${n}"]`);if(card)card.remove();delete OFFLINE_DRAFT_FILES.damage[n];scheduleTextDraft()}
+function getSelectedDamagePhotos(){return [...document.querySelectorAll('.damage-photo-input')].map(x=>{const i=Number(x.dataset.photoIndex);return {index:i,file:(x.files&&x.files[0])||OFFLINE_DRAFT_FILES.damage[i]||null}}).filter(x=>x.file).sort((a,b)=>a.index-b.index)}
+function getDocFile(id){const el=$(id);return (el&&el.files&&el.files[0])||OFFLINE_DRAFT_FILES[id]||null}
+
+async function submitReport(ev){
+  ev.preventDefault();hideMsg();
+  const damagePhotos=getSelectedDamagePhotos();
+  const existingCount=EDIT_CONTEXT?Number(EDIT_CONTEXT.existingPhotoCount||0):0;
+  if(!EDIT_CONTEXT && damagePhotos.length<2){showMsg('Minimal dua foto rumah/kerusakan wajib diunggah.',false);return}
+  if(EDIT_CONTEXT && existingCount+damagePhotos.length<2){showMsg('Laporan harus memiliki minimal dua foto kerusakan.',false);return}
+  const btn=$('submitBtn');btn.disabled=true;btn.textContent=EDIT_CONTEXT?'Menyimpan perubahan...':'Menyimpan laporan...';$('uploadProgress').textContent='Menyiapkan data laporan...';
+  const payload={
+    provinsi:v('provinsi'),kabKota:v('kabKota'),kecamatan:v('kecamatan'),desa:v('desa'),dusun:'',
+    kewenangan:checked('kewenangan'),namaPemilik:v('namaPemilik'),nik:v('nik'),noKK:v('noKK'),alamat:v('alamat'),
+    latitude:v('latitude'),longitude:v('longitude'),namaPetugas:v('namaPetugas'),noHpPetugas:v('noHpPetugas'),
+    kepemilikanBangunan:v('kepemilikanBangunan'),kepemilikanTanah:v('kepemilikanTanah'),damage:collectDamage(),expectedPhotoCount:existingCount+damagePhotos.length
+  };
+  const ktpFile=getDocFile('ktp'), kkFile=getDocFile('kk');
+  const submittedKecamatan=payload.kecamatan, submittedPetugas=payload.namaPetugas;
+  try{
+    // Laporan lokal/edit lokal selalu disimpan ke perangkat terlebih dahulu.
+    if(EDIT_CONTEXT && EDIT_CONTEXT.localId){
+      const r=await pwaUpdateLocalReport(EDIT_CONTEXT.localId,payload,damagePhotos,ktpFile,kkFile);
+      await clearOfflineDraft(false);EDIT_CONTEXT=null;updateEditModeUI();resetForm(true);
+      showMsg(`Perubahan laporan ${r.serverId||r.localId} disimpan di perangkat${r.syncState==='updatePending'?' dan menunggu sinkronisasi':''}.`,true);
+      if($('lookupKecamatan')){$('lookupKecamatan').value=submittedKecamatan;await loadLookupPetugas(submittedPetugas);await lookupPublicReports()}
+      btn.disabled=false;btn.textContent='Simpan Laporan';return;
+    }
+
+    // Bila offline atau server belum disetel, simpan laporan lengkap ke antrean lokal.
+    if(!navigator.onLine || !pwaBackendUrl()){
+      const r=await pwaQueueNewReport(payload,damagePhotos,ktpFile,kkFile);
+      await clearOfflineDraft(false);resetForm(true);
+      showMsg(`Laporan berhasil disimpan OFFLINE dengan ID ${r.localId}. Data dan foto aman di perangkat dan akan dikirim saat Sinkron dijalankan.`,true);
+      if($('lookupKecamatan')){$('lookupKecamatan').value=submittedKecamatan;await loadLookupPetugas(submittedPetugas);await lookupPublicReports()}
+      btn.disabled=false;btn.textContent='Simpan Laporan';window.scrollTo({top:0,behavior:'smooth'});return;
+    }
+
+    // Online: simpan langsung ke server.
+    let created=null;
+    try{
+      if(EDIT_CONTEXT) created=await gsCall('updatePublicReport',EDIT_CONTEXT.editToken,EDIT_CONTEXT.id,payload); else created=await gsCall('saveReport',payload);
+      const totalFiles=damagePhotos.length+(ktpFile?1:0)+(kkFile?1:0);let done=0;
+      for(let i=0;i<damagePhotos.length;i++){
+        const serverIndex=(EDIT_CONTEXT?Number(created.existingPhotoCount||0):0)+i+1;
+        btn.textContent=`Upload foto ${i+1}/${damagePhotos.length}...`;$('uploadProgress').textContent=`Mengoptimalkan dan mengunggah foto kerusakan ${i+1} dari ${damagePhotos.length}...`;
+        await gsCall('uploadReportFile',created.id,created.uploadKey,'damage',serverIndex,await fileToPayload(damagePhotos[i].file,true));done++;$('uploadProgress').textContent=`Upload ${done} dari ${totalFiles} file selesai.`;
+      }
+      if(ktpFile){await gsCall('uploadReportFile',created.id,created.uploadKey,'ktp',1,await fileToPayload(ktpFile,true));done++}
+      if(kkFile){await gsCall('uploadReportFile',created.id,created.uploadKey,'kk',1,await fileToPayload(kkFile,true));done++}
+      const fin=await gsCall('finalizeReportUpload',created.id,created.uploadKey);const wasEdit=!!EDIT_CONTEXT;
+      await clearOfflineDraft(false);EDIT_CONTEXT=null;updateEditModeUI();showMsg(`${wasEdit?'Perubahan laporan':'Laporan'} berhasil disimpan ke server. ID: ${fin.id}. Total foto: ${fin.photoCount}.`,true);resetForm(true);
+      if($('lookupKecamatan')){$('lookupKecamatan').value=submittedKecamatan;await loadLookupPetugas(submittedPetugas);await lookupPublicReports()}
+    }catch(e){
+      // Jika gagal sebelum server membuat ID, amankan laporan sebagai antrean offline.
+      if(!created){const r=await pwaQueueNewReport(payload,damagePhotos,ktpFile,kkFile);await clearOfflineDraft(false);resetForm(true);showMsg(`Koneksi/server gagal. Laporan diamankan di perangkat sebagai ${r.localId} dan menunggu sinkronisasi.`,true)}
+      else {throw e}
+    }
+  }catch(e){showMsg(e.message||String(e),false);await saveOfflineDraft(false).catch(()=>{})}
+  finally{btn.disabled=false;btn.textContent=EDIT_CONTEXT?'Simpan Perubahan':'Simpan Laporan';$('uploadProgress').textContent='';await pwaRefreshSyncStatus()}
+}
+async function lookupPublicReports(){
+  const kecamatan=v('lookupKecamatan'), petugas=v('lookupPetugas');
+  const msg=$('lookupMsg'), box=$('lookupResults'), btn=$('lookupBtn');
+  box.classList.add('hide');$('lookupRows').innerHTML='';msg.innerHTML='';
+  if(!kecamatan||!petugas){msg.innerHTML='<div class="notice err">Pilih Kecamatan dan Nama Petugas.</div>';return}
+  btn.disabled=true;btn.textContent='Mencari data...';
+  try{
+    const r=await gsCall('getPublicSubmittedReports',kecamatan,petugas);
+    const rows=(r.rows||[]);
+    $('lookupSummary').innerHTML=`Ditemukan <b>${rows.length}</b> laporan berhasil diinput untuk petugas <b>${esc(r.petugas)}</b> di Kecamatan <b>${esc(r.kecamatan)}</b>.`;
+    $('lookupRows').innerHTML=rows.length?rows.map(x=>`<tr><td><b>${esc(x.id)}</b>${x.local?`<br><span class="${x.syncState==='synced'?'localTag':'queuedTag'}">${x.syncState==='synced'?'Tersimpan lokal':'Menunggu sinkron'}</span>`:''}</td><td>${esc(x.timestamp||'-')}</td><td>${esc(x.namaPemilik||'-')}</td><td>${esc(x.desa||'-')}</td><td>${esc(x.alamat||'-')}</td><td>${esc(String(x.jumlahFoto||0))}</td><td>${x.canEdit?'<span class="pill p-wait">Belum Diverifikasi</span>':'<span class="pill p-ok">Terverifikasi</span>'}</td><td>${x.canEdit?`<button type="button" class="btn ghost" onclick="startEditReport('${escAttr(x.id)}')">Edit</button>`:'<span class="hint">Terkunci</span>'}</td></tr>`).join(''):'<tr><td colspan="8">Belum ada laporan lengkap yang cocok dengan Kecamatan dan Nama Petugas tersebut.</td></tr>';
+    box.classList.remove('hide');
+  }catch(e){msg.innerHTML=`<div class="notice err">${esc(errText(e))}</div>`}
+  finally{btn.disabled=false;btn.textContent='Lihat Data Terinput'}
+}
+
+
+async function startEditReport(id){
+  const kecamatan=v('lookupKecamatan'), petugas=v('lookupPetugas');
+  if(!kecamatan||!petugas)return;
+  $('lookupMsg').innerHTML='<div class="hint">Membuka laporan untuk diedit...</div>';
+  try{
+    const r=await gsCall('getPublicEditableReport',kecamatan,petugas,id);
+    resetForm(true);
+    EDIT_CONTEXT={id:id,editToken:r.editToken,existingPhotoCount:Number(r.existingPhotoCount||0),localId:r.localId||null};
+    populateEditForm(r.record||{}); updateEditModeUI();
+    $('lookupMsg').innerHTML='';
+    window.scrollTo({top:document.querySelector('#reportForm').offsetTop-80,behavior:'smooth'});
+  }catch(e){$('lookupMsg').innerHTML=`<div class="notice err">${esc(errText(e))}</div>`}
+}
+
+function populateEditForm(r){
+  $('kecamatan').value=r.kecamatan||''; updateDesaOptions(); $('desa').value=r.desa||'';
+  document.querySelectorAll('input[name="kewenangan"]').forEach(x=>x.checked=false);
+  const kw=String(r.kewenangan||'').split(/[,;|]/).map(x=>normText(x)).filter(Boolean);
+  document.querySelectorAll('input[name="kewenangan"]').forEach(x=>{x.checked=kw.includes(normText(x.value))});
+  $('namaPemilik').value=r.namaPemilik||''; $('nik').value=r.nik||''; $('noKK').value=r.noKK||''; $('alamat').value=r.alamat||'';
+  $('latitude').value=r.latitude==null?'':r.latitude; $('longitude').value=r.longitude==null?'':r.longitude;
+  $('namaPetugas').value=r.petugas||''; $('noHpPetugas').value=r.noHpPetugas||'';
+  $('kepemilikanBangunan').value=r.kepemilikanBangunan||''; $('kepemilikanTanah').value=r.kepemilikanTanah||'';
+  applyDamageToForm(r.damage||{});
+  $('uploadProgress').textContent=`Mode edit: ${Number(r.jumlahFoto||EDIT_CONTEXT.existingPhotoCount||0)} foto lama tetap tersimpan. Foto baru yang dipilih akan ditambahkan.`;
+}
+
+function applyDamageToForm(damage){
+  document.querySelectorAll('[data-damage-type]').forEach((type,i)=>{
+    let selected='';
+    [...type.options].forEach(o=>{if(o.value&&Number(damage[o.value]||0)>0)selected=o.value});
+    type.value=selected;
+    const count=document.querySelector(`[data-damage-count="${i}"]`);
+    if(selected&&count){count.disabled=false;count.value=String(Math.max(1,Math.min(3,Number(damage[selected]||1))))}
+    else if(count){count.value='0';count.disabled=true}
+    updateDamageWeight(i);
+  });
+}
+
+function updateEditModeUI(){
+  const editing=!!EDIT_CONTEXT;
+  $('cancelEditBtn').classList.toggle('hide',!editing);
+  $('editModeBanner').classList.toggle('hide',!editing);
+  $('submitBtn').textContent=editing?'Simpan Perubahan':'Simpan Laporan';
+  if(editing)$('editModeBanner').innerHTML=`<b>Mode Edit:</b> Laporan <b>${esc(EDIT_CONTEXT.id)}</b> masih belum diverifikasi. Petugas dapat memperbaiki data. Setelah admin memverifikasi, laporan otomatis terkunci.`;
+  else $('editModeBanner').innerHTML='';
+}
+
+function cancelEdit(){EDIT_CONTEXT=null;updateEditModeUI();resetForm();showMsg('Mode edit dibatalkan.',true)}
+
+function updateNetworkStatus(){
+  const online=navigator.onLine;$('netDot').classList.toggle('off',!online);$('netText').textContent=online?'Online':'Offline';
+  if(!online)$('netText').textContent='Offline — laporan disimpan di perangkat';const hs=document.getElementById('heroNetState');if(hs)hs.textContent=online?'Online':'Offline';setTimeout(pwaRefreshSyncStatus,0);
+}
+
+function collectFormState(){
+  return {kecamatan:v('kecamatan'),desa:v('desa'),kewenangan:checked('kewenangan'),namaPemilik:v('namaPemilik'),nik:v('nik'),noKK:v('noKK'),alamat:v('alamat'),latitude:v('latitude'),longitude:v('longitude'),namaPetugas:v('namaPetugas'),noHpPetugas:v('noHpPetugas'),kepemilikanBangunan:v('kepemilikanBangunan'),kepemilikanTanah:v('kepemilikanTanah'),damage:collectDamage()};
+}
+
+function applyFormState(st){
+  if(!st)return;
+  $('kecamatan').value=st.kecamatan||''; updateDesaOptions(); $('desa').value=st.desa||'';
+  document.querySelectorAll('input[name="kewenangan"]').forEach(x=>x.checked=(st.kewenangan||[]).some(v=>normText(v)===normText(x.value)));
+  ['namaPemilik','nik','noKK','alamat','latitude','longitude','namaPetugas','noHpPetugas','kepemilikanBangunan','kepemilikanTanah'].forEach(id=>{if($(id))$(id).value=st[id]||''});
+  applyDamageToForm(st.damage||{});
+}
+
+function openDraftDb(){return new Promise((resolve,reject)=>{const req=indexedDB.open(DRAFT_DB,1);req.onupgradeneeded=()=>{const db=req.result;if(!db.objectStoreNames.contains(DRAFT_STORE))db.createObjectStore(DRAFT_STORE,{keyPath:'key'})};req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error)})}
+async function draftDbGet(){const db=await openDraftDb();return new Promise((resolve,reject)=>{const tx=db.transaction(DRAFT_STORE,'readonly'),req=tx.objectStore(DRAFT_STORE).get(DRAFT_KEY);req.onsuccess=()=>resolve(req.result||null);req.onerror=()=>reject(req.error);tx.oncomplete=()=>db.close()})}
+async function draftDbPut(obj){const db=await openDraftDb();return new Promise((resolve,reject)=>{const tx=db.transaction(DRAFT_STORE,'readwrite');tx.objectStore(DRAFT_STORE).put(obj);tx.oncomplete=()=>{db.close();resolve(true)};tx.onerror=()=>{db.close();reject(tx.error)}})}
+async function draftDbDelete(){const db=await openDraftDb();return new Promise((resolve,reject)=>{const tx=db.transaction(DRAFT_STORE,'readwrite');tx.objectStore(DRAFT_STORE).delete(DRAFT_KEY);tx.oncomplete=()=>{db.close();resolve(true)};tx.onerror=()=>{db.close();reject(tx.error)}})}
+
+function scheduleTextDraft(){
+  clearTimeout(AUTO_DRAFT_TIMER);AUTO_DRAFT_TIMER=setTimeout(()=>{try{localStorage.setItem(TEXT_DRAFT_KEY,JSON.stringify({updatedAt:Date.now(),state:collectFormState()}))}catch(e){}},700);
+}
+
+async function saveOfflineDraft(showNotice=true){
+  const state=collectFormState();
+  const damage={...OFFLINE_DRAFT_FILES.damage};
+  document.querySelectorAll('.damage-photo-input').forEach(x=>{const i=Number(x.dataset.photoIndex);if(x.files&&x.files[0])damage[i]=x.files[0]});
+  const ktp=getDocFile('ktp'), kk=getDocFile('kk'), updatedAt=Date.now();
+  try{localStorage.setItem(TEXT_DRAFT_KEY,JSON.stringify({updatedAt,state}))}catch(e){}
+  try{await draftDbPut({key:DRAFT_KEY,updatedAt,state,files:{damage,ktp,kk}})}catch(e){if(showNotice){showMsg('Data teks tersimpan sebagai draft, tetapi browser tidak dapat menyimpan semua file/foto secara lokal: '+errText(e),false);return}}
+  if(showNotice){const when=new Date(updatedAt).toLocaleString('id-ID');$('draftBanner').classList.remove('hide');$('draftBanner').innerHTML=`Draft tersimpan di perangkat pada <b>${esc(when)}</b>. <button type="button" class="btn ghost" onclick="restoreOfflineDraft()">Pulihkan Draft</button> <button type="button" class="btn red" onclick="clearOfflineDraft(true)">Hapus Draft</button>`;showMsg('Draft berhasil disimpan di perangkat. Data dapat dikirim ketika jaringan kembali online.',true)}
+}
+
+async function checkOfflineDraft(){
+  let d=null;try{d=await draftDbGet()}catch(e){}
+  if(!d){try{d=JSON.parse(localStorage.getItem(TEXT_DRAFT_KEY)||'null')}catch(e){}}
+  if(!d||!d.state)return;
+  const when=new Date(d.updatedAt||Date.now()).toLocaleString('id-ID');$('draftBanner').classList.remove('hide');$('draftBanner').innerHTML=`Terdapat draft lokal dari <b>${esc(when)}</b>. <button type="button" class="btn ghost" onclick="restoreOfflineDraft()">Pulihkan Draft</button> <button type="button" class="btn red" onclick="clearOfflineDraft(true)">Hapus Draft</button>`;
+}
+
+async function restoreOfflineDraft(){
+  let d=null;try{d=await draftDbGet()}catch(e){}
+  if(!d){try{d=JSON.parse(localStorage.getItem(TEXT_DRAFT_KEY)||'null')}catch(e){}}
+  if(!d||!d.state){showMsg('Draft tidak ditemukan pada perangkat ini.',false);return}
+  EDIT_CONTEXT=null;updateEditModeUI();resetForm(true);applyFormState(d.state);
+  OFFLINE_DRAFT_FILES={damage:{},ktp:null,kk:null};
+  if(d.files){OFFLINE_DRAFT_FILES.damage=d.files.damage||{};OFFLINE_DRAFT_FILES.ktp=d.files.ktp||null;OFFLINE_DRAFT_FILES.kk=d.files.kk||null}
+  const keys=Object.keys(OFFLINE_DRAFT_FILES.damage||{}).map(Number).filter(Boolean).sort((a,b)=>a-b);
+  keys.forEach(i=>{while(PHOTO_SEQ<i)addDamagePhoto();const f=OFFLINE_DRAFT_FILES.damage[i],pv=$('pv'+i);if(f&&pv){if(String(f.type||'').startsWith('image/')){const u=URL.createObjectURL(f);pv.innerHTML=`<img src="${u}">`}else pv.textContent=f.name||('Foto '+i)}});
+  const n=keys.length+(OFFLINE_DRAFT_FILES.ktp?1:0)+(OFFLINE_DRAFT_FILES.kk?1:0);
+  showMsg(`Draft berhasil dipulihkan${n?` termasuk ${n} file/foto tersimpan`:''}.`,true);window.scrollTo({top:0,behavior:'smooth'});
+}
+
+async function clearOfflineDraft(showNotice=false){
+  try{localStorage.removeItem(TEXT_DRAFT_KEY)}catch(e){};try{await draftDbDelete()}catch(e){}
+  OFFLINE_DRAFT_FILES={damage:{},ktp:null,kk:null};$('draftBanner').classList.add('hide');$('draftBanner').innerHTML='';if(showNotice)showMsg('Draft lokal telah dihapus.',true);
+}
+
+async function clearFormAndDraft(){EDIT_CONTEXT=null;updateEditModeUI();await clearOfflineDraft(false);resetForm();}
+
+function gsCall(method,...args){return new Promise((resolve,reject)=>{const runner=google.script.run.withSuccessHandler(resolve).withFailureHandler(reject);runner[method](...args)})}
+function collectDamage(){
+  const o={};(CONFIG&&CONFIG.damageCatalog||[]).forEach(x=>o[x.id]=0);
+  document.querySelectorAll('[data-damage-part]').forEach((row,i)=>{
+    const type=document.querySelector(`[data-damage-type="${i}"]`), count=document.querySelector(`[data-damage-count="${i}"]`);
+    if(type&&type.value&&count)o[type.value]=Math.max(0,Math.min(3,Number(count.value||0)));
+  });
+  return o;
+}
+function checked(name){return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(x=>x.value)}
+function v(id){return $(id).value.trim()}
+
+async function fileToPayload(file,compress){
+  if(!file)return null;
+  if(compress&&file.type.startsWith('image/')){
+    try{return await compressImage(file)}catch(e){return {name:file.name,type:file.type||'application/octet-stream',data:await readDataUrl(file)}}
+  }
+  return {name:file.name,type:file.type||'application/octet-stream',data:await readDataUrl(file)};
+}
+function readDataUrl(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=rej;r.readAsDataURL(file)})}
+function compressImage(file){return new Promise((res,rej)=>{const img=new Image();const url=URL.createObjectURL(file);img.onload=()=>{try{let w=img.width,h=img.height,max=1800;if(Math.max(w,h)>max){const k=max/Math.max(w,h);w=Math.round(w*k);h=Math.round(h*k)}const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);const data=c.toDataURL('image/jpeg',.82);URL.revokeObjectURL(url);res({name:file.name.replace(/\.[^.]+$/,'.jpg'),type:'image/jpeg',data})}catch(e){URL.revokeObjectURL(url);rej(e)}};img.onerror=()=>{URL.revokeObjectURL(url);rej(new Error('Foto tidak dapat diproses.'))};img.src=url})}
+
+function resetForm(keepNotice=false){
+  $('reportForm').reset();OFFLINE_DRAFT_FILES={damage:{},ktp:null,kk:null};
+  [...document.querySelectorAll('#damagePhotoGrid [data-photo-card]')].forEach(card=>{if(Number(card.dataset.photoCard)>2)card.remove()});PHOTO_SEQ=2;
+  if(CONFIG){$('provinsi').value=CONFIG.defaults.provinsi||'Nusa Tenggara Timur';$('kabKota').value=CONFIG.defaults.kabKota||'Kabupaten Manggarai';buildRegionDropdowns(CONFIG.regions||{})}
+  if($('lookupPetugas')){$('lookupPetugas').disabled=true;$('lookupPetugas').innerHTML='<option value="">Pilih Kecamatan terlebih dahulu</option>'}
+  if(CONFIG)buildDamageRows(CONFIG.damageCatalog||[]);document.querySelectorAll('.preview').forEach(x=>{x.innerHTML='Belum ada foto'});$('locStatus').textContent='Koordinat dapat diambil otomatis dari GPS perangkat atau diisi manual.';$('uploadProgress').textContent='';if(!keepNotice)hideMsg()
+}
+
+function showMsg(t,ok){$('msg').innerHTML=`<div class="notice ${ok?'ok':'err'}">${esc(t)}</div>`}
+function hideMsg(){$('msg').innerHTML=''}
+function showError(e){showMsg(errText(e),false)}
+
+function showPublic(){$('publicView').classList.remove('hide');$('adminView').classList.add('hide');window.scrollTo(0,0)}
+function openAdminLogin(){if(ADMIN_TOKEN){showAdmin();loadAdmin();return}modal(`<div class="modalbox loginbox"><div class="modalhead"><b>Login Admin</b><button class="btn ghost" onclick="closeModal()">✕</button></div><div class="modalbody"><label>Password Admin</label><input id="adminPass" type="password" class="field" placeholder="Masukkan password"><div class="hint">Password awal: admin123. Segera ganti setelah login pertama.</div><div class="submitbar"><button class="btn green" onclick="adminLogin()">Login</button></div><div id="loginMsg"></div></div></div>`);setTimeout(()=>$('adminPass').focus(),50)}
+function adminLogin(){const p=$('adminPass').value;$('loginMsg').innerHTML='<div class="hint">Memeriksa...</div>';google.script.run.withSuccessHandler(r=>{ADMIN_TOKEN=r.token;closeModal();showAdmin();loadAdmin()}).withFailureHandler(e=>$('loginMsg').innerHTML=`<div class="notice err">${esc(errText(e))}</div>`).loginAdmin(p)}
+function showAdmin(){$('publicView').classList.add('hide');$('adminView').classList.remove('hide');window.scrollTo(0,0)}
+function adminLogout(){if(ADMIN_TOKEN)google.script.run.logoutAdmin(ADMIN_TOKEN);ADMIN_TOKEN='';ADMIN_DATA=null;showPublic()}
+
+function loadAdmin(){if(!ADMIN_TOKEN){openAdminLogin();return}const q=v('searchAdmin');$('adminRows').innerHTML='<tr><td colspan="9">Memuat data...</td></tr>';google.script.run.withSuccessHandler(d=>{ADMIN_DATA=d;renderStats(d.stats);renderRows(d.rows)}).withFailureHandler(adminFail).getAdminDashboard(ADMIN_TOKEN,q)}
+function renderStats(s){$('adminStats').innerHTML=[['Total Laporan',s.total],['Belum Diverifikasi',s.belum],['Rusak Ringan',s.ringan],['Rusak Sedang',s.sedang],['Rusak Berat',s.berat]].map(x=>`<div class="stat"><small>${x[0]}</small><strong>${x[1]}</strong></div>`).join('')}
+function renderRows(rows){$('adminRows').innerHTML=rows.length?rows.map(r=>`<tr><td><b>${esc(r.id)}</b></td><td>${esc(r.timestamp)}</td><td>${esc(r.namaPemilik)}<br><small>${esc(r.nik)}</small></td><td>${esc(r.desa)}</td><td>${esc(r.petugas)}</td><td><b>${r.score}%</b></td><td>${r.tingkat?levelPill(r.tingkat):'<span class="pill p-wait">Belum ditetapkan</span>'}</td><td>${r.status==='Terverifikasi'?'<span class="pill p-ok">Terverifikasi</span>':'<span class="pill p-wait">Belum</span>'}</td><td><button class="btn ghost" onclick="openDetail('${escAttr(r.id)}')">Detail</button></td></tr>`).join(''):'<tr><td colspan="9">Tidak ada data.</td></tr>'}
+function levelPill(x){const c=x.includes('Berat')?'p-heavy':x.includes('Sedang')?'p-mid':'p-light';return `<span class="pill ${c}">${esc(x)}</span>`}
+function adminFail(e){const t=errText(e);if(t.toLowerCase().includes('sesi')){ADMIN_TOKEN='';openAdminLogin()}else alert(t)}
+
+function openDetail(id){google.script.run.withSuccessHandler(r=>{const coords=(r.latitude!==''&&r.longitude!=='')?`<a class="link" target="_blank" href="https://www.google.com/maps?q=${encodeURIComponent(r.latitude+','+r.longitude)}">${esc(r.koordinat)} ↗</a>`:'-';const photoLinks=(r.fotos||[]).map((u,i)=>`<a class="btn ghost" target="_blank" href="${escAttr(u)}">Foto ${i+1}</a>`).join(' ');const otherFiles=[['KTP',r.ktp],['KK',r.kk],['Folder',r.folder]].filter(x=>x[1]).map(x=>`<a class="btn ghost" target="_blank" href="${escAttr(x[1])}">${esc(x[0])}</a>`).join(' ');const files=[photoLinks,otherFiles].filter(Boolean).join(' ');const dmg=r.damageDetails.length?r.damageDetails.map(x=>`<li><b>${esc(x.part)}</b> — ${esc(x.text)} <b>(${x.count} komponen; bobot ${x.weight}%)</b></li>`).join(''):'<li>Tidak ada item kerusakan yang dipilih.</li>';modal(`<div class="modalbox"><div class="modalhead"><b>Detail ${esc(r.id)}</b><button class="btn ghost" onclick="closeModal()">✕</button></div><div class="modalbody"><div class="detailGrid">${kv('Nama Pemilik',r.namaPemilik)}${kv('NIK / No. KK',(r.nik||'-')+' / '+(r.noKK||'-'))}${kv('Wilayah',[r.kecamatan,r.desa].filter(Boolean).join(' / '))}${kv('Alamat (RT, RW, DUSUN)',r.alamat)}${kv('Koordinat',coords,true)}${kv('Petugas',r.petugas+' / '+r.noHpPetugas)}${kv('Jumlah Foto Kerusakan',String((r.fotos||[]).length))}</div><h3>Data Kerusakan</h3><ul class="damageList">${dmg}</ul><div class="notice ok"><b>Total bobot kerusakan: ${r.score}%</b><br><small>Bobot hanya informasi pendukung. Tingkat kerusakan ditetapkan oleh admin/verifikator.</small></div><h3>Foto & Dokumen</h3><div style="display:flex;gap:8px;flex-wrap:wrap">${files||'<span class="hint">Belum ada berkas.</span>'}</div><hr style="border:0;border-top:1px solid #ddd;margin:18px 0"><div class="grid"><div class="c4"><label>Tingkat Kerusakan *</label><select id="verTingkat" class="field"><option value="">Pilih</option><option ${r.tingkat==='Rusak Ringan'?'selected':''}>Rusak Ringan</option><option ${r.tingkat==='Rusak Sedang'?'selected':''}>Rusak Sedang</option><option ${r.tingkat==='Rusak Berat'?'selected':''}>Rusak Berat</option></select></div><div class="c4"><label>Tanggal Verifikasi</label><input id="verTanggal" type="date" class="field" value="${escAttr(r.tanggalVerifikasi||today())}"></div><div class="c12"><label>Catatan Admin</label><textarea id="verCatatan" class="field" rows="3">${esc(r.catatan||'')}</textarea></div></div><div class="submitbar"><button class="btn green" onclick="saveVerification('${escAttr(r.id)}')">Simpan Verifikasi</button></div></div></div>`)}).withFailureHandler(adminFail).getReportDetail(ADMIN_TOKEN,id)}
+function saveVerification(id){const tingkat=v('verTingkat');if(!tingkat){alert('Pilih tingkat kerusakan.');return}google.script.run.withSuccessHandler(()=>{closeModal();loadAdmin()}).withFailureHandler(adminFail).verifyReport(ADMIN_TOKEN,id,{tingkat,tanggalVerifikasi:v('verTanggal'),catatan:v('verCatatan')})}
+
+function showVillageSummary(){if(!ADMIN_DATA)return;const rows=ADMIN_DATA.stats.byVillage.map(x=>`<tr><td>${esc(x.desa)}</td><td><b>${x.total}</b></td></tr>`).join('');modal(`<div class="modalbox loginbox"><div class="modalhead"><b>Rekap Laporan per Desa</b><button class="btn ghost" onclick="closeModal()">✕</button></div><div class="modalbody"><table class="table" style="min-width:0"><thead><tr><th>Desa</th><th>Total Laporan</th></tr></thead><tbody>${rows||'<tr><td colspan="2">Belum ada data</td></tr>'}</tbody></table></div></div>`)}
+function exportAdminExcel(){
+  if(!ADMIN_TOKEN){openAdminLogin();return}
+  if(!navigator.onLine){alert('Export Excel membutuhkan koneksi internet karena file dibuat dari database server.');return}
+  const q=v('searchAdmin');
+  const b=$('exportExcelBtn');
+  const old=b?b.innerHTML:'';
+  if(b){b.disabled=true;b.innerHTML='⏳ Membuat Excel...'}
+  google.script.run.withSuccessHandler(file=>{
+    try{
+      downloadBase64File(file);
+      alert(`Export Excel berhasil. ${file.total||0} laporan dibuat ke ${file.fileName}.`);
+    }catch(e){alert('File Excel sudah dibuat tetapi proses download gagal: '+errText(e))}
+    finally{if(b){b.disabled=false;b.innerHTML=old||'⬇ Export Excel'}}
+  }).withFailureHandler(e=>{
+    if(b){b.disabled=false;b.innerHTML=old||'⬇ Export Excel'}
+    adminFail(e);
+  }).exportReportsExcel(ADMIN_TOKEN,q);
+}
+function downloadBase64File(file){
+  if(!file||!file.base64)throw new Error('Data file Excel kosong.');
+  const raw=atob(file.base64), chunk=1024*512, parts=[];
+  for(let i=0;i<raw.length;i+=chunk){
+    const slice=raw.slice(i,i+chunk), bytes=new Uint8Array(slice.length);
+    for(let j=0;j<slice.length;j++)bytes[j]=slice.charCodeAt(j);
+    parts.push(bytes);
+  }
+  const blob=new Blob(parts,{type:file.mimeType||'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  const url=URL.createObjectURL(blob), a=document.createElement('a');
+  a.href=url;a.download=file.fileName||'SIGAP_GEMPA_FLORES_Laporan.xlsx';document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),3000);
+}
+
+function showSystemInfo(){google.script.run.withSuccessHandler(x=>modal(`<div class="modalbox loginbox"><div class="modalhead"><b>Database Aplikasi</b><button class="btn ghost" onclick="closeModal()">✕</button></div><div class="modalbody"><p><a class="btn ghost" target="_blank" href="${escAttr(x.spreadsheetUrl)}">Buka Google Sheet</a></p><p><a class="btn ghost" target="_blank" href="${escAttr(x.folderUrl)}">Buka Folder Drive</a></p></div></div>`)).withFailureHandler(adminFail).getSystemInfo(ADMIN_TOKEN)}
+function openChangePassword(){modal(`<div class="modalbox loginbox"><div class="modalhead"><b>Ganti Password Admin</b><button class="btn ghost" onclick="closeModal()">✕</button></div><div class="modalbody"><label>Password Lama</label><input id="oldPass" type="password" class="field"><br><label>Password Baru</label><input id="newPass" type="password" class="field" placeholder="Minimal 6 karakter"><div class="submitbar"><button class="btn green" onclick="changePassword()">Simpan</button></div><div id="cpMsg"></div></div></div>`)}
+function changePassword(){google.script.run.withSuccessHandler(()=>$('cpMsg').innerHTML='<div class="notice ok">Password berhasil diubah.</div>').withFailureHandler(e=>$('cpMsg').innerHTML=`<div class="notice err">${esc(errText(e))}</div>`).changeAdminPassword(ADMIN_TOKEN,v('oldPass'),v('newPass'))}
+
+function modal(html){$('modalRoot').innerHTML=`<div class="modal" onclick="if(event.target===this)closeModal()">${html}</div>`}
+function closeModal(){$('modalRoot').innerHTML=''}
+function kv(k,v,html=false){return `<div class="kv"><small>${esc(k)}</small><b>${html?v:esc(v||'-')}</b></div>`}
+function today(){const d=new Date();return d.toISOString().slice(0,10)}
+function errText(e){return (e&&e.message)?e.message:String(e||'Terjadi kesalahan')}
+function esc(s){return String(s==null?'':s).replace(/[&<>'"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[m]))}
+function escAttr(s){return esc(s).replace(/`/g,'&#96;')}
+</script>
+</body>
+</html>
