@@ -36,7 +36,36 @@
     @media(max-width:430px){.photoGrid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.brand b{font-size:15px}.btn{padding:9px 10px}}
   
     .pwaActions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.syncBadge{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;background:#fff7d6;color:#7c5b00;font-size:11px;font-weight:800}.syncBadge.ok{background:#dcfce7;color:#166534}.syncBadge.err{background:#fee2e2;color:#991b1b}.offlineHero{padding:11px 13px;background:#eff6ff;color:#1e3a8a;border:1px solid #bfdbfe;border-radius:12px;margin-top:12px;font-size:12px}.settingsRow{display:flex;gap:8px;align-items:end}.settingsRow>div{flex:1}.localTag{display:inline-block;padding:3px 7px;border-radius:999px;background:#e0f2fe;color:#075985;font-size:10px;font-weight:800}.queuedTag{display:inline-block;padding:3px 7px;border-radius:999px;background:#fef3c7;color:#92400e;font-size:10px;font-weight:800}
-  </style>
+  
+/* V6: mobile lebih ringkas dan stabil */
+.simpleUpload{align-items:center}.simpleUpload .hint{margin:0}
+@media (max-width: 768px){
+  .top{position:sticky!important;top:0!important;width:100%!important;margin:0!important;border-radius:0!important;border-left:0!important;border-right:0!important}
+  .topin{display:block!important;padding:8px!important}
+  .brand{width:100%!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;margin-bottom:7px!important}
+  .brandCopy{min-width:0!important}.brandCopy b{font-size:13px!important}.brandCopy small{display:none!important}
+  .nav{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:5px!important;width:100%!important}
+  .nav .btn{width:100%!important;min-width:0!important;min-height:40px!important;padding:6px 4px!important;font-size:9px!important;white-space:normal!important;line-height:1.1!important}
+  #installBtn{display:flex!important}
+  #publicView>.hero{min-height:0!important;padding:10px!important;margin-bottom:8px!important}
+  #publicView>.hero .heroInner{min-height:0!important}
+  #publicView>.hero .heroSeal{width:58px!important;float:left!important;margin:0 10px 5px 0!important}
+  #publicView>.hero .badge{display:none!important}
+  #publicView>.hero h1{font-size:22px!important;line-height:1.02!important;margin:2px 0 5px!important}
+  #publicView>.hero .heroSubtitle{font-size:11px!important;line-height:1.25!important;margin:0!important}
+  #publicView>.hero .heroInner>p,.heroFeatures,.heroStats,.netbar,.offlineHero,.heroQuote{display:none!important}
+  #publicView>.hero #syncStatus{clear:both!important;margin-top:8px!important;font-size:9px!important;padding:6px 8px!important}
+  .wrap{padding:0 7px 24px!important;margin-top:7px!important}
+  .formTitle{padding:10px!important}.formTitle small{font-size:8px!important}.cardhead{padding:10px!important}.cardbody{padding:10px!important}
+  .multiUploadZone.simpleUpload{display:grid!important;grid-template-columns:1fr!important;gap:6px!important;padding:8px!important}
+  .multiUploadZone.simpleUpload .uploadPrimary{margin:0!important;min-height:48px!important;font-size:13px!important}
+  .multiUploadZone.simpleUpload b,.multiUploadZone.simpleUpload .hint{text-align:center!important;font-size:10px!important}
+  .compactActions{grid-template-columns:1fr 1fr!important}
+  #adminView .toolbar #exportExcelBtn{display:flex!important;align-items:center!important;justify-content:center!important;background:#ffd12f!important;color:#132437!important;border-color:#ffd12f!important;font-weight:900!important}
+}
+@media (max-width: 390px){.nav{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+
+</style>
 
 <style id="lapor-jalan-inspired-theme">
   :root{--navy:#03162b;--navy2:#061f39;--navy3:#082a49;--cyan:#22bdf5;--cyan2:#0d86bd;--gold:#ffd12f;--gold2:#eeb619;--ink:#eef8ff;--muted:#9fb7cb;--line:rgba(34,189,245,.55);--panel:rgba(5,31,55,.88);--panel2:rgba(8,42,73,.76);--green2:#16a3c7;--green:#0f6f92;--bg:#03162b;--white:#fff;--red:#ef4444;--lime:#163d4c}
@@ -202,7 +231,7 @@
 
 </head>
 <body>
-  <header class="top"><div class="topin"><div class="brand"><img class="brandMark" src="logo-manggarai.png" alt="Logo Kabupaten Manggarai"><span class="brandCopy"><b>SIGAP GEMPA FLORES</b><small>Sistem Informasi Pendataan Kerusakan Rumah Akibat Gempa</small></span></div><div class="nav"><button class="btn light" onclick="showPublic()">⌂ Beranda</button><button id="installBtn" class="btn light hide" onclick="installPwa()">⬇ Instal Aplikasi</button><button class="btn light" onclick="syncPendingReports()">↻ Sinkron Data</button><button class="btn light" onclick="openPwaSettings()">⚙ Server</button><button class="btn gold" onclick="openAdminLogin()">🔐 Admin</button></div></div></header>
+  <header class="top"><div class="topin"><div class="brand"><img class="brandMark" src="logo-manggarai.png" alt="Logo Kabupaten Manggarai"><span class="brandCopy"><b>SIGAP GEMPA FLORES</b><small>Sistem Informasi Pendataan Kerusakan Rumah Akibat Gempa</small></span></div><div class="nav"><button class="btn light" onclick="showPublic()">⌂ Beranda</button><button id="installBtn" class="btn light" onclick="installPwa()">⬇ Pasang Aplikasi</button><button class="btn light" onclick="syncPendingReports()">↻ Sinkron Data</button><button class="btn light" onclick="openPwaSettings()">⚙ Server</button><button class="btn gold" onclick="openAdminLogin()">🔐 Admin</button></div></div></header>
 
   <main id="publicView" class="wrap">
     <section class="hero"><div class="heroInner"><img class="heroSeal" src="logo-manggarai.png" alt="Logo Kabupaten Manggarai"><span class="badge">PEMERINTAH KABUPATEN MANGGARAI</span><h1>SIGAP <em>GEMPA FLORES</em></h1><h2 class="heroSubtitle">Sistem Informasi Pendataan Kerusakan Rumah Akibat Gempa</h2><p>Bersama kita data, bersama kita bangun kembali Manggarai yang lebih tangguh. Aplikasi dapat digunakan untuk pendataan lapangan termasuk saat jaringan internet tidak tersedia.</p><div class="heroFeatures"><div><span>✓</span><b>Mudah Digunakan</b><small>Form lapangan ringkas dan terstruktur.</small></div><div><span>◉</span><b>Bisa Offline (PWA)</b><small>Data dan foto tersimpan di perangkat.</small></div><div><span>⌖</span><b>Koordinat Fleksibel</b><small>GPS otomatis atau input manual.</small></div><div><span>▣</span><b>Data Aman</b><small>Sinkron ke Google Sheet dan Drive.</small></div></div><div class="heroStats"><div><strong id="heroLocalCount">0</strong><small>Total laporan di perangkat</small></div><div><strong id="heroPendingCount">0</strong><small>Menunggu sinkronisasi</small></div><div><strong id="heroNetState">Online</strong><small>Status jaringan</small></div></div><div class="netbar"><span id="netDot" class="netdot"></span><b id="netText">Online</b><span class="hint">Setelah aplikasi terpasang, form tetap dapat dibuka tanpa internet.</span></div><div id="syncStatus" class="syncBadge">Memeriksa data offline...</div><div class="offlineHero"><b>Mode Offline aktif.</b> Laporan, foto dan penilaian dapat disimpan di perangkat dan disinkronkan ke server saat jaringan tersedia.</div><div class="heroQuote">“Data yang akurat, langkah awal untuk Manggarai yang lebih kuat.”</div></div></section>
@@ -210,12 +239,11 @@
     <div id="editModeBanner" class="editbox hide"></div>
     <div id="msg"></div>
     <form id="reportForm" onsubmit="submitReport(event)"><div class="formTitle"><div><span class="formIcon">▤</span><div><b>Form Laporan Kerusakan Rumah</b><small>Lengkapi data berikut untuk pendataan kerusakan rumah akibat gempa</small></div></div><span class="formState">PWA • OFFLINE READY</span></div>
-      <section class="card"><div class="cardhead">1. Wilayah dan kewenangan</div><div class="cardbody"><div class="grid">
+      <section class="card"><div class="cardhead">1. Wilayah</div><div class="cardbody"><div class="grid">
         <div class="c4"><label>Provinsi</label><input id="provinsi" class="field" value="Nusa Tenggara Timur" readonly></div>
         <div class="c4"><label>Kabupaten</label><input id="kabKota" class="field" value="Kabupaten Manggarai" readonly></div>
         <div class="c4"><label class="req">Kecamatan</label><select id="kecamatan" class="field" required onchange="updateDesaOptions()"><option value="">Pilih Kecamatan</option></select></div>
         <div class="c12"><label class="req">Desa/Kelurahan</label><select id="desa" class="field" required disabled><option value="">Pilih Kecamatan terlebih dahulu</option></select><div class="hint">Daftar desa/kelurahan otomatis menyesuaikan kecamatan.</div></div>
-        <div class="c12"><label>Kewenangan</label><div class="checks" id="kewenanganChecks"></div></div>
       </div></div></section>
 
       <section class="card"><div class="cardhead">2. Identitas pemilik dan lokasi rumah</div><div class="cardbody"><div class="grid">
@@ -227,22 +255,22 @@
       </div></div></section>
 
       <section class="card"><div class="cardhead">3. Foto dan dokumen</div><div class="cardbody">
-        <label class="req">Foto Rumah/Kerusakan</label>
-        <div class="multiUploadZone">
+        <label class="req">Foto Kerusakan</label>
+        <div class="multiUploadZone simpleUpload">
           <input id="damagePhotosPicker" type="file" accept="image/*" multiple hidden onchange="handleDamagePhotoSelection(this)">
-          <button type="button" class="btn uploadPrimary" onclick="openNativePicker('damagePhotosPicker')">📷 Pilih Banyak Foto dari Album</button>
-          <div><b id="damagePhotoCount">Belum ada foto dipilih</b><div class="hint">Pilih beberapa foto sekaligus dari Album/Galeri (minimal 2 foto). Jangan aktifkan mode kamera jika ingin memilih banyak foto. Anda tetap dapat menambah foto lagi setelah pilihan pertama. Foto akan dioptimalkan sebelum dikirim.</div></div>
+          <button type="button" class="btn uploadPrimary" onclick="openNativePicker('damagePhotosPicker')">📷 Pilih Foto</button>
+          <div><b id="damagePhotoCount">Minimal 2 foto</b></div>
         </div>
         <div id="damagePhotoGrid" class="photoPreviewGrid"></div>
-        <div class="photoActions"><button type="button" class="btn ghost" onclick="openNativePicker('damagePhotosPicker')">➕ Tambah Foto Lagi</button><button type="button" class="btn red" onclick="clearDamagePhotos()">Hapus Semua Foto</button></div>
+        <div class="photoActions compactActions"><button type="button" class="btn ghost" onclick="openNativePicker('damagePhotosPicker')">Tambah Foto</button><button type="button" class="btn red" onclick="clearDamagePhotos()">Hapus Semua</button></div>
         <div id="uploadProgress" class="uploadProgress"></div>
 
         <div class="docsUploadBlock">
-          <label>Foto/Scan KTP dan KK</label>
-          <div class="multiUploadZone compact">
-            <input id="identityDocsPicker" type="file" accept="image/*" multiple hidden onchange="handleIdentityDocsSelection(this)">
-            <button type="button" class="btn uploadPrimary" onclick="openNativePicker('identityDocsPicker')">🪪 Pilih Foto KTP + KK Sekaligus</button>
-            <div class="hint">Pilih 2 foto sekaligus dari Album/Galeri dalam satu kali pemilihan. Jika nama file mengandung “KTP” atau “KK”, aplikasi akan mengenalinya otomatis; jika tidak, foto pertama dianggap KTP dan foto kedua KK.</div>
+          <label>KTP dan KK</label>
+          <div class="multiUploadZone compact simpleUpload">
+            <input id="identityDocsPicker" type="file" accept="image/*,application/pdf" multiple hidden onchange="handleIdentityDocsSelection(this)">
+            <button type="button" class="btn uploadPrimary" onclick="openNativePicker('identityDocsPicker')">📎 Pilih KTP & KK</button>
+            <div class="hint">Foto/PDF</div>
           </div>
           <div class="docPreviewGrid">
             <div class="docPreviewCard"><div class="docPreviewTitle"><b>KTP</b><button type="button" class="miniRemove" onclick="removeIdentityDoc('ktp')">×</button></div><div id="ktpPreview" class="docPreview">Belum dipilih</div></div>
@@ -280,7 +308,7 @@
   <main id="adminView" class="wrap hide">
     <section class="hero"><div><span class="badge">DASHBOARD ADMIN</span><h1>Verifikasi Laporan Kerusakan Rumah</h1><p>Admin dapat melihat bobot kerusakan, menetapkan tingkat kerusakan, tanggal verifikasi, serta rekap jumlah laporan per desa.</p></div></section>
     <div id="adminStats" class="stats" style="margin-top:16px"></div>
-    <div class="toolbar"><input id="searchAdmin" class="field" placeholder="Cari ID, nama, NIK, desa, alamat, petugas..." onkeydown="if(event.key==='Enter')loadAdmin()"><button class="btn green" onclick="loadAdmin()">Cari / Refresh</button><button class="btn ghost" onclick="showVillageSummary()">Rekap Desa</button><button class="btn gold" id="exportExcelBtn" onclick="exportAdminExcel()">⬇ Export Excel</button><button class="btn ghost" onclick="showSystemInfo()">Database</button><button class="btn ghost" onclick="openChangePassword()">Ganti Password</button><button class="btn red" onclick="adminLogout()">Logout</button></div>
+    <div class="toolbar"><input id="searchAdmin" class="field" placeholder="Cari ID, nama, NIK, desa, alamat, petugas..." onkeydown="if(event.key==='Enter')loadAdmin()"><button class="btn green" onclick="loadAdmin()">Cari / Refresh</button><button class="btn ghost" onclick="showVillageSummary()">Rekap Desa</button><button class="btn gold" id="exportExcelBtn" onclick="exportAdminExcel()">⬇ Download Excel</button><button class="btn ghost" onclick="showSystemInfo()">Database</button><button class="btn ghost" onclick="openChangePassword()">Ganti Password</button><button class="btn red" onclick="adminLogout()">Logout</button></div>
     <div class="tableWrap"><table class="table"><thead><tr><th>ID</th><th>Tanggal</th><th>Nama Pemilik</th><th>Desa/Kelurahan</th><th>Petugas</th><th>Bobot (%)</th><th>Tingkat Kerusakan</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="adminRows"></tbody></table></div>
   </main>
 
@@ -328,13 +356,25 @@ const PWA_BACKEND_KEY='sigap_backend_exec_url';
 let PWA_DEFERRED_PROMPT=null, PWA_BRIDGE_FRAME=null, PWA_BRIDGE_READY=false, PWA_BRIDGE_SOURCE=null, PWA_BRIDGE_TOKEN='', PWA_BRIDGE_ORIGIN='*', PWA_RPC_SEQ=0;
 const PWA_RPC_PENDING=new Map();
 
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();PWA_DEFERRED_PROMPT=e;const b=document.getElementById('installBtn');if(b)b.classList.remove('hide')});
-window.addEventListener('appinstalled',()=>{const b=document.getElementById('installBtn');if(b)b.classList.add('hide');PWA_DEFERRED_PROMPT=null});
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();PWA_DEFERRED_PROMPT=e;const b=document.getElementById('installBtn');if(b){b.classList.remove('hide');b.textContent='⬇ Pasang Aplikasi'}});
+window.addEventListener('appinstalled',()=>{const b=document.getElementById('installBtn');if(b){b.textContent='✓ Terpasang';b.disabled=true}PWA_DEFERRED_PROMPT=null});
 window.addEventListener('load',()=>{if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});setTimeout(pwaRefreshSyncStatus,800)});
 window.addEventListener('online',()=>{pwaRefreshSyncStatus();setTimeout(()=>syncPendingReports(true),1200)});
 window.addEventListener('offline',pwaRefreshSyncStatus);
 
-function installPwa(){if(!PWA_DEFERRED_PROMPT){alert('Gunakan menu browser “Tambahkan ke layar utama/Install app” bila tombol instal belum tersedia.');return}PWA_DEFERRED_PROMPT.prompt();PWA_DEFERRED_PROMPT.userChoice.finally(()=>{PWA_DEFERRED_PROMPT=null;const b=document.getElementById('installBtn');if(b)b.classList.add('hide')})}
+function installPwa(){
+  const standalone=window.matchMedia&&window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone===true;
+  if(standalone){alert('SIGAP GEMPA FLORES sudah terpasang di perangkat ini.');return}
+  if(PWA_DEFERRED_PROMPT){
+    PWA_DEFERRED_PROMPT.prompt();
+    PWA_DEFERRED_PROMPT.userChoice.finally(()=>{PWA_DEFERRED_PROMPT=null});
+    return;
+  }
+  const ua=navigator.userAgent||'';
+  const ios=/iPad|iPhone|iPod/.test(ua) || (navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  if(ios){alert('Untuk iPhone/iPad: ketuk tombol Bagikan (kotak dengan panah ke atas) di Safari, lalu pilih “Tambahkan ke Layar Utama”.');return}
+  alert('Buka menu browser lalu pilih “Install app” atau “Tambahkan ke layar utama”.');
+}
 function pwaBackendUrl(){return (localStorage.getItem(PWA_BACKEND_KEY)||'').trim()}
 function pwaSetBackendUrl(u){u=String(u||'').trim();if(u&& !/\/exec(?:\?|$)/.test(u))throw new Error('Gunakan URL deployment Google Apps Script yang berakhir /exec.');localStorage.setItem(PWA_BACKEND_KEY,u);PWA_BRIDGE_READY=false;PWA_BRIDGE_SOURCE=null;PWA_BRIDGE_TOKEN='';PWA_BRIDGE_ORIGIN='*';if(PWA_BRIDGE_FRAME){PWA_BRIDGE_FRAME.remove();PWA_BRIDGE_FRAME=null}}
 function openPwaSettings(){const u=pwaBackendUrl();modal(`<div class="modalbox loginbox"><div class="modalhead"><b>Pengaturan Server & Offline</b><button class="btn ghost" onclick="closeModal()">✕</button></div><div class="modalbody"><p class="hint">Aplikasi tetap dapat dipakai tanpa server saat offline. URL server hanya diperlukan untuk sinkronisasi ke Google Sheet/Drive dan Dashboard Admin.</p><label>URL Web App Google Apps Script (/exec)</label><input id="pwaBackendInput" class="field" value="${escAttr(u)}" placeholder="https://script.google.com/macros/s/.../exec"><div class="submitbar"><button class="btn ghost" onclick="testPwaServer()">Tes Server</button><button class="btn green" onclick="savePwaServer()">Simpan</button></div><div id="pwaServerMsg"></div><hr style="border:0;border-top:1px solid #ddd;margin:16px 0"><button class="btn ghost" onclick="syncPendingReports()">↻ Sinkronkan Data Offline Sekarang</button></div></div>`)}
@@ -352,7 +392,7 @@ async function pwaRefreshSyncStatus(){const el=document.getElementById('syncStat
 
 async function pwaLocalPetugas(kecamatan){const all=await pwaGetReports(),m=new Map();for(const r of all){const p=r.payload||{};if(normText(p.kecamatan)!==normText(kecamatan))continue;const key=normText(p.namaPetugas);if(key&&!m.has(key))m.set(key,{nama:p.namaPetugas,noHp:p.noHpPetugas||''})}return {kecamatan,petugas:[...m.values()].sort((a,b)=>a.nama.localeCompare(b.nama,'id'))}}
 async function pwaLocalSubmitted(kecamatan,petugas){const all=await pwaGetReports();const rows=all.filter(r=>normText(r.payload?.kecamatan)===normText(kecamatan)&&normText(r.payload?.namaPetugas)===normText(petugas)).map(r=>({id:r.serverId||r.localId,timestamp:new Date(r.createdAt).toLocaleString('id-ID'),namaPemilik:r.payload.namaPemilik,desa:r.payload.desa,alamat:r.payload.alamat,jumlahFoto:r.photoCount||0,canEdit:r.verificationStatus!=='Terverifikasi',local:true,syncState:r.syncState}));return {kecamatan,petugas,rows}}
-async function pwaLocalEditable(id){const r=await pwaGetReportByAnyId(id);if(!r)throw new Error('Laporan ini belum tersimpan di perangkat dan memerlukan internet.');if(r.verificationStatus==='Terverifikasi')throw new Error('Laporan sudah terverifikasi dan terkunci.');return {editToken:'LOCAL:'+r.localId,localId:r.localId,existingPhotoCount:Number(r.photoCount||0),record:{kecamatan:r.payload.kecamatan,desa:r.payload.desa,kewenangan:(r.payload.kewenangan||[]).join(', '),namaPemilik:r.payload.namaPemilik,nik:r.payload.nik,noKK:r.payload.noKK,alamat:r.payload.alamat,latitude:r.payload.latitude,longitude:r.payload.longitude,petugas:r.payload.namaPetugas,noHpPetugas:r.payload.noHpPetugas,kepemilikanBangunan:r.payload.kepemilikanBangunan,kepemilikanTanah:r.payload.kepemilikanTanah,damage:r.payload.damage||{},jumlahFoto:r.photoCount||0}}}
+async function pwaLocalEditable(id){const r=await pwaGetReportByAnyId(id);if(!r)throw new Error('Laporan ini belum tersimpan di perangkat dan memerlukan internet.');if(r.verificationStatus==='Terverifikasi')throw new Error('Laporan sudah terverifikasi dan terkunci.');return {editToken:'LOCAL:'+r.localId,localId:r.localId,existingPhotoCount:Number(r.photoCount||0),record:{kecamatan:r.payload.kecamatan,desa:r.payload.desa,namaPemilik:r.payload.namaPemilik,nik:r.payload.nik,noKK:r.payload.noKK,alamat:r.payload.alamat,latitude:r.payload.latitude,longitude:r.payload.longitude,petugas:r.payload.namaPetugas,noHpPetugas:r.payload.noHpPetugas,kepemilikanBangunan:r.payload.kepemilikanBangunan,kepemilikanTanah:r.payload.kepemilikanTanah,damage:r.payload.damage||{},jumlahFoto:r.photoCount||0}}}
 
 function pwaMakeBridgeToken(){try{if(window.crypto&&crypto.randomUUID)return crypto.randomUUID()}catch(e){}return 'br_'+Date.now()+'_'+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2)}
 function pwaEnsureBridge(){return new Promise((resolve,reject)=>{const url=pwaBackendUrl();if(!url)return reject(new Error('Server belum diatur. Buka ⚙ Server dan masukkan URL Web App /exec.'));if(!navigator.onLine)return reject(new Error('Tidak ada koneksi internet.'));if(PWA_BRIDGE_READY&&PWA_BRIDGE_SOURCE)return resolve();if(PWA_BRIDGE_FRAME){PWA_BRIDGE_FRAME.remove();PWA_BRIDGE_FRAME=null}PWA_BRIDGE_READY=false;PWA_BRIDGE_SOURCE=null;PWA_BRIDGE_ORIGIN='*';const token=pwaMakeBridgeToken();PWA_BRIDGE_TOKEN=token;const f=document.createElement('iframe');f.style.position='fixed';f.style.width='1px';f.style.height='1px';f.style.opacity='0';f.style.pointerEvents='none';f.style.border='0';f.setAttribute('aria-hidden','true');f.src=url+(url.includes('?')?'&':'?')+'mode=bridge&bridgeToken='+encodeURIComponent(token)+'&t='+Date.now();PWA_BRIDGE_FRAME=f;const timer=setTimeout(()=>{window.removeEventListener('message',onmsg);reject(new Error('Server tidak merespons. Bridge Apps Script terbuka, tetapi belum dapat berkomunikasi dengan PWA. Pastikan Code.gs dan Bridge.html memakai versi FIX V2 lalu deploy sebagai New version.'))},20000);const onmsg=e=>{const d=e.data;if(!d||d.type!=='sigap-bridge-ready'||d.bridgeToken!==token)return;clearTimeout(timer);window.removeEventListener('message',onmsg);PWA_BRIDGE_SOURCE=e.source;PWA_BRIDGE_ORIGIN=(e.origin&&e.origin!=='null')?e.origin:'*';PWA_BRIDGE_READY=true;resolve()};window.addEventListener('message',onmsg);document.body.appendChild(f)})}
@@ -412,7 +452,6 @@ let AUTO_DRAFT_TIMER=null;
 const $=id=>document.getElementById(id);
 
 document.addEventListener('DOMContentLoaded',()=>{
-  buildChecks('kewenanganChecks',['Pusat','Provinsi','Kab/Kota','Masyarakat','Swasta'],'kewenangan');
   updateNetworkStatus();renderDamagePhotoPreviews();renderDocPreviews();
   window.addEventListener('online',updateNetworkStatus); window.addEventListener('offline',updateNetworkStatus);
   $('reportForm').addEventListener('input',scheduleTextDraft); $('reportForm').addEventListener('change',scheduleTextDraft);
@@ -544,7 +583,7 @@ function renderDamagePhotoPreviews(){
   const grid=$('damagePhotoGrid');if(!grid)return;
   const items=Object.keys(OFFLINE_DRAFT_FILES.damage||{}).map(Number).filter(Boolean).sort((a,b)=>a-b).map(i=>({index:i,file:OFFLINE_DRAFT_FILES.damage[i]})).filter(x=>x.file);
   grid.innerHTML=items.map((x,pos)=>`<div class="photoPreviewCard"><button type="button" class="removePhoto" title="Hapus foto" onclick="removeDamagePhoto(${x.index})">×</button><div class="photoIndex">Foto ${pos+1}</div><div class="preview">${filePreviewHtml(x.file,'Foto '+(pos+1))}</div></div>`).join('');
-  const c=$('damagePhotoCount');if(c)c.textContent=items.length?`${items.length} foto dipilih`:'Belum ada foto dipilih';
+  const c=$('damagePhotoCount');if(c)c.textContent=items.length?`${items.length} foto dipilih`:'Minimal 2 foto';
 }
 
 function handleDamagePhotoSelection(input){
@@ -563,12 +602,12 @@ function renderDocPreviews(){
   if(kkp)kkp.innerHTML=filePreviewHtml(OFFLINE_DRAFT_FILES.kk,'KK');
 }
 function handleIdentityDocsSelection(input){
-  const files=Array.from(input.files||[]).slice(0,2);if(!files.length)return;
+  const files=Array.from(input.files||[]).filter(f=>String(f.type||'').startsWith('image/')||String(f.type||'')==='application/pdf').slice(0,2);if(!files.length)return;
   let ktp=null,kk=null,rest=[];
   files.forEach(f=>{const n=String(f.name||'').toLowerCase();if(!ktp&&n.includes('ktp'))ktp=f;else if(!kk&&(/(^|[^a-z])kk([^a-z]|$)/i.test(n)||n.includes('kartu keluarga')))kk=f;else rest.push(f)});
   if(!ktp&&rest.length)ktp=rest.shift();if(!kk&&rest.length)kk=rest.shift();
   if(ktp)OFFLINE_DRAFT_FILES.ktp=ktp;if(kk)OFFLINE_DRAFT_FILES.kk=kk;
-  input.value='';renderDocPreviews();const up=$('uploadProgress');if(up)up.textContent=`KTP/KK berhasil dipilih dalam satu kali upload (${[OFFLINE_DRAFT_FILES.ktp,OFFLINE_DRAFT_FILES.kk].filter(Boolean).length}/2 foto).`;saveOfflineDraft(false).catch(()=>{});
+  input.value='';renderDocPreviews();const up=$('uploadProgress');if(up)up.textContent=`Dokumen KTP/KK dipilih (${[OFFLINE_DRAFT_FILES.ktp,OFFLINE_DRAFT_FILES.kk].filter(Boolean).length}/2).`;saveOfflineDraft(false).catch(()=>{});
 }
 function removeIdentityDoc(kind){if(kind!=='ktp'&&kind!=='kk')return;OFFLINE_DRAFT_FILES[kind]=null;renderDocPreviews();saveOfflineDraft(false).catch(()=>{});scheduleTextDraft()}
 function getDocFile(id){return OFFLINE_DRAFT_FILES[id]||null}
@@ -582,7 +621,7 @@ async function submitReport(ev){
   const btn=$('submitBtn');btn.disabled=true;btn.textContent=EDIT_CONTEXT?'Menyimpan perubahan...':'Menyimpan laporan...';$('uploadProgress').textContent='Menyiapkan data laporan...';
   const payload={
     provinsi:v('provinsi'),kabKota:v('kabKota'),kecamatan:v('kecamatan'),desa:v('desa'),dusun:'',
-    kewenangan:checked('kewenangan'),namaPemilik:v('namaPemilik'),nik:v('nik'),noKK:v('noKK'),alamat:v('alamat'),
+    namaPemilik:v('namaPemilik'),nik:v('nik'),noKK:v('noKK'),alamat:v('alamat'),
     latitude:v('latitude'),longitude:v('longitude'),namaPetugas:v('namaPetugas'),noHpPetugas:v('noHpPetugas'),
     kepemilikanBangunan:v('kepemilikanBangunan'),kepemilikanTanah:v('kepemilikanTanah'),damage:collectDamage(),expectedPhotoCount:existingCount+damagePhotos.length
   };
@@ -663,9 +702,6 @@ async function startEditReport(id){
 
 function populateEditForm(r){
   $('kecamatan').value=r.kecamatan||''; updateDesaOptions(); $('desa').value=r.desa||'';
-  document.querySelectorAll('input[name="kewenangan"]').forEach(x=>x.checked=false);
-  const kw=String(r.kewenangan||'').split(/[,;|]/).map(x=>normText(x)).filter(Boolean);
-  document.querySelectorAll('input[name="kewenangan"]').forEach(x=>{x.checked=kw.includes(normText(x.value))});
   $('namaPemilik').value=r.namaPemilik||''; $('nik').value=r.nik||''; $('noKK').value=r.noKK||''; $('alamat').value=r.alamat||'';
   $('latitude').value=r.latitude==null?'':r.latitude; $('longitude').value=r.longitude==null?'':r.longitude;
   $('namaPetugas').value=r.petugas||''; $('noHpPetugas').value=r.noHpPetugas||'';
@@ -703,13 +739,12 @@ function updateNetworkStatus(){
 }
 
 function collectFormState(){
-  return {kecamatan:v('kecamatan'),desa:v('desa'),kewenangan:checked('kewenangan'),namaPemilik:v('namaPemilik'),nik:v('nik'),noKK:v('noKK'),alamat:v('alamat'),latitude:v('latitude'),longitude:v('longitude'),namaPetugas:v('namaPetugas'),noHpPetugas:v('noHpPetugas'),kepemilikanBangunan:v('kepemilikanBangunan'),kepemilikanTanah:v('kepemilikanTanah'),damage:collectDamage()};
+  return {kecamatan:v('kecamatan'),desa:v('desa'),namaPemilik:v('namaPemilik'),nik:v('nik'),noKK:v('noKK'),alamat:v('alamat'),latitude:v('latitude'),longitude:v('longitude'),namaPetugas:v('namaPetugas'),noHpPetugas:v('noHpPetugas'),kepemilikanBangunan:v('kepemilikanBangunan'),kepemilikanTanah:v('kepemilikanTanah'),damage:collectDamage()};
 }
 
 function applyFormState(st){
   if(!st)return;
   $('kecamatan').value=st.kecamatan||''; updateDesaOptions(); $('desa').value=st.desa||'';
-  document.querySelectorAll('input[name="kewenangan"]').forEach(x=>x.checked=(st.kewenangan||[]).some(v=>normText(v)===normText(x.value)));
   ['namaPemilik','nik','noKK','alamat','latitude','longitude','namaPetugas','noHpPetugas','kepemilikanBangunan','kepemilikanTanah'].forEach(id=>{if($(id))$(id).value=st[id]||''});
   applyDamageToForm(st.damage||{});
 }
@@ -820,9 +855,9 @@ function exportAdminExcel(){
       downloadBase64File(file);
       alert(`Export Excel berhasil. ${file.total||0} laporan dibuat ke ${file.fileName}.`);
     }catch(e){alert('File Excel sudah dibuat tetapi proses download gagal: '+errText(e))}
-    finally{if(b){b.disabled=false;b.innerHTML=old||'⬇ Export Excel'}}
+    finally{if(b){b.disabled=false;b.innerHTML=old||'⬇ Download Excel'}}
   }).withFailureHandler(e=>{
-    if(b){b.disabled=false;b.innerHTML=old||'⬇ Export Excel'}
+    if(b){b.disabled=false;b.innerHTML=old||'⬇ Download Excel'}
     adminFail(e);
   }).exportReportsExcel(ADMIN_TOKEN,q);
 }
