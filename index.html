@@ -956,6 +956,9 @@ const PWA_OFFLINE_CONFIG = {
 };
 const PWA_DB='sigap_gempa_pwa_v1', PWA_REPORT_STORE='reports';
 const PWA_BACKEND_KEY='sigap_backend_exec_url';
+const PETUGAS_CACHE_PREFIX='sigap_petugas_cache_v23_';
+const PETUGAS_CACHE_TTL=30*60*1000;
+const PETUGAS_REMOTE_INFLIGHT=new Map();
 let PWA_DEFERRED_PROMPT=null, PWA_BRIDGE_FRAME=null, PWA_BRIDGE_READY=false, PWA_BRIDGE_SOURCE=null, PWA_BRIDGE_TOKEN='', PWA_BRIDGE_ORIGIN='*', PWA_RPC_SEQ=0;
 const PWA_RPC_PENDING=new Map();
 
@@ -1043,7 +1046,27 @@ window.addEventListener('message',e=>{const d=e.data;if(!d||d.type!=='sigap-rpc-
 async function pwaRemoteRpc(method,args){await pwaEnsureBridge();return new Promise((resolve,reject)=>{const id='rpc_'+(++PWA_RPC_SEQ)+'_'+Date.now();const timer=setTimeout(()=>{PWA_RPC_PENDING.delete(id);reject(new Error('Waktu koneksi ke server habis.'))},120000);PWA_RPC_PENDING.set(id,{resolve,reject,timer});try{PWA_BRIDGE_SOURCE.postMessage({type:'sigap-rpc-call',bridgeToken:PWA_BRIDGE_TOKEN,id,method,args},PWA_BRIDGE_ORIGIN||'*')}catch(e){PWA_RPC_PENDING.delete(id);clearTimeout(timer);reject(new Error('Gagal mengirim perintah ke bridge server: '+(e.message||e)))}})}
 async function pwaRpc(method,args){
   if(method==='getPublicConfig')return PWA_OFFLINE_CONFIG;
-  if(method==='getPetugasHistoryByKecamatan'){const local=await pwaLocalPetugas(args[0]);if(navigator.onLine&&pwaBackendUrl()){try{const rem=await pwaRemoteRpc(method,args),m=new Map();[...(rem.petugas||[]),...(local.petugas||[])].forEach(x=>m.set(normText(x.nama),x));return {kecamatan:args[0],petugas:[...m.values()]}}catch(e){}}return local}
+  if(method==='getPetugasHistoryByKecamatan'){
+    const kec=String(args[0]||'');
+    const local=await pwaLocalPetugas(kec);
+    const ck=PETUGAS_CACHE_PREFIX+encodeURIComponent(normText(kec));
+    let cached=null;
+    try{cached=JSON.parse(localStorage.getItem(ck)||'null')}catch(e){}
+    const merge=(remote)=>{const m=new Map();[...((remote&&remote.petugas)||[]),...(local.petugas||[])].forEach(x=>{if(x&&x.nama)m.set(normText(x.nama),x)});return {kecamatan:kec,petugas:[...m.values()].sort((a,b)=>a.nama.localeCompare(b.nama,'id'))}};
+    const refresh=()=>{
+      if(!navigator.onLine||!pwaBackendUrl())return Promise.resolve(null);
+      if(PETUGAS_REMOTE_INFLIGHT.has(ck))return PETUGAS_REMOTE_INFLIGHT.get(ck);
+      const p=pwaRemoteRpc(method,args).then(rem=>{try{localStorage.setItem(ck,JSON.stringify({ts:Date.now(),data:rem}))}catch(e){};return rem}).finally(()=>PETUGAS_REMOTE_INFLIGHT.delete(ck));
+      PETUGAS_REMOTE_INFLIGHT.set(ck,p);return p;
+    };
+    if(cached&&cached.data&&Date.now()-Number(cached.ts||0)<PETUGAS_CACHE_TTL){
+      // Tampilkan dropdown seketika dari cache perangkat; server diperbarui di latar belakang.
+      refresh().then(rem=>{if(rem){try{window.dispatchEvent(new CustomEvent('sigap-petugas-refreshed',{detail:{kecamatan:kec,data:merge(rem)}}))}catch(e){}}}).catch(()=>{});
+      return merge(cached.data);
+    }
+    if(navigator.onLine&&pwaBackendUrl()){try{return merge(await refresh())}catch(e){}}
+    return merge(null)
+  }
   if(method==='getPublicSubmittedReports'){const local=await pwaLocalSubmitted(args[0],args[1]);if(navigator.onLine&&pwaBackendUrl()){try{const rem=await pwaRemoteRpc(method,args);const seen=new Set((rem.rows||[]).map(x=>x.id));return {...rem,rows:[...(local.rows||[]).filter(x=>!seen.has(x.id)),...(rem.rows||[])]}}catch(e){}}return local}
   if(method==='getPublicEditableReport'){const local=await pwaGetReportByAnyId(args[2]);if(local)return pwaLocalEditable(args[2]);return pwaRemoteRpc(method,args)}
   return pwaRemoteRpc(method,args);
@@ -1054,6 +1077,10 @@ async function pwaRpc(method,args){
   const make=(s,f)=>new Proxy({},{get(t,p){if(p==='withSuccessHandler')return fn=>make(fn,f);if(p==='withFailureHandler')return fn=>make(s,fn);return (...args)=>{pwaRpc(String(p),args).then(v=>s&&s(v)).catch(e=>f?f(e):console.error(e))}}});
   window.google=window.google||{};window.google.script=window.google.script||{};window.google.script.run=make(null,null);
 })();
+
+function clearPetugasDeviceCache(kecamatan){
+  try{localStorage.removeItem(PETUGAS_CACHE_PREFIX+encodeURIComponent(normText(kecamatan||'')))}catch(e){}
+}
 
 async function syncPendingReports(silent=false){
   if(!navigator.onLine){if(!silent)alert('Tidak ada koneksi internet. Data tetap aman di perangkat.');return}
@@ -1068,7 +1095,7 @@ async function syncPendingReports(silent=false){
         for(let j=0;j<(r.damagePhotos||[]).length;j++){const fp=await fileToPayload(r.damagePhotos[j],true);await pwaRemoteRpc('uploadReportFile',[created.id,created.uploadKey,'damage',j+1,fp])}
         if(r.ktpFile)await pwaRemoteRpc('uploadReportFile',[created.id,created.uploadKey,'ktp',1,await fileToPayload(r.ktpFile,true)]);
         if(r.kkFile)await pwaRemoteRpc('uploadReportFile',[created.id,created.uploadKey,'kk',1,await fileToPayload(r.kkFile,true)]);
-        const fin=await pwaRemoteRpc('finalizeReportUpload',[created.id,created.uploadKey]);r.serverId=fin.id;r.photoCount=fin.photoCount;r.syncState='synced';r.syncedAt=new Date().toISOString();r.damagePhotos=[];r.ktpFile=null;r.kkFile=null;r.lastSyncError='';
+        const fin=await pwaRemoteRpc('finalizeReportUpload',[created.id,created.uploadKey]);clearPetugasDeviceCache(r.payload&&r.payload.kecamatan);r.serverId=fin.id;r.photoCount=fin.photoCount;r.syncState='synced';r.syncedAt=new Date().toISOString();r.damagePhotos=[];r.ktpFile=null;r.kkFile=null;r.lastSyncError='';
       } else {
         if(!r.serverId)throw new Error('ID server laporan tidak ditemukan.');
         const ed=await pwaRemoteRpc('getPublicEditableReport',[r.payload.kecamatan,r.payload.namaPetugas,r.serverId]);
@@ -1076,7 +1103,7 @@ async function syncPendingReports(silent=false){
         const extras=r.extraDamagePhotos||[];for(let j=0;j<extras.length;j++){const fp=await fileToPayload(extras[j],true);await pwaRemoteRpc('uploadReportFile',[created.id,created.uploadKey,'damage',Number(created.existingPhotoCount||r.photoCount||0)+j+1,fp])}
         if(r.extraKtpFile)await pwaRemoteRpc('uploadReportFile',[created.id,created.uploadKey,'ktp',1,await fileToPayload(r.extraKtpFile,true)]);
         if(r.extraKkFile)await pwaRemoteRpc('uploadReportFile',[created.id,created.uploadKey,'kk',1,await fileToPayload(r.extraKkFile,true)]);
-        const fin=await pwaRemoteRpc('finalizeReportUpload',[created.id,created.uploadKey]);r.photoCount=fin.photoCount;r.syncState='synced';r.syncedAt=new Date().toISOString();r.extraDamagePhotos=[];r.extraKtpFile=null;r.extraKkFile=null;r.lastSyncError='';
+        const fin=await pwaRemoteRpc('finalizeReportUpload',[created.id,created.uploadKey]);clearPetugasDeviceCache(r.payload&&r.payload.kecamatan);r.photoCount=fin.photoCount;r.syncState='synced';r.syncedAt=new Date().toISOString();r.extraDamagePhotos=[];r.extraKtpFile=null;r.extraKkFile=null;r.lastSyncError='';
       }
       await pwaPutReport(r);ok++;
     }catch(e){r.lastSyncError=e.message||String(e);await pwaPutReport(r);fail++}
@@ -1398,6 +1425,21 @@ async function submitReport(ev){
   }catch(e){showMsg(e.message||String(e),false);await saveOfflineDraft(false).catch(()=>{})}
   finally{btn.disabled=false;btn.textContent=EDIT_CONTEXT?'Simpan Perubahan':'Kirim Laporan';$('uploadProgress').textContent='';await pwaRefreshSyncStatus()}
 }
+window.addEventListener('sigap-petugas-refreshed',e=>{
+  try{
+    const d=e.detail||{};
+    const current=v('lookupKecamatan');
+    if(normText(current)!==normText(d.kecamatan))return;
+    const sel=$('lookupPetugas');
+    if(!sel||document.activeElement===sel)return;
+    const selected=sel.value;
+    const items=(d.data&&d.data.petugas)||[];
+    sel.innerHTML='<option value="">Pilih Nama Petugas</option>'+items.map(x=>`<option value="${escAttr(x.nama)}">${esc(x.nama)}</option>`).join('');
+    if(selected&&items.some(x=>normText(x.nama)===normText(selected)))sel.value=items.find(x=>normText(x.nama)===normText(selected)).nama;
+    sel.disabled=false;
+  }catch(err){}
+});
+
 async function lookupPublicReports(){
   const kecamatan=v('lookupKecamatan'), petugas=v('lookupPetugas');
   const msg=$('lookupMsg'), box=$('lookupResults'), btn=$('lookupBtn');
@@ -1715,5 +1757,6 @@ function errText(e){return (e&&e.message)?e.message:String(e||'Terjadi kesalahan
 function esc(s){return String(s==null?'':s).replace(/[&<>'"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[m]))}
 function escAttr(s){return esc(s).replace(/`/g,'&#96;')}
 </script>
+<!-- V23 FAST LOOKUP: petugas cached on device + backend optimized. -->
 </body>
 </html>
