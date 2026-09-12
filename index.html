@@ -418,6 +418,64 @@
   }
 }
 </style>
+
+<style id="mobile-v13-damage-10px-muted">
+/* V13: Jenis Kerusakan + Jumlah Komponen = 10px, normal; placeholder/default dibuat lebih redup. */
+.field::placeholder, textarea.field::placeholder, input.field::placeholder{
+  color:rgba(172,202,219,.44)!important;
+  opacity:1!important;
+  font-weight:400!important;
+}
+select.field:has(option[value=""]:checked){
+  color:rgba(172,202,219,.52)!important;
+  font-weight:400!important;
+}
+.damageSection .damageTable td:nth-child(2) select.field.damageEmpty{
+  color:rgba(172,202,219,.46)!important;
+}
+.damageSection .damageTable td:nth-child(3) select.field:disabled{
+  color:rgba(172,202,219,.42)!important;
+  opacity:.75!important;
+}
+@media(max-width:768px){
+  .damageSection .damageTable td:nth-child(2) select.field,
+  .damageSection .damageTable td:nth-child(2) select.field option,
+  .damageSection .damageTable td:nth-child(3) select.field,
+  .damageSection .damageTable td:nth-child(3) select.field option{
+    font-size:10px!important;
+    font-weight:400!important;
+    font-family:inherit!important;
+    line-height:1.15!important;
+  }
+  .damageSection .damageTable td:nth-child(2) select.field{
+    min-height:36px!important;
+    height:36px!important;
+    padding:5px 32px 5px 8px!important;
+  }
+  .damageSection .damageTable td:nth-child(3) select.field{
+    width:112px!important;
+    max-width:112px!important;
+    min-height:38px!important;
+    height:38px!important;
+    padding:6px 28px 6px 9px!important;
+  }
+}
+@media(max-width:390px){
+  .damageSection .damageTable td:nth-child(2) select.field,
+  .damageSection .damageTable td:nth-child(2) select.field option,
+  .damageSection .damageTable td:nth-child(3) select.field,
+  .damageSection .damageTable td:nth-child(3) select.field option{
+    font-size:10px!important;
+    font-weight:400!important;
+  }
+  .damageSection .damageTable td:nth-child(3) select.field{
+    width:104px!important;
+    max-width:104px!important;
+    min-height:36px!important;
+    height:36px!important;
+  }
+}
+</style>
 </head>
 <body>
   <header class="top"><div class="topin"><div class="brand"><img class="brandMark" src="logo-manggarai.png" alt="Logo Kabupaten Manggarai"><span class="brandCopy"><b>SIGAP GEMPA FLORES</b><small>Sistem Pendataan Kerusakan Rumah Akibat Gempa</small></span></div><div class="nav"><button class="btn light" onclick="showPublic()">⌂ Beranda</button><button id="installBtn" class="btn light" onclick="installPwa()">⬇ Pasang Aplikasi</button><button class="btn light" onclick="syncPendingReports()">↻ Sinkron Data</button><button class="btn light" onclick="openPwaSettings()">⚙ Server</button><button class="btn gold" onclick="openAdminLogin()">🔐 Admin</button></div></div></header>
@@ -720,13 +778,14 @@ function buildDamageRows(items){
     if(!g){g={part:item.part,items:[]};groups.push(g)}
     g.items.push(item);
   });
-  $('damageRows').innerHTML=groups.map((g,i)=>`<tr data-damage-part="${i}"><td data-label="Bagian Bangunan"><b>${esc(g.part)}</b></td><td data-label="Jenis Kerusakan"><select class="field" data-damage-type="${i}" onchange="damageTypeChanged(${i})"><option value="">Tidak ada kerusakan</option>${g.items.map(x=>`<option value="${escAttr(x.id)}">${esc(x.text)}</option>`).join('')}</select></td><td data-label="Jumlah Komponen"><select class="field" data-damage-count="${i}" onchange="updateDamageWeight(${i})" disabled><option value="0">-</option><option value="1">1</option><option value="2">2</option><option value="3">≥3</option></select></td><td data-label="Bobot"><span id="damageWeight${i}" class="damageWeight">0%</span></td></tr>`).join('');
+  $('damageRows').innerHTML=groups.map((g,i)=>`<tr data-damage-part="${i}"><td data-label="Bagian Bangunan"><b>${esc(g.part)}</b></td><td data-label="Jenis Kerusakan"><select class="field damageEmpty" data-damage-type="${i}" onchange="damageTypeChanged(${i})"><option value="">Tidak ada kerusakan</option>${g.items.map(x=>`<option value="${escAttr(x.id)}">${esc(x.text)}</option>`).join('')}</select></td><td data-label="Jumlah Komponen"><select class="field" data-damage-count="${i}" onchange="updateDamageWeight(${i})" disabled><option value="0">-</option><option value="1">1</option><option value="2">2</option><option value="3">≥3</option></select></td><td data-label="Bobot"><span id="damageWeight${i}" class="damageWeight">0%</span></td></tr>`).join('');
   $('totalDamageWeight').textContent='0%';
 }
 function damageTypeChanged(i){
   const type=document.querySelector(`[data-damage-type="${i}"]`);
   const count=document.querySelector(`[data-damage-count="${i}"]`);
   if(!type||!count)return;
+  type.classList.toggle('damageEmpty',!type.value);
   if(type.value){count.disabled=false;if(Number(count.value||0)===0)count.value='1'}else{count.value='0';count.disabled=true}
   updateDamageWeight(i);
 }
@@ -903,6 +962,7 @@ function applyDamageToForm(damage){
     let selected='';
     [...type.options].forEach(o=>{if(o.value&&Number(damage[o.value]||0)>0)selected=o.value});
     type.value=selected;
+    type.classList.toggle('damageEmpty',!selected);
     const count=document.querySelector(`[data-damage-count="${i}"]`);
     if(selected&&count){count.disabled=false;count.value=String(Math.max(1,Math.min(3,Number(damage[selected]||1))))}
     else if(count){count.value='0';count.disabled=true}
