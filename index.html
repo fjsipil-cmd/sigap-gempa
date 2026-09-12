@@ -782,6 +782,93 @@ body:not(.admin-mode) #adminView{display:none!important}
 }
 </style>
 
+<style>
+
+/* ===== V20: Navigasi bawah tetap, tanpa menu ganda di atas ===== */
+/* Header atas hanya menampilkan identitas aplikasi. Menu dipindahkan ke bawah. */
+body{padding-bottom:92px!important}
+.top{z-index:1300!important}
+.topin{position:relative!important}
+
+.top .nav{
+  position:fixed!important;
+  left:50%!important;
+  right:auto!important;
+  bottom:12px!important;
+  top:auto!important;
+  transform:translateX(-50%)!important;
+  z-index:5000!important;
+  width:min(780px,calc(100vw - 24px))!important;
+  max-width:780px!important;
+  display:grid!important;
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  gap:7px!important;
+  margin:0!important;
+  padding:8px!important;
+  overflow:visible!important;
+  border:1px solid rgba(34,189,245,.48)!important;
+  border-radius:13px!important;
+  background:rgba(3,22,43,.96)!important;
+  box-shadow:0 10px 32px rgba(0,0,0,.36),0 0 18px rgba(34,189,245,.10)!important;
+  backdrop-filter:blur(12px)!important;
+  -webkit-backdrop-filter:blur(12px)!important;
+}
+.top .nav .btn{
+  width:100%!important;
+  min-width:0!important;
+  min-height:42px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  margin:0!important;
+  padding:8px 7px!important;
+  border-radius:8px!important;
+  font-size:10.5px!important;
+  line-height:1.15!important;
+  white-space:normal!important;
+  text-align:center!important;
+}
+
+/* Dashboard Admin: Pasang Aplikasi dan tombol Admin tidak perlu ditampilkan. */
+body.admin-mode .top .nav{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+body.admin-mode .top .nav .btn{display:flex!important}
+body.admin-mode .top .nav #installBtn,
+body.admin-mode .top .nav .btn:last-child{display:none!important}
+
+/* Ruang aman agar menu bawah tidak menutupi isi. */
+.wrap,#publicView,#adminView{padding-bottom:28px!important}
+
+@media(max-width:700px){
+  body{padding-bottom:82px!important}
+  .top .nav{
+    left:0!important;
+    right:0!important;
+    bottom:0!important;
+    transform:none!important;
+    width:100%!important;
+    max-width:none!important;
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    gap:4px!important;
+    padding:6px 6px calc(6px + env(safe-area-inset-bottom))!important;
+    border-left:0!important;
+    border-right:0!important;
+    border-bottom:0!important;
+    border-radius:12px 12px 0 0!important;
+  }
+  .top .nav .btn{
+    min-height:46px!important;
+    padding:6px 3px!important;
+    font-size:9.5px!important;
+    line-height:1.08!important;
+  }
+  body.admin-mode .top .nav{grid-template-columns:repeat(3,minmax(0,1fr))!important}
+}
+
+@media(max-width:390px){
+  body{padding-bottom:86px!important}
+  .top .nav .btn{font-size:9px!important;padding:5px 2px!important}
+}
+</style>
 </head>
 <body>
   <header class="top"><div class="topin"><div class="brand"><img class="brandMark" src="logo-manggarai.png" alt="Logo Kabupaten Manggarai"><span class="brandCopy"><b>SIGAP GEMPA FLORES</b><small>Sistem Pendataan Kerusakan Rumah Akibat Gempa</small></span></div><div class="nav"><button class="btn light" onclick="showPublic()">⌂ Beranda</button><button id="installBtn" class="btn light" onclick="installPwa()">⬇ Pasang Aplikasi</button><button class="btn light" onclick="syncPendingReports()">↻ Sinkron Data</button><button class="btn light" onclick="openPwaSettings()">⚙ Server</button><button class="btn gold" onclick="openAdminLogin()">🔐 Admin</button></div></div></header>
