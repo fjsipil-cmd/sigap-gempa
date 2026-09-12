@@ -102,6 +102,104 @@
   @media(max-width:700px){.heroSeal{width:92px!important}.hero h1{font-size:32px!important}.heroSubtitle{font-size:14px}.brandMark{width:34px!important;height:34px!important}.heroFeatures{grid-template-columns:1fr 1fr!important}}
   @media(max-width:430px){.heroFeatures{grid-template-columns:1fr!important}.heroSeal{width:82px!important}.hero h1{font-size:29px!important}.brandCopy b{font-size:11px!important}}
 </style>
+
+<style id="mobile-v3-comfort">
+  .multiUploadZone{display:flex;gap:12px;align-items:center;padding:12px;border:1px dashed rgba(34,189,245,.55);border-radius:10px;background:rgba(5,38,64,.74);margin:7px 0 10px}.multiUploadZone.compact{margin-top:7px}.uploadPrimary{background:linear-gradient(135deg,#08aeea,#0f7cad)!important;color:#fff!important;border:1px solid rgba(120,222,255,.75)!important;box-shadow:0 6px 18px rgba(0,174,239,.15)}
+  .photoPreviewGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.photoPreviewCard{position:relative;padding:7px;border:1px solid rgba(34,189,245,.30);border-radius:8px;background:#052640;min-width:0}.photoPreviewCard .preview{height:96px;margin-top:4px}.photoIndex{font-size:10px;font-weight:800;color:#dff4ff;padding-right:25px}.fileName{display:block;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:8px;padding:3px 5px;color:#bcd8e8}.pdfBadge{display:inline-flex;align-items:center;justify-content:center;padding:10px;border-radius:7px;background:#6b2231;color:#fff;font-weight:900;margin:7px}.docsUploadBlock{margin-top:14px;padding-top:12px;border-top:1px solid rgba(34,189,245,.18)}.docPreviewGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}.docPreviewCard{border:1px solid rgba(34,189,245,.28);border-radius:8px;padding:8px;background:#041f37}.docPreviewTitle{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.docPreview{min-height:92px;border-radius:7px;background:#03192c;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;color:#86a8bc;font-size:9px;text-align:center}.docPreview img{width:100%;height:92px;object-fit:cover}.miniRemove{width:24px;height:24px;border:0;border-radius:999px;background:#6b2231;color:#ffdfe5;font-weight:900;cursor:pointer}.mobileOnly{display:none}
+
+  @media(max-width:700px){
+    body{padding-bottom:env(safe-area-inset-bottom)}
+    .top{top:0;width:100%;margin:0;border-radius:0;border-left:0;border-right:0}.topin{display:grid!important;grid-template-columns:1fr;gap:7px;padding:8px 10px}.brand{display:flex;align-items:center}.brandMark{width:34px;height:34px}.brand b{font-size:13px}.brandCopy small{display:block!important;font-size:8px;white-space:normal}.nav{display:flex!important;flex-direction:row!important;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;width:100%;padding-bottom:2px}.nav::-webkit-scrollbar{display:none}.nav .btn{flex:0 0 auto;min-height:40px;padding:8px 10px!important;font-size:10px!important;white-space:nowrap}.nav .btn:nth-child(1){display:inline-flex!important}
+    .wrap{margin-top:7px;padding:0 6px 26px}.wrap#publicView{display:block!important}.wrap#publicView>.hero{display:none!important}#reportForm{display:block!important}.formTitle{position:sticky;top:91px;z-index:25;margin:0 0 7px;padding:9px 10px;border-radius:9px;background:rgba(5,31,55,.98);box-shadow:0 5px 16px #0005}.formTitle b{font-size:13px!important}.formTitle small{font-size:8px}.formState{display:none!important}
+    .card{margin-top:8px;border-radius:9px}.cardhead{padding:10px 11px;font-size:12px}.cardbody{padding:10px}.grid{gap:9px}.field,select.field,textarea.field{min-height:47px;font-size:16px!important;padding:11px 12px;border-radius:9px}textarea.field{min-height:76px}.hint{font-size:10px;line-height:1.45}label{font-size:11px;margin-bottom:5px}.checks{display:grid;grid-template-columns:1fr 1fr;gap:6px}.check{min-height:43px;padding:8px;font-size:11px}.coord{display:grid!important;grid-template-columns:1fr 1fr;gap:7px}.coord>div{min-width:0}.coord>.btn{grid-column:1/-1;min-height:46px;margin-top:0!important}
+    .multiUploadZone{display:block;padding:10px}.multiUploadZone .uploadPrimary{width:100%;min-height:48px;margin-bottom:8px}.photoPreviewGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.photoPreviewCard .preview{height:122px}.photoActions{display:grid;grid-template-columns:1fr 1fr;gap:7px}.photoActions .btn{width:100%;min-height:44px}.docPreviewGrid{grid-template-columns:1fr 1fr}.docPreview{min-height:112px}.docPreview img{height:112px}
+    .damageWrap{overflow:visible;border:0;background:transparent}.damageTable{min-width:0!important;width:100%;display:block}.damageTable thead{display:none}.damageTable tbody{display:block}.damageTable tr{display:block;border:1px solid rgba(34,189,245,.28);border-radius:9px;background:#052640;margin-bottom:8px;padding:9px}.damageTable td{display:block!important;width:100%!important;border:0!important;padding:4px 0!important;font-size:11px!important}.damageTable td:nth-child(1){font-weight:900;color:#ffd12f;font-size:12px!important;padding-bottom:7px!important}.damageTable td:nth-child(2)::before{content:'Jenis Kerusakan';display:block;color:#8db5cc;font-size:9px;font-weight:800;margin-bottom:3px}.damageTable td:nth-child(3)::before{content:'Jumlah Komponen';display:block;color:#8db5cc;font-size:9px;font-weight:800;margin-bottom:3px}.damageTable td:nth-child(4)::before{content:'Bobot';display:block;color:#8db5cc;font-size:9px;font-weight:800;margin-bottom:3px}.damageTable select{min-height:44px;font-size:14px!important}.damageWeight{font-size:17px!important}.totalWeight{position:sticky;bottom:76px;z-index:15;box-shadow:0 5px 20px #0006}
+    .submitbar{position:sticky;bottom:0;z-index:24;display:grid!important;grid-template-columns:1fr 1fr!important;gap:7px!important;margin:12px -10px -10px;padding:8px 10px calc(8px + env(safe-area-inset-bottom));background:rgba(3,22,43,.97);border-top:1px solid rgba(34,189,245,.30);box-shadow:0 -7px 18px #0005}.submitbar .btn{width:100%;min-height:47px;font-size:11px}.submitbar #submitBtn{background:#ffd12f!important;color:#1e2600!important;border-color:#ffd12f!important}.submitbar #cancelEditBtn.hide{display:none!important}
+    #publicHistoryCard{margin-top:10px}.modal{padding:0!important;align-items:stretch}.modalbox{width:100%!important;max-height:100dvh!important;height:100dvh;border-radius:0!important}.modalhead{padding:11px 12px}.modalbody{padding:10px}.stats{display:grid;grid-template-columns:1fr 1fr}.toolbar{display:grid;grid-template-columns:1fr 1fr}.toolbar input{grid-column:1/-1;min-width:0}.tableWrap{border-radius:8px}.detailGrid{grid-template-columns:1fr}.settingsRow{display:block}.settingsRow .btn{width:100%;margin-top:7px}
+  }
+  @media(max-width:390px){.photoPreviewGrid{grid-template-columns:1fr 1fr}.docPreviewGrid{grid-template-columns:1fr}.checks{grid-template-columns:1fr 1fr}.submitbar{grid-template-columns:1fr 1fr!important}.nav .btn{font-size:9px!important;padding:7px 8px!important}}
+</style>
+
+
+<style id="mobile-v5-clean-stable">
+/* ===== V5 MOBILE CLEAN: single-column, no overlapping sticky blocks ===== */
+@media (max-width: 768px){
+  html,body{width:100%;max-width:100%;overflow-x:hidden}
+  body{font-size:14px;padding-bottom:calc(10px + env(safe-area-inset-bottom));-webkit-text-size-adjust:100%}
+  button,.btn,input,select,textarea{touch-action:manipulation}
+
+  .top{position:relative!important;top:auto!important;width:100%!important;margin:0!important;border-radius:0!important;border-left:0!important;border-right:0!important;box-shadow:0 5px 18px rgba(0,0,0,.26)!important}
+  .topin{display:block!important;padding:10px 10px 9px!important}
+  .brand{display:flex!important;align-items:center!important;gap:9px!important;min-width:0;padding:0 2px 8px!important}
+  .brandMark{width:40px!important;height:40px!important;flex:0 0 40px!important;object-fit:contain!important}
+  .brandCopy{min-width:0!important}.brandCopy b{display:block!important;font-size:14px!important;line-height:1.1!important;white-space:normal!important}.brandCopy small{display:block!important;font-size:9px!important;line-height:1.3!important;white-space:normal!important;margin-top:3px!important;color:#a9c7da!important}
+  .nav{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:6px!important;overflow:visible!important;width:100%!important;padding:0!important}
+  .nav .btn{display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;min-width:0!important;min-height:42px!important;padding:8px 5px!important;font-size:10px!important;line-height:1.15!important;white-space:normal!important;text-align:center!important;border-radius:8px!important}
+  .nav .hide{display:none!important}
+
+  .wrap,#publicView,#adminView{width:100%!important;max-width:none!important;margin:0!important;padding:10px 9px 30px!important}
+  #publicView{display:block!important}
+  #publicView>.hero{display:none!important}
+  #draftBanner,#editModeBanner,#msg{width:100%!important;margin:8px 0!important}
+
+  #reportForm{display:block!important;width:100%!important;margin:0!important;padding:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important}
+  .formTitle{position:relative!important;top:auto!important;z-index:1!important;display:flex!important;align-items:flex-start!important;justify-content:space-between!important;gap:8px!important;margin:0 0 9px!important;padding:11px 12px!important;border:1px solid rgba(34,189,245,.40)!important;border-radius:11px!important;background:linear-gradient(180deg,rgba(6,39,67,.98),rgba(4,29,51,.98))!important;box-shadow:none!important}
+  .formTitle>div{min-width:0}.formIcon{flex:0 0 34px!important;width:34px!important;height:34px!important;border-radius:8px!important}.formTitle b{font-size:14px!important;line-height:1.2!important}.formTitle small{font-size:9px!important;line-height:1.35!important}.formState{display:none!important}
+
+  .card{width:100%!important;margin:0 0 10px!important;border-radius:11px!important;overflow:hidden!important}
+  .cardhead{padding:12px 12px!important;font-size:13px!important;line-height:1.25!important}
+  .cardbody{padding:12px!important}
+  .grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:11px!important}
+  .grid>[class^="c"],.grid>[class*=" c"]{grid-column:1!important;min-width:0!important;width:100%!important}
+  label{font-size:12px!important;line-height:1.25!important;margin-bottom:6px!important}
+  .hint,.status{font-size:10.5px!important;line-height:1.48!important}
+  .field,select.field,textarea.field{width:100%!important;max-width:100%!important;min-width:0!important;min-height:50px!important;padding:11px 12px!important;border-radius:9px!important;font-size:16px!important;line-height:1.3!important}
+  textarea.field{min-height:88px!important;resize:vertical!important}
+
+  .checks{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:7px!important}
+  .check{display:flex!important;align-items:center!important;min-width:0!important;min-height:46px!important;padding:9px 10px!important;border-radius:8px!important;font-size:11px!important;line-height:1.2!important}
+  .check input{width:18px!important;height:18px!important;flex:0 0 18px!important}
+
+  .coord{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:9px!important;align-items:stretch!important}
+  .coord>div{width:100%!important;min-width:0!important}.coord>.btn{width:100%!important;min-height:48px!important;margin:0!important}
+
+  .multiUploadZone,.multiUploadZone.compact{display:block!important;margin:7px 0 10px!important;padding:11px!important;border-radius:10px!important}
+  .multiUploadZone .uploadPrimary{display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;min-height:50px!important;margin:0 0 8px!important;padding:11px 12px!important;font-size:12px!important;line-height:1.25!important;text-align:center!important}
+  #damagePhotoCount{display:block!important;font-size:12px!important;margin-bottom:4px!important;color:#fff!important}
+  .photoPreviewGrid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important;width:100%!important}
+  .photoPreviewCard{min-width:0!important;padding:7px!important;border-radius:9px!important}.photoPreviewCard .preview{height:126px!important}.photoIndex{font-size:10px!important}.fileName{font-size:9px!important}
+  .photoActions{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;margin-top:9px!important}.photoActions .btn{width:100%!important;min-height:46px!important;font-size:11px!important;white-space:normal!important}
+  .docsUploadBlock{margin-top:16px!important;padding-top:14px!important}.docPreviewGrid{display:grid!important;grid-template-columns:1fr!important;gap:9px!important}.docPreviewCard{padding:9px!important;border-radius:9px!important}.docPreview{min-height:150px!important}.docPreview img{height:150px!important;object-fit:contain!important;background:#03192c!important}.docPreviewTitle{font-size:12px!important}
+
+  .damageWrap{overflow:visible!important;border:0!important;background:transparent!important}.damageTable{display:block!important;width:100%!important;min-width:0!important}.damageTable thead{display:none!important}.damageTable tbody{display:block!important;width:100%!important}.damageTable tr{display:block!important;width:100%!important;margin:0 0 9px!important;padding:11px!important;border:1px solid rgba(34,189,245,.30)!important;border-radius:10px!important;background:#052640!important}.damageTable td{display:block!important;width:100%!important;padding:0 0 9px!important;border:0!important;font-size:11px!important}.damageTable td:last-child{padding-bottom:0!important}.damageTable td::before{content:attr(data-label);display:block;margin:0 0 5px;color:#82aac1;font-size:9px;font-weight:800;letter-spacing:.02em;text-transform:uppercase}.damageTable td:first-child::before{display:none}.damageTable td:first-child{padding-bottom:10px!important;color:#ffd12f!important;font-size:13px!important}.damageTable select.field{min-height:48px!important;font-size:15px!important}.damageWeight{display:block!important;padding:8px 10px!important;border-radius:8px!important;background:#041b30!important;color:#ffd12f!important;font-size:19px!important;text-align:center!important}.totalWeight{position:relative!important;bottom:auto!important;z-index:1!important;display:flex!important;justify-content:space-between!important;margin-top:10px!important;padding:11px 12px!important;box-shadow:none!important}.totalWeight span{font-size:11px!important}.totalWeight strong{font-size:20px!important}
+
+  .submitbar{position:relative!important;bottom:auto!important;z-index:1!important;display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;margin:14px 0 0!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
+  .submitbar .btn{width:100%!important;min-width:0!important;min-height:48px!important;padding:10px 9px!important;font-size:11px!important;line-height:1.2!important;white-space:normal!important}
+  .submitbar #submitBtn{grid-column:1/-1!important;min-height:52px!important;font-size:13px!important;background:#ffd12f!important;color:#132437!important;border-color:#ffd12f!important}
+  .submitbar #cancelEditBtn:not(.hide){grid-column:1/-1!important}
+
+  #publicHistoryCard{display:block!important;width:100%!important;margin:12px 0 0!important;background:rgba(6,37,63,.80)!important;border:1px solid rgba(34,189,245,.32)!important;border-radius:11px!important;overflow:hidden!important}
+  #publicHistoryCard>.cardhead{display:block!important;padding:12px!important;background:linear-gradient(90deg,rgba(12,60,91,.65),rgba(6,37,63,.25))!important;border-bottom:1px solid rgba(34,189,245,.25)!important;font-size:13px!important}#publicHistoryCard>.cardhead:before{display:inline-block!important}#publicHistoryCard>.cardhead span{font-size:13px!important}#publicHistoryCard>.cardhead span:after{content:""!important}#publicHistoryCard>.cardhead small{display:block!important;margin-top:3px!important;font-size:9px!important}
+  #publicHistoryCard>.cardbody{display:block!important;padding:12px!important;background:transparent!important}
+  #publicHistoryCard>.cardbody>p,#publicHistoryCard>.cardbody>.grid,#publicHistoryCard>.cardbody>.submitbar,#publicHistoryCard>.cardbody>#lookupMsg{display:block!important;width:100%!important;margin:0 0 9px!important;padding:0!important;background:transparent!important;border:0!important;border-radius:0!important}
+  #publicHistoryCard>.cardbody>.submitbar{display:block!important}.#publicHistoryCard{}#publicHistoryCard>.cardbody>.submitbar .btn{width:100%!important;min-height:48px!important}
+  #publicHistoryCard #lookupResults{display:block!important;width:100%!important;min-height:0!important;margin-top:11px!important;padding:0!important;background:transparent!important;border:0!important;border-radius:0!important}
+  #publicHistoryCard #lookupResults.hide{display:none!important}
+  .tableWrap{width:100%!important;max-width:100%!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch!important}.table{min-width:820px!important}
+
+  #adminView .hero{display:block!important;margin-bottom:10px!important;padding:14px!important}#adminView .hero h1{font-size:20px!important}.stats{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important}.stat{padding:11px!important}.stat strong{font-size:22px!important}.toolbar{display:grid!important;grid-template-columns:1fr!important;gap:7px!important}.toolbar input,.toolbar .btn{width:100%!important;min-width:0!important;min-height:46px!important}.toolbar input{grid-column:1!important}.modal{padding:0!important;align-items:flex-end!important}.modalbox{width:100%!important;max-width:none!important;max-height:94dvh!important;border-radius:14px 14px 0 0!important}.modalhead{padding:12px!important}.modalbody{padding:12px!important}.detailGrid{grid-template-columns:1fr!important}
+}
+@media (max-width: 430px){
+  .nav{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .checks{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+  .photoPreviewGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.photoPreviewCard .preview{height:112px!important}
+  .stats{grid-template-columns:1fr 1fr!important}
+}
+@media (max-width: 350px){
+  .checks{grid-template-columns:1fr!important}.photoPreviewGrid{grid-template-columns:1fr!important}.submitbar{grid-template-columns:1fr!important}.submitbar #submitBtn,.submitbar #cancelEditBtn:not(.hide){grid-column:1!important}
+}
+</style>
+
 </head>
 <body>
   <header class="top"><div class="topin"><div class="brand"><img class="brandMark" src="logo-manggarai.png" alt="Logo Kabupaten Manggarai"><span class="brandCopy"><b>SIGAP GEMPA FLORES</b><small>Sistem Informasi Pendataan Kerusakan Rumah Akibat Gempa</small></span></div><div class="nav"><button class="btn light" onclick="showPublic()">⌂ Beranda</button><button id="installBtn" class="btn light hide" onclick="installPwa()">⬇ Instal Aplikasi</button><button class="btn light" onclick="syncPendingReports()">↻ Sinkron Data</button><button class="btn light" onclick="openPwaSettings()">⚙ Server</button><button class="btn gold" onclick="openAdminLogin()">🔐 Admin</button></div></div></header>
@@ -130,15 +228,26 @@
 
       <section class="card"><div class="cardhead">3. Foto dan dokumen</div><div class="cardbody">
         <label class="req">Foto Rumah/Kerusakan</label>
-        <div id="damagePhotoGrid" class="photoGrid">
-          <div class="upload" data-photo-card="1"><b>Foto Kerusakan 1 *</b><input id="foto1" data-photo-index="1" type="file" accept="image/*" capture="environment" class="field damage-photo-input" onchange="previewFile(this,'pv1')"><div id="pv1" class="preview">Belum ada foto</div></div>
-          <div class="upload" data-photo-card="2"><b>Foto Kerusakan 2 *</b><input id="foto2" data-photo-index="2" type="file" accept="image/*" capture="environment" class="field damage-photo-input" onchange="previewFile(this,'pv2')"><div id="pv2" class="preview">Belum ada foto</div></div>
+        <div class="multiUploadZone">
+          <input id="damagePhotosPicker" type="file" accept="image/*" multiple hidden onchange="handleDamagePhotoSelection(this)">
+          <button type="button" class="btn uploadPrimary" onclick="openNativePicker('damagePhotosPicker')">📷 Pilih Banyak Foto dari Album</button>
+          <div><b id="damagePhotoCount">Belum ada foto dipilih</b><div class="hint">Pilih beberapa foto sekaligus dari Album/Galeri (minimal 2 foto). Jangan aktifkan mode kamera jika ingin memilih banyak foto. Anda tetap dapat menambah foto lagi setelah pilihan pertama. Foto akan dioptimalkan sebelum dikirim.</div></div>
         </div>
-        <div class="photoActions"><button type="button" class="btn ghost" onclick="addDamagePhoto()">➕ Tambahkan Foto</button><span class="hint">Minimal 2 foto. Jumlah foto tambahan tidak dibatasi oleh form dan tidak ada batas MB yang ditetapkan aplikasi. Foto gambar dioptimalkan sebelum dikirim.</span></div>
+        <div id="damagePhotoGrid" class="photoPreviewGrid"></div>
+        <div class="photoActions"><button type="button" class="btn ghost" onclick="openNativePicker('damagePhotosPicker')">➕ Tambah Foto Lagi</button><button type="button" class="btn red" onclick="clearDamagePhotos()">Hapus Semua Foto</button></div>
         <div id="uploadProgress" class="uploadProgress"></div>
-        <div class="photoGrid" style="margin-top:14px">
-          <div class="upload"><b>Foto/Scan KTP</b><input id="ktp" type="file" accept="image/*,application/pdf" class="field"><div class="hint">Opsional</div></div>
-          <div class="upload"><b>Foto/Scan KK</b><input id="kk" type="file" accept="image/*,application/pdf" class="field"><div class="hint">Opsional</div></div>
+
+        <div class="docsUploadBlock">
+          <label>Foto/Scan KTP dan KK</label>
+          <div class="multiUploadZone compact">
+            <input id="identityDocsPicker" type="file" accept="image/*" multiple hidden onchange="handleIdentityDocsSelection(this)">
+            <button type="button" class="btn uploadPrimary" onclick="openNativePicker('identityDocsPicker')">🪪 Pilih Foto KTP + KK Sekaligus</button>
+            <div class="hint">Pilih 2 foto sekaligus dari Album/Galeri dalam satu kali pemilihan. Jika nama file mengandung “KTP” atau “KK”, aplikasi akan mengenalinya otomatis; jika tidak, foto pertama dianggap KTP dan foto kedua KK.</div>
+          </div>
+          <div class="docPreviewGrid">
+            <div class="docPreviewCard"><div class="docPreviewTitle"><b>KTP</b><button type="button" class="miniRemove" onclick="removeIdentityDoc('ktp')">×</button></div><div id="ktpPreview" class="docPreview">Belum dipilih</div></div>
+            <div class="docPreviewCard"><div class="docPreviewTitle"><b>KK</b><button type="button" class="miniRemove" onclick="removeIdentityDoc('kk')">×</button></div><div id="kkPreview" class="docPreview">Belum dipilih</div></div>
+          </div>
         </div>
       </div></section>
 
@@ -296,7 +405,7 @@ async function syncPendingReports(silent=false){
 </script>
 
 <script>
-let CONFIG=null, ADMIN_TOKEN='', ADMIN_DATA=null, PHOTO_SEQ=2, EDIT_CONTEXT=null;
+let CONFIG=null, ADMIN_TOKEN='', ADMIN_DATA=null, PHOTO_SEQ=0, EDIT_CONTEXT=null;
 let OFFLINE_DRAFT_FILES={damage:{},ktp:null,kk:null};
 const DRAFT_DB='sigap_gempa_draft_db', DRAFT_STORE='drafts', DRAFT_KEY='current', CONFIG_CACHE_KEY='sigap_config_v1', TEXT_DRAFT_KEY='sigap_text_draft_v1';
 let AUTO_DRAFT_TIMER=null;
@@ -304,15 +413,14 @@ const $=id=>document.getElementById(id);
 
 document.addEventListener('DOMContentLoaded',()=>{
   buildChecks('kewenanganChecks',['Pusat','Provinsi','Kab/Kota','Masyarakat','Swasta'],'kewenangan');
-  updateNetworkStatus();
+  updateNetworkStatus();renderDamagePhotoPreviews();renderDocPreviews();
   window.addEventListener('online',updateNetworkStatus); window.addEventListener('offline',updateNetworkStatus);
   $('reportForm').addEventListener('input',scheduleTextDraft); $('reportForm').addEventListener('change',scheduleTextDraft);
   document.addEventListener('change',e=>{
     const el=e.target;if(!el||el.type!=='file')return;
-    if(el.classList.contains('damage-photo-input')){const i=Number(el.dataset.photoIndex);if(el.files&&el.files[0])OFFLINE_DRAFT_FILES.damage[i]=el.files[0];}
-    else if(el.id==='ktp'&&el.files&&el.files[0])OFFLINE_DRAFT_FILES.ktp=el.files[0];
-    else if(el.id==='kk'&&el.files&&el.files[0])OFFLINE_DRAFT_FILES.kk=el.files[0];
-    saveOfflineDraft(false).catch(()=>{});
+    // Picker foto/dokumen baru mengelola file melalui handler masing-masing.
+    // Simpan draft otomatis tetap dijalankan setelah setiap perubahan file.
+    if(el.id!=='damagePhotosPicker'&&el.id!=='identityDocsPicker')saveOfflineDraft(false).catch(()=>{});
   });
   const useConfig=cfg=>{CONFIG=cfg;try{localStorage.setItem(CONFIG_CACHE_KEY,JSON.stringify(cfg))}catch(e){};$('provinsi').value=cfg.defaults.provinsi||'Nusa Tenggara Timur';$('kabKota').value=cfg.defaults.kabKota||'Kabupaten Manggarai';buildRegionDropdowns(cfg.regions||{});buildDamageRows(cfg.damageCatalog);checkOfflineDraft();};
   google.script.run.withSuccessHandler(useConfig).withFailureHandler(e=>{
@@ -385,7 +493,7 @@ function buildDamageRows(items){
     if(!g){g={part:item.part,items:[]};groups.push(g)}
     g.items.push(item);
   });
-  $('damageRows').innerHTML=groups.map((g,i)=>`<tr data-damage-part="${i}"><td><b>${esc(g.part)}</b></td><td><select class="field" data-damage-type="${i}" onchange="damageTypeChanged(${i})"><option value="">Tidak ada kerusakan</option>${g.items.map(x=>`<option value="${escAttr(x.id)}">${esc(x.text)}</option>`).join('')}</select></td><td><select class="field" data-damage-count="${i}" onchange="updateDamageWeight(${i})" disabled><option value="0">-</option><option value="1">1 komponen</option><option value="2">2 komponen</option><option value="3">≥ 3 komponen</option></select></td><td><span id="damageWeight${i}" class="damageWeight">0%</span></td></tr>`).join('');
+  $('damageRows').innerHTML=groups.map((g,i)=>`<tr data-damage-part="${i}"><td data-label="Bagian Bangunan"><b>${esc(g.part)}</b></td><td data-label="Jenis Kerusakan"><select class="field" data-damage-type="${i}" onchange="damageTypeChanged(${i})"><option value="">Tidak ada kerusakan</option>${g.items.map(x=>`<option value="${escAttr(x.id)}">${esc(x.text)}</option>`).join('')}</select></td><td data-label="Jumlah Komponen"><select class="field" data-damage-count="${i}" onchange="updateDamageWeight(${i})" disabled><option value="0">-</option><option value="1">1 komponen</option><option value="2">2 komponen</option><option value="3">≥ 3 komponen</option></select></td><td data-label="Bobot"><span id="damageWeight${i}" class="damageWeight">0%</span></td></tr>`).join('');
   $('totalDamageWeight').textContent='0%';
 }
 function damageTypeChanged(i){
@@ -414,19 +522,56 @@ function updateTotalDamageWeight(){
 
 function getLocation(){const s=$('locStatus'); if(!navigator.geolocation){s.textContent='Perangkat/browser tidak mendukung GPS. Silakan isi manual.';return} s.textContent='Mengambil koordinat...';navigator.geolocation.getCurrentPosition(p=>{$('latitude').value=p.coords.latitude.toFixed(6);$('longitude').value=p.coords.longitude.toFixed(6);s.textContent=`Lokasi berhasil diambil. Akurasi ±${Math.round(p.coords.accuracy)} meter.`},e=>{s.textContent='GPS tidak dapat diambil: '+e.message+'. Silakan isi koordinat manual.'},{enableHighAccuracy:true,timeout:15000,maximumAge:0})}
 
-function previewFile(input,id){const f=input.files&&input.files[0];const p=$(id);if(!p)return;if(!f){p.textContent='Belum ada foto';return}if(f.type.startsWith('image/')){const u=URL.createObjectURL(f);p.innerHTML=`<img src="${u}">`}else p.textContent=f.name}
-
-function addDamagePhoto(){
-  PHOTO_SEQ++;
-  const n=PHOTO_SEQ;
-  const card=document.createElement('div');
-  card.className='upload';card.dataset.photoCard=String(n);
-  card.innerHTML=`<button type="button" class="removePhoto" title="Hapus foto" onclick="removeDamagePhoto(${n})">×</button><b>Foto Kerusakan ${n}</b><input id="foto${n}" data-photo-index="${n}" type="file" accept="image/*" capture="environment" class="field damage-photo-input" onchange="previewFile(this,'pv${n}')"><div id="pv${n}" class="preview">Belum ada foto</div>`;
-  $('damagePhotoGrid').appendChild(card);
+function openNativePicker(id){
+  const input=document.getElementById(id);
+  if(!input)return;
+  try{
+    if(typeof input.showPicker==='function') input.showPicker();
+    else input.click();
+  }catch(e){ input.click(); }
 }
-function removeDamagePhoto(n){const card=document.querySelector(`[data-photo-card="${n}"]`);if(card)card.remove();delete OFFLINE_DRAFT_FILES.damage[n];scheduleTextDraft()}
-function getSelectedDamagePhotos(){return [...document.querySelectorAll('.damage-photo-input')].map(x=>{const i=Number(x.dataset.photoIndex);return {index:i,file:(x.files&&x.files[0])||OFFLINE_DRAFT_FILES.damage[i]||null}}).filter(x=>x.file).sort((a,b)=>a.index-b.index)}
-function getDocFile(id){const el=$(id);return (el&&el.files&&el.files[0])||OFFLINE_DRAFT_FILES[id]||null}
+
+function filePreviewHtml(file,label){
+  if(!file)return '<span>Belum dipilih</span>';
+  if(String(file.type||'').startsWith('image/')){
+    const u=URL.createObjectURL(file);
+    return `<img src="${u}" alt="${escAttr(label||file.name||'Foto')}"><span class="fileName">${esc(file.name||label||'Foto')}</span>`;
+  }
+  return `<span class="pdfBadge">PDF</span><span class="fileName">${esc(file.name||label||'Dokumen')}</span>`;
+}
+
+function renderDamagePhotoPreviews(){
+  const grid=$('damagePhotoGrid');if(!grid)return;
+  const items=Object.keys(OFFLINE_DRAFT_FILES.damage||{}).map(Number).filter(Boolean).sort((a,b)=>a-b).map(i=>({index:i,file:OFFLINE_DRAFT_FILES.damage[i]})).filter(x=>x.file);
+  grid.innerHTML=items.map((x,pos)=>`<div class="photoPreviewCard"><button type="button" class="removePhoto" title="Hapus foto" onclick="removeDamagePhoto(${x.index})">×</button><div class="photoIndex">Foto ${pos+1}</div><div class="preview">${filePreviewHtml(x.file,'Foto '+(pos+1))}</div></div>`).join('');
+  const c=$('damagePhotoCount');if(c)c.textContent=items.length?`${items.length} foto dipilih`:'Belum ada foto dipilih';
+}
+
+function handleDamagePhotoSelection(input){
+  const files=Array.from(input.files||[]).filter(f=>String(f.type||'').startsWith('image/'));
+  files.forEach(f=>{PHOTO_SEQ++;OFFLINE_DRAFT_FILES.damage[PHOTO_SEQ]=f});
+  input.value='';renderDamagePhotoPreviews();const up=$('uploadProgress');if(up&&files.length)up.textContent=`${files.length} foto berhasil ditambahkan dari album. Total ${getSelectedDamagePhotos().length} foto.`;saveOfflineDraft(false).catch(()=>{});
+}
+function addDamagePhoto(){document.getElementById('damagePhotosPicker')?.click()}
+function removeDamagePhoto(n){delete OFFLINE_DRAFT_FILES.damage[n];renderDamagePhotoPreviews();saveOfflineDraft(false).catch(()=>{});scheduleTextDraft()}
+function clearDamagePhotos(){OFFLINE_DRAFT_FILES.damage={};PHOTO_SEQ=0;renderDamagePhotoPreviews();saveOfflineDraft(false).catch(()=>{});scheduleTextDraft()}
+function getSelectedDamagePhotos(){return Object.keys(OFFLINE_DRAFT_FILES.damage||{}).map(Number).filter(Boolean).sort((a,b)=>a-b).map(i=>({index:i,file:OFFLINE_DRAFT_FILES.damage[i]})).filter(x=>x.file)}
+
+function renderDocPreviews(){
+  const kp=$('ktpPreview'),kkp=$('kkPreview');
+  if(kp)kp.innerHTML=filePreviewHtml(OFFLINE_DRAFT_FILES.ktp,'KTP');
+  if(kkp)kkp.innerHTML=filePreviewHtml(OFFLINE_DRAFT_FILES.kk,'KK');
+}
+function handleIdentityDocsSelection(input){
+  const files=Array.from(input.files||[]).slice(0,2);if(!files.length)return;
+  let ktp=null,kk=null,rest=[];
+  files.forEach(f=>{const n=String(f.name||'').toLowerCase();if(!ktp&&n.includes('ktp'))ktp=f;else if(!kk&&(/(^|[^a-z])kk([^a-z]|$)/i.test(n)||n.includes('kartu keluarga')))kk=f;else rest.push(f)});
+  if(!ktp&&rest.length)ktp=rest.shift();if(!kk&&rest.length)kk=rest.shift();
+  if(ktp)OFFLINE_DRAFT_FILES.ktp=ktp;if(kk)OFFLINE_DRAFT_FILES.kk=kk;
+  input.value='';renderDocPreviews();const up=$('uploadProgress');if(up)up.textContent=`KTP/KK berhasil dipilih dalam satu kali upload (${[OFFLINE_DRAFT_FILES.ktp,OFFLINE_DRAFT_FILES.kk].filter(Boolean).length}/2 foto).`;saveOfflineDraft(false).catch(()=>{});
+}
+function removeIdentityDoc(kind){if(kind!=='ktp'&&kind!=='kk')return;OFFLINE_DRAFT_FILES[kind]=null;renderDocPreviews();saveOfflineDraft(false).catch(()=>{});scheduleTextDraft()}
+function getDocFile(id){return OFFLINE_DRAFT_FILES[id]||null}
 
 async function submitReport(ev){
   ev.preventDefault();hideMsg();
@@ -581,7 +726,6 @@ function scheduleTextDraft(){
 async function saveOfflineDraft(showNotice=true){
   const state=collectFormState();
   const damage={...OFFLINE_DRAFT_FILES.damage};
-  document.querySelectorAll('.damage-photo-input').forEach(x=>{const i=Number(x.dataset.photoIndex);if(x.files&&x.files[0])damage[i]=x.files[0]});
   const ktp=getDocFile('ktp'), kk=getDocFile('kk'), updatedAt=Date.now();
   try{localStorage.setItem(TEXT_DRAFT_KEY,JSON.stringify({updatedAt,state}))}catch(e){}
   try{await draftDbPut({key:DRAFT_KEY,updatedAt,state,files:{damage,ktp,kk}})}catch(e){if(showNotice){showMsg('Data teks tersimpan sebagai draft, tetapi browser tidak dapat menyimpan semua file/foto secara lokal: '+errText(e),false);return}}
@@ -603,14 +747,14 @@ async function restoreOfflineDraft(){
   OFFLINE_DRAFT_FILES={damage:{},ktp:null,kk:null};
   if(d.files){OFFLINE_DRAFT_FILES.damage=d.files.damage||{};OFFLINE_DRAFT_FILES.ktp=d.files.ktp||null;OFFLINE_DRAFT_FILES.kk=d.files.kk||null}
   const keys=Object.keys(OFFLINE_DRAFT_FILES.damage||{}).map(Number).filter(Boolean).sort((a,b)=>a-b);
-  keys.forEach(i=>{while(PHOTO_SEQ<i)addDamagePhoto();const f=OFFLINE_DRAFT_FILES.damage[i],pv=$('pv'+i);if(f&&pv){if(String(f.type||'').startsWith('image/')){const u=URL.createObjectURL(f);pv.innerHTML=`<img src="${u}">`}else pv.textContent=f.name||('Foto '+i)}});
+  PHOTO_SEQ=keys.length?Math.max(...keys):0;renderDamagePhotoPreviews();renderDocPreviews();
   const n=keys.length+(OFFLINE_DRAFT_FILES.ktp?1:0)+(OFFLINE_DRAFT_FILES.kk?1:0);
   showMsg(`Draft berhasil dipulihkan${n?` termasuk ${n} file/foto tersimpan`:''}.`,true);window.scrollTo({top:0,behavior:'smooth'});
 }
 
 async function clearOfflineDraft(showNotice=false){
   try{localStorage.removeItem(TEXT_DRAFT_KEY)}catch(e){};try{await draftDbDelete()}catch(e){}
-  OFFLINE_DRAFT_FILES={damage:{},ktp:null,kk:null};$('draftBanner').classList.add('hide');$('draftBanner').innerHTML='';if(showNotice)showMsg('Draft lokal telah dihapus.',true);
+  OFFLINE_DRAFT_FILES={damage:{},ktp:null,kk:null};PHOTO_SEQ=0;renderDamagePhotoPreviews();renderDocPreviews();$('draftBanner').classList.add('hide');$('draftBanner').innerHTML='';if(showNotice)showMsg('Draft lokal telah dihapus.',true);
 }
 
 async function clearFormAndDraft(){EDIT_CONTEXT=null;updateEditModeUI();await clearOfflineDraft(false);resetForm();}
@@ -638,11 +782,10 @@ function readDataUrl(file){return new Promise((res,rej)=>{const r=new FileReader
 function compressImage(file){return new Promise((res,rej)=>{const img=new Image();const url=URL.createObjectURL(file);img.onload=()=>{try{let w=img.width,h=img.height,max=1800;if(Math.max(w,h)>max){const k=max/Math.max(w,h);w=Math.round(w*k);h=Math.round(h*k)}const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);const data=c.toDataURL('image/jpeg',.82);URL.revokeObjectURL(url);res({name:file.name.replace(/\.[^.]+$/,'.jpg'),type:'image/jpeg',data})}catch(e){URL.revokeObjectURL(url);rej(e)}};img.onerror=()=>{URL.revokeObjectURL(url);rej(new Error('Foto tidak dapat diproses.'))};img.src=url})}
 
 function resetForm(keepNotice=false){
-  $('reportForm').reset();OFFLINE_DRAFT_FILES={damage:{},ktp:null,kk:null};
-  [...document.querySelectorAll('#damagePhotoGrid [data-photo-card]')].forEach(card=>{if(Number(card.dataset.photoCard)>2)card.remove()});PHOTO_SEQ=2;
+  $('reportForm').reset();OFFLINE_DRAFT_FILES={damage:{},ktp:null,kk:null};PHOTO_SEQ=0;renderDamagePhotoPreviews();renderDocPreviews();
   if(CONFIG){$('provinsi').value=CONFIG.defaults.provinsi||'Nusa Tenggara Timur';$('kabKota').value=CONFIG.defaults.kabKota||'Kabupaten Manggarai';buildRegionDropdowns(CONFIG.regions||{})}
   if($('lookupPetugas')){$('lookupPetugas').disabled=true;$('lookupPetugas').innerHTML='<option value="">Pilih Kecamatan terlebih dahulu</option>'}
-  if(CONFIG)buildDamageRows(CONFIG.damageCatalog||[]);document.querySelectorAll('.preview').forEach(x=>{x.innerHTML='Belum ada foto'});$('locStatus').textContent='Koordinat dapat diambil otomatis dari GPS perangkat atau diisi manual.';$('uploadProgress').textContent='';if(!keepNotice)hideMsg()
+  if(CONFIG)buildDamageRows(CONFIG.damageCatalog||[]);$('locStatus').textContent='Koordinat dapat diambil otomatis dari GPS perangkat atau diisi manual.';$('uploadProgress').textContent='';if(!keepNotice)hideMsg()
 }
 
 function showMsg(t,ok){$('msg').innerHTML=`<div class="notice ${ok?'ok':'err'}">${esc(t)}</div>`}
