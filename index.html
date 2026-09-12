@@ -364,6 +364,60 @@
   }
 }
 </style>
+
+<style id="mobile-v12-damage-font-balance">
+/* V12: Jenis Kerusakan lebih kecil dan normal; Jumlah Komponen diperbesar lagi agar mudah dipilih di HP. */
+@media(max-width:768px){
+  .damageSection .damageTable td:nth-child(2) select.field,
+  .damageSection .damageTable td:nth-child(2) select.field option{
+    min-height:36px!important;
+    height:36px!important;
+    font-size:9.5px!important;
+    line-height:1.1!important;
+    font-weight:400!important;
+    font-family:inherit!important;
+    padding:5px 32px 5px 8px!important;
+    border-radius:7px!important;
+  }
+  .damageSection .damageTable td:nth-child(3) select.field,
+  .damageSection .damageTable td:nth-child(3) select.field option{
+    width:112px!important;
+    max-width:112px!important;
+    min-height:38px!important;
+    height:38px!important;
+    font-size:13px!important;
+    line-height:1.1!important;
+    font-weight:400!important;
+    font-family:inherit!important;
+    padding:6px 28px 6px 9px!important;
+    border-radius:7px!important;
+  }
+  .damageSection .damageTable td:nth-child(3)::before{
+    font-size:9px!important;
+    font-weight:400!important;
+  }
+}
+@media(max-width:390px){
+  .damageSection .damageTable td:nth-child(2) select.field,
+  .damageSection .damageTable td:nth-child(2) select.field option{
+    min-height:35px!important;
+    height:35px!important;
+    font-size:9px!important;
+    font-weight:400!important;
+    padding:5px 30px 5px 7px!important;
+  }
+  .damageSection .damageTable td:nth-child(3) select.field,
+  .damageSection .damageTable td:nth-child(3) select.field option{
+    width:104px!important;
+    max-width:104px!important;
+    min-height:36px!important;
+    height:36px!important;
+    font-size:12.5px!important;
+    font-weight:400!important;
+    padding:5px 26px 5px 8px!important;
+  }
+}
+</style>
 </head>
 <body>
   <header class="top"><div class="topin"><div class="brand"><img class="brandMark" src="logo-manggarai.png" alt="Logo Kabupaten Manggarai"><span class="brandCopy"><b>SIGAP GEMPA FLORES</b><small>Sistem Pendataan Kerusakan Rumah Akibat Gempa</small></span></div><div class="nav"><button class="btn light" onclick="showPublic()">⌂ Beranda</button><button id="installBtn" class="btn light" onclick="installPwa()">⬇ Pasang Aplikasi</button><button class="btn light" onclick="syncPendingReports()">↻ Sinkron Data</button><button class="btn light" onclick="openPwaSettings()">⚙ Server</button><button class="btn gold" onclick="openAdminLogin()">🔐 Admin</button></div></div></header>
