@@ -485,6 +485,74 @@ select.field:has(option[value=""]:checked){
   }
 }
 </style>
+
+<style id="v15-ux-admin-validation-success">
+/* ===== V15: validasi jelas, notifikasi sukses, admin mobile ===== */
+.field.fieldError,
+select.field.fieldError,
+textarea.field.fieldError{
+  border-color:#ff4d5f!important;
+  box-shadow:0 0 0 2px rgba(255,77,95,.18)!important;
+  background:rgba(255,77,95,.055)!important;
+}
+.multiUploadZone.uploadError{
+  border-color:#ff4d5f!important;
+  box-shadow:0 0 0 2px rgba(255,77,95,.18)!important;
+}
+.fieldErrorFlash{animation:fieldErrorPulse .8s ease 2}
+@keyframes fieldErrorPulse{
+  0%,100%{box-shadow:0 0 0 2px rgba(255,77,95,.18)}
+  50%{box-shadow:0 0 0 5px rgba(255,77,95,.28)}
+}
+.successOverlay{
+  position:fixed;inset:0;z-index:10000;
+  display:flex;align-items:center;justify-content:center;
+  padding:18px;background:rgba(0,10,22,.78);
+  backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
+}
+.successOverlay.hide{display:none!important}
+.successCard{
+  width:min(92vw,390px);padding:26px 22px 22px;
+  text-align:center;border-radius:18px;
+  background:linear-gradient(180deg,#073558,#041f38);
+  border:1px solid rgba(34,189,245,.50);
+  box-shadow:0 22px 60px rgba(0,0,0,.48);
+}
+.successCheck{
+  width:92px;height:92px;margin:0 auto 16px;
+  display:grid;place-items:center;border-radius:50%;
+  background:#18b86b;color:white;font-size:56px;font-weight:900;
+  box-shadow:0 0 0 10px rgba(24,184,107,.12);
+  animation:successPop .32s ease-out;
+}
+@keyframes successPop{from{transform:scale(.65);opacity:0}to{transform:scale(1);opacity:1}}
+.successTitle{font-size:20px;font-weight:900;color:#fff;margin-bottom:7px}
+.successText{font-size:12px;line-height:1.55;color:#b8d4e5}
+.successClose{width:100%;margin-top:18px;min-height:46px}
+.modalbox.loginbox{
+  height:auto!important;max-height:90dvh!important;
+  align-self:center!important;border-radius:14px!important;
+}
+@media(max-width:768px){
+  .topin{position:relative!important;padding-top:10px!important}
+  .brand{padding-right:88px!important}
+  .nav{grid-template-columns:repeat(2,minmax(0,1fr))!important;padding-top:4px!important}
+  .nav .btn:last-child{
+    position:absolute!important;top:10px!important;right:10px!important;
+    width:auto!important;min-width:74px!important;min-height:38px!important;
+    padding:7px 10px!important;font-size:10px!important;z-index:3!important;
+  }
+  .modalbox.loginbox{
+    width:calc(100% - 20px)!important;
+    max-width:430px!important;margin:auto!important;
+    border-radius:14px!important;
+  }
+  .successCard{padding:24px 18px 20px}
+  .successCheck{width:86px;height:86px;font-size:52px}
+  .successTitle{font-size:19px}
+}
+</style>
+
 </head>
 <body>
   <header class="top"><div class="topin"><div class="brand"><img class="brandMark" src="logo-manggarai.png" alt="Logo Kabupaten Manggarai"><span class="brandCopy"><b>SIGAP GEMPA FLORES</b><small>Sistem Pendataan Kerusakan Rumah Akibat Gempa</small></span></div><div class="nav"><button class="btn light" onclick="showPublic()">⌂ Beranda</button><button id="installBtn" class="btn light" onclick="installPwa()">⬇ Pasang Aplikasi</button><button class="btn light" onclick="syncPendingReports()">↻ Sinkron Data</button><button class="btn light" onclick="openPwaSettings()">⚙ Server</button><button class="btn gold" onclick="openAdminLogin()">🔐 Admin</button></div></div></header>
@@ -494,7 +562,7 @@ select.field:has(option[value=""]:checked){
     <div id="draftBanner" class="draftbox hide"></div>
     <div id="editModeBanner" class="editbox hide"></div>
     <div id="msg"></div>
-    <form id="reportForm" onsubmit="submitReport(event)"><div class="formTitle"><div><span class="formIcon">▤</span><div><b>Form Laporan Kerusakan Rumah</b></div></div><span class="formState">PWA • OFFLINE</span></div>
+    <form id="reportForm" novalidate onsubmit="submitReport(event)"><div class="formTitle"><div><span class="formIcon">▤</span><div><b>Form Laporan Kerusakan Rumah</b></div></div><span class="formState">PWA • OFFLINE</span></div>
       <section class="card"><div class="cardhead">1. Wilayah</div><div class="cardbody"><div class="grid">
         <div class="c4"><label>Provinsi</label><input id="provinsi" class="field" value="Nusa Tenggara Timur" readonly></div>
         <div class="c4"><label>Kabupaten</label><input id="kabKota" class="field" value="Kabupaten Manggarai" readonly></div>
@@ -542,7 +610,7 @@ select.field:has(option[value=""]:checked){
         <div class="c6"><label class="req">No. HP Petugas</label><input id="noHpPetugas" class="field" inputmode="tel" required placeholder="08xxxxxxxxxx"></div>
         <div class="c6"><label>Kepemilikan Bangunan</label><select id="kepemilikanBangunan" class="field"><option value="">Pilih</option><option>Sendiri</option><option>Pihak Lain</option></select></div>
         <div class="c6"><label>Kepemilikan Tanah</label><select id="kepemilikanTanah" class="field"><option value="">Pilih</option><option>Sendiri</option><option>Pihak Lain</option></select></div>
-      </div><div class="submitbar"><button type="button" class="btn ghost" onclick="saveOfflineDraft(true)">💾 Simpan Draft</button><button id="cancelEditBtn" type="button" class="btn red hide" onclick="cancelEdit()">Batalkan Edit</button><button type="button" class="btn ghost" onclick="clearFormAndDraft()">Bersihkan</button><button id="submitBtn" type="submit" class="btn green">Simpan Laporan</button></div></div></section>
+      </div><div class="submitbar"><button type="button" class="btn ghost" onclick="saveOfflineDraft(true)">💾 Simpan Draft</button><button id="cancelEditBtn" type="button" class="btn red hide" onclick="cancelEdit()">Batalkan Edit</button><button type="button" class="btn ghost" onclick="clearFormAndDraft()">Bersihkan</button><button id="submitBtn" type="submit" class="btn green">Kirim Laporan</button></div></div></section>
     </form>
 
     <section class="card" id="publicHistoryCard"><div class="cardhead"><span>6. Cek Data Terinput</span></div><div class="cardbody">
@@ -567,6 +635,14 @@ select.field:has(option[value=""]:checked){
     <div class="tableWrap"><table class="table"><thead><tr><th>ID</th><th>Tanggal</th><th>Nama Pemilik</th><th>Desa/Kelurahan</th><th>Petugas</th><th>Bobot (%)</th><th>Tingkat Kerusakan</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="adminRows"></tbody></table></div>
   </main>
 
+  <div id="successOverlay" class="successOverlay hide" role="status" aria-live="polite" onclick="hideSuccessOverlay()">
+    <div class="successCard" onclick="event.stopPropagation()">
+      <div class="successCheck">✓</div>
+      <div id="successTitle" class="successTitle">Data Berhasil Disimpan</div>
+      <div id="successText" class="successText"></div>
+      <button type="button" class="btn green successClose" onclick="hideSuccessOverlay()">OK</button>
+    </div>
+  </div>
   <div id="modalRoot"></div>
 
 
@@ -868,13 +944,96 @@ function handleIdentityDocsSelection(input){
 function removeIdentityDoc(kind){if(kind!=='ktp'&&kind!=='kk')return;OFFLINE_DRAFT_FILES[kind]=null;renderDocPreviews();saveOfflineDraft(false).catch(()=>{});scheduleTextDraft()}
 function getDocFile(id){return OFFLINE_DRAFT_FILES[id]||null}
 
+
+let SUCCESS_OVERLAY_TIMER=null;
+
+function showSuccessOverlay(title,message,autoCloseMs=2600){
+  const box=$('successOverlay');
+  if(!box)return;
+  $('successTitle').textContent=title||'Data Berhasil Disimpan';
+  $('successText').textContent=message||'Data berhasil disimpan.';
+  box.classList.remove('hide');
+  clearTimeout(SUCCESS_OVERLAY_TIMER);
+  if(autoCloseMs>0)SUCCESS_OVERLAY_TIMER=setTimeout(hideSuccessOverlay,autoCloseMs);
+}
+function hideSuccessOverlay(){
+  clearTimeout(SUCCESS_OVERLAY_TIMER);
+  const box=$('successOverlay');if(box)box.classList.add('hide');
+}
+
+function clearFieldErrors(){
+  document.querySelectorAll('.fieldError,.fieldErrorFlash').forEach(el=>{
+    el.classList.remove('fieldError','fieldErrorFlash');
+  });
+  document.querySelectorAll('.uploadError').forEach(el=>el.classList.remove('uploadError'));
+}
+function focusInvalid(el,msg){
+  if(!el)return false;
+  el.classList.add('fieldError','fieldErrorFlash');
+  try{el.scrollIntoView({behavior:'smooth',block:'center'})}catch(e){el.scrollIntoView()}
+  setTimeout(()=>{try{el.focus({preventScroll:true})}catch(e){try{el.focus()}catch(_){}}},350);
+  showMsg(msg||'Lengkapi data yang ditandai merah.',false);
+  return false;
+}
+function fieldLabelText(el){
+  const wrap=el.closest('[class^="c"],[class*=" c"],.coord>div,.cardbody')||el.parentElement;
+  const lab=wrap&&wrap.querySelector('label');
+  return lab?lab.textContent.replace('*','').trim():'Data wajib';
+}
+function validateReportForm(){
+  clearFieldErrors();
+  const form=$('reportForm');
+  const missing=[];
+  [...form.querySelectorAll('[required]')].forEach(el=>{
+    const val=(el.value||'').trim();
+    if(!val){
+      el.classList.add('fieldError');
+      missing.push(el);
+    }
+  });
+
+  // Bila jenis kerusakan dipilih, jumlah komponen harus ada.
+  document.querySelectorAll('[data-damage-part]').forEach((row,i)=>{
+    const type=document.querySelector(`[data-damage-type="${i}"]`);
+    const count=document.querySelector(`[data-damage-count="${i}"]`);
+    if(type&&type.value&&count&&Number(count.value||0)<1){
+      count.classList.add('fieldError');missing.push(count);
+    }
+  });
+
+  if(missing.length){
+    const first=missing[0];
+    return focusInvalid(first,`${fieldLabelText(first)} belum diisi. Lengkapi kolom yang ditandai merah.`);
+  }
+
+  const existingCount=EDIT_CONTEXT?Number(EDIT_CONTEXT.existingPhotoCount||0):0;
+  const damagePhotos=getSelectedDamagePhotos();
+  if(existingCount+damagePhotos.length<2){
+    const zone=document.querySelector('.multiUploadZone.simpleUpload');
+    if(zone){zone.classList.add('uploadError','fieldErrorFlash')}
+    try{zone?.scrollIntoView({behavior:'smooth',block:'center'})}catch(e){}
+    showMsg('Foto Kerusakan belum lengkap. Pilih minimal 2 foto.',false);
+    return false;
+  }
+  return true;
+}
+
+document.addEventListener('input',e=>{
+  if(e.target&&e.target.classList)e.target.classList.remove('fieldError','fieldErrorFlash');
+});
+document.addEventListener('change',e=>{
+  if(e.target&&e.target.classList)e.target.classList.remove('fieldError','fieldErrorFlash');
+  if(e.target&&e.target.id==='damagePhotosPicker'){
+    document.querySelector('.multiUploadZone.simpleUpload')?.classList.remove('uploadError','fieldErrorFlash');
+  }
+});
+
 async function submitReport(ev){
   ev.preventDefault();hideMsg();
+  if(!validateReportForm())return;
   const damagePhotos=getSelectedDamagePhotos();
   const existingCount=EDIT_CONTEXT?Number(EDIT_CONTEXT.existingPhotoCount||0):0;
-  if(!EDIT_CONTEXT && damagePhotos.length<2){showMsg('Minimal dua foto rumah/kerusakan wajib diunggah.',false);return}
-  if(EDIT_CONTEXT && existingCount+damagePhotos.length<2){showMsg('Laporan harus memiliki minimal dua foto kerusakan.',false);return}
-  const btn=$('submitBtn');btn.disabled=true;btn.textContent=EDIT_CONTEXT?'Menyimpan perubahan...':'Menyimpan laporan...';$('uploadProgress').textContent='Menyiapkan data laporan...';
+  const btn=$('submitBtn');btn.disabled=true;btn.textContent=EDIT_CONTEXT?'Menyimpan perubahan...':'Mengirim laporan...';$('uploadProgress').textContent='Menyiapkan data laporan...';
   const payload={
     provinsi:v('provinsi'),kabKota:v('kabKota'),kecamatan:v('kecamatan'),desa:v('desa'),dusun:'',
     namaPemilik:v('namaPemilik'),nik:v('nik'),noKK:v('noKK'),alamat:v('alamat'),
@@ -889,8 +1048,9 @@ async function submitReport(ev){
       const r=await pwaUpdateLocalReport(EDIT_CONTEXT.localId,payload,damagePhotos,ktpFile,kkFile);
       await clearOfflineDraft(false);EDIT_CONTEXT=null;updateEditModeUI();resetForm(true);
       showMsg(`Perubahan laporan ${r.serverId||r.localId} disimpan di perangkat${r.syncState==='updatePending'?' dan menunggu sinkronisasi':''}.`,true);
+      showSuccessOverlay('Data Berhasil Disimpan',`Perubahan laporan ${r.serverId||r.localId} berhasil disimpan.`);
       if($('lookupKecamatan')){$('lookupKecamatan').value=submittedKecamatan;await loadLookupPetugas(submittedPetugas);await lookupPublicReports()}
-      btn.disabled=false;btn.textContent='Simpan Laporan';return;
+      btn.disabled=false;btn.textContent='Kirim Laporan';return;
     }
 
     // Bila offline atau server belum disetel, simpan laporan lengkap ke antrean lokal.
@@ -898,8 +1058,9 @@ async function submitReport(ev){
       const r=await pwaQueueNewReport(payload,damagePhotos,ktpFile,kkFile);
       await clearOfflineDraft(false);resetForm(true);
       showMsg(`Laporan berhasil disimpan OFFLINE dengan ID ${r.localId}. Data dan foto aman di perangkat dan akan dikirim saat Sinkron dijalankan.`,true);
+      showSuccessOverlay('Data Berhasil Disimpan',`Laporan tersimpan di perangkat dengan ID ${r.localId} dan siap disinkronkan.`);
       if($('lookupKecamatan')){$('lookupKecamatan').value=submittedKecamatan;await loadLookupPetugas(submittedPetugas);await lookupPublicReports()}
-      btn.disabled=false;btn.textContent='Simpan Laporan';window.scrollTo({top:0,behavior:'smooth'});return;
+      btn.disabled=false;btn.textContent='Kirim Laporan';window.scrollTo({top:0,behavior:'smooth'});return;
     }
 
     // Online: simpan langsung ke server.
@@ -915,15 +1076,15 @@ async function submitReport(ev){
       if(ktpFile){await gsCall('uploadReportFile',created.id,created.uploadKey,'ktp',1,await fileToPayload(ktpFile,true));done++}
       if(kkFile){await gsCall('uploadReportFile',created.id,created.uploadKey,'kk',1,await fileToPayload(kkFile,true));done++}
       const fin=await gsCall('finalizeReportUpload',created.id,created.uploadKey);const wasEdit=!!EDIT_CONTEXT;
-      await clearOfflineDraft(false);EDIT_CONTEXT=null;updateEditModeUI();showMsg(`${wasEdit?'Perubahan laporan':'Laporan'} berhasil disimpan ke server. ID: ${fin.id}. Total foto: ${fin.photoCount}.`,true);resetForm(true);
+      await clearOfflineDraft(false);EDIT_CONTEXT=null;updateEditModeUI();showMsg(`${wasEdit?'Perubahan laporan':'Laporan'} berhasil disimpan ke server. ID: ${fin.id}. Total foto: ${fin.photoCount}.`,true);showSuccessOverlay(wasEdit?'Perubahan Berhasil Disimpan':'Laporan Berhasil Dikirim',`ID Laporan: ${fin.id}`);resetForm(true);
       if($('lookupKecamatan')){$('lookupKecamatan').value=submittedKecamatan;await loadLookupPetugas(submittedPetugas);await lookupPublicReports()}
     }catch(e){
       // Jika gagal sebelum server membuat ID, amankan laporan sebagai antrean offline.
-      if(!created){const r=await pwaQueueNewReport(payload,damagePhotos,ktpFile,kkFile);await clearOfflineDraft(false);resetForm(true);showMsg(`Koneksi/server gagal. Laporan diamankan di perangkat sebagai ${r.localId} dan menunggu sinkronisasi.`,true)}
+      if(!created){const r=await pwaQueueNewReport(payload,damagePhotos,ktpFile,kkFile);await clearOfflineDraft(false);resetForm(true);showMsg(`Koneksi/server gagal. Laporan diamankan di perangkat sebagai ${r.localId} dan menunggu sinkronisasi.`,true);showSuccessOverlay('Data Berhasil Disimpan',`Laporan diamankan di perangkat sebagai ${r.localId}.`)}
       else {throw e}
     }
   }catch(e){showMsg(e.message||String(e),false);await saveOfflineDraft(false).catch(()=>{})}
-  finally{btn.disabled=false;btn.textContent=EDIT_CONTEXT?'Simpan Perubahan':'Simpan Laporan';$('uploadProgress').textContent='';await pwaRefreshSyncStatus()}
+  finally{btn.disabled=false;btn.textContent=EDIT_CONTEXT?'Simpan Perubahan':'Kirim Laporan';$('uploadProgress').textContent='';await pwaRefreshSyncStatus()}
 }
 async function lookupPublicReports(){
   const kecamatan=v('lookupKecamatan'), petugas=v('lookupPetugas');
@@ -983,7 +1144,7 @@ function updateEditModeUI(){
   const editing=!!EDIT_CONTEXT;
   $('cancelEditBtn').classList.toggle('hide',!editing);
   $('editModeBanner').classList.toggle('hide',!editing);
-  $('submitBtn').textContent=editing?'Simpan Perubahan':'Simpan Laporan';
+  $('submitBtn').textContent=editing?'Simpan Perubahan':'Kirim Laporan';
   if(editing)$('editModeBanner').innerHTML=`<b>Mode Edit:</b> Laporan <b>${esc(EDIT_CONTEXT.id)}</b> masih belum diverifikasi. Petugas dapat memperbaiki data. Setelah admin memverifikasi, laporan otomatis terkunci.`;
   else $('editModeBanner').innerHTML='';
 }
@@ -1021,7 +1182,7 @@ async function saveOfflineDraft(showNotice=true){
   const ktp=getDocFile('ktp'), kk=getDocFile('kk'), updatedAt=Date.now();
   try{localStorage.setItem(TEXT_DRAFT_KEY,JSON.stringify({updatedAt,state}))}catch(e){}
   try{await draftDbPut({key:DRAFT_KEY,updatedAt,state,files:{damage,ktp,kk}})}catch(e){if(showNotice){showMsg('Data teks tersimpan sebagai draft, tetapi browser tidak dapat menyimpan semua file/foto secara lokal: '+errText(e),false);return}}
-  if(showNotice){const when=new Date(updatedAt).toLocaleString('id-ID');$('draftBanner').classList.remove('hide');$('draftBanner').innerHTML=`Draft tersimpan di perangkat pada <b>${esc(when)}</b>. <button type="button" class="btn ghost" onclick="restoreOfflineDraft()">Pulihkan Draft</button> <button type="button" class="btn red" onclick="clearOfflineDraft(true)">Hapus Draft</button>`;showMsg('Draft berhasil disimpan di perangkat. Data dapat dikirim ketika jaringan kembali online.',true)}
+  if(showNotice){const when=new Date(updatedAt).toLocaleString('id-ID');$('draftBanner').classList.remove('hide');$('draftBanner').innerHTML=`Draft tersimpan di perangkat pada <b>${esc(when)}</b>. <button type="button" class="btn ghost" onclick="restoreOfflineDraft()">Pulihkan Draft</button> <button type="button" class="btn red" onclick="clearOfflineDraft(true)">Hapus Draft</button>`;showMsg('Draft berhasil disimpan di perangkat. Data dapat dikirim ketika jaringan kembali online.',true);showSuccessOverlay('Draft Berhasil Disimpan','Data draft tersimpan aman di perangkat.')}
 }
 
 async function checkOfflineDraft(){
@@ -1085,8 +1246,33 @@ function hideMsg(){$('msg').innerHTML=''}
 function showError(e){showMsg(errText(e),false)}
 
 function showPublic(){$('publicView').classList.remove('hide');$('adminView').classList.add('hide');window.scrollTo(0,0)}
-function openAdminLogin(){if(ADMIN_TOKEN){showAdmin();loadAdmin();return}modal(`<div class="modalbox loginbox"><div class="modalhead"><b>Login Admin</b><button class="btn ghost" onclick="closeModal()">✕</button></div><div class="modalbody"><label>Password Admin</label><input id="adminPass" type="password" class="field" placeholder="Masukkan password"><div class="hint">Password awal: admin123. Segera ganti setelah login pertama.</div><div class="submitbar"><button class="btn green" onclick="adminLogin()">Login</button></div><div id="loginMsg"></div></div></div>`);setTimeout(()=>$('adminPass').focus(),50)}
-function adminLogin(){const p=$('adminPass').value;$('loginMsg').innerHTML='<div class="hint">Memeriksa...</div>';google.script.run.withSuccessHandler(r=>{ADMIN_TOKEN=r.token;closeModal();showAdmin();loadAdmin()}).withFailureHandler(e=>$('loginMsg').innerHTML=`<div class="notice err">${esc(errText(e))}</div>`).loginAdmin(p)}
+function openAdminLogin(){
+  if(ADMIN_TOKEN){showAdmin();loadAdmin();return}
+  if(!pwaBackendUrl()){
+    modal(`<div class="modalbox loginbox"><div class="modalhead"><b>Hubungkan Server</b><button class="btn ghost" onclick="closeModal()">✕</button></div><div class="modalbody"><label>URL Web App Google Apps Script (/exec)</label><input id="adminServerInput" class="field" placeholder="https://script.google.com/macros/s/.../exec"><div class="submitbar"><button class="btn green" onclick="connectServerThenAdmin()">Simpan & Lanjut</button></div><div id="adminServerMsg"></div></div></div>`);
+    setTimeout(()=>$('adminServerInput')?.focus(),50);return;
+  }
+  modal(`<div class="modalbox loginbox"><div class="modalhead"><b>Login Admin</b><button class="btn ghost" onclick="closeModal()">✕</button></div><div class="modalbody"><label>Password Admin</label><input id="adminPass" type="password" class="field" placeholder="Masukkan password" onkeydown="if(event.key==='Enter')adminLogin()"><div class="submitbar"><button class="btn green" onclick="adminLogin()">Login</button></div><div id="loginMsg"></div></div></div>`);
+  setTimeout(()=>$('adminPass')?.focus(),50);
+}
+async function connectServerThenAdmin(){
+  const input=$('adminServerInput'),msg=$('adminServerMsg');
+  try{
+    pwaSetBackendUrl(input.value);
+    msg.innerHTML='<div class="hint">Menghubungkan server...</div>';
+    const c=await pwaRemoteRpc('getPublicConfig',[]);
+    msg.innerHTML=`<div class="notice ok">Server terhubung: ${esc(c.appName||'SIGAP GEMPA FLORES')}</div>`;
+    setTimeout(()=>{closeModal();openAdminLogin()},450);
+  }catch(e){
+    msg.innerHTML=`<div class="notice err">${esc(errText(e))}</div>`;
+  }
+}
+function adminLogin(){
+  const p=$('adminPass').value;
+  if(!p){$('adminPass').classList.add('fieldError');$('loginMsg').innerHTML='<div class="notice err">Masukkan password admin.</div>';return}
+  $('loginMsg').innerHTML='<div class="hint">Memeriksa...</div>';
+  google.script.run.withSuccessHandler(r=>{ADMIN_TOKEN=r.token;closeModal();showAdmin();loadAdmin()}).withFailureHandler(e=>$('loginMsg').innerHTML=`<div class="notice err">${esc(errText(e))}</div>`).loginAdmin(p);
+}
 function showAdmin(){$('publicView').classList.add('hide');$('adminView').classList.remove('hide');window.scrollTo(0,0)}
 function adminLogout(){if(ADMIN_TOKEN)google.script.run.logoutAdmin(ADMIN_TOKEN);ADMIN_TOKEN='';ADMIN_DATA=null;showPublic()}
 
