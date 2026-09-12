@@ -553,11 +553,51 @@ textarea.field.fieldError{
 }
 </style>
 
+
+<style id="v16-separate-admin-sync-alert">
+/* ===== V16: Admin terpisah + peringatan sinkronisasi ===== */
+body.admin-mode #publicView{display:none!important}
+body.admin-mode #adminView{display:block!important}
+body:not(.admin-mode) #adminView{display:none!important}
+#pendingSyncAlert{grid-column:1/-1;width:100%;box-sizing:border-box;margin:0 0 10px}
+.pendingSyncAlert{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 13px;border-radius:10px;border:1px solid rgba(255,209,47,.72);background:linear-gradient(180deg,rgba(105,73,0,.50),rgba(72,48,0,.40));box-shadow:0 5px 18px rgba(0,0,0,.20);color:#fff4b6}
+.pendingSyncAlert.hide{display:none!important}
+.pendingSyncAlert .pendingCopy{display:flex;align-items:flex-start;gap:9px;min-width:0}
+.pendingSyncAlert .pendingIcon{font-size:20px;line-height:1}
+.pendingSyncAlert .pendingWords{min-width:0}
+.pendingSyncAlert strong{display:block;font-size:12px;color:#ffe165;margin-bottom:2px}
+.pendingSyncAlert span{display:block;font-size:10px;line-height:1.35;color:#d9e8f2}
+.pendingSyncAlert .btn{flex:0 0 auto;min-height:38px;padding:7px 12px;font-size:10px}
+.pendingSyncAlert.offline{border-color:rgba(126,159,180,.45);background:rgba(6,37,63,.86)}
+.pendingSyncAlert.offline strong{color:#b7d2e2}
+.pendingSyncAlert.no-server{border-color:rgba(255,144,56,.62);background:rgba(83,40,3,.72)}
+#adminView{min-height:calc(100dvh - 72px)}
+#adminView .adminBackBtn{margin-bottom:10px}
+@media(max-width:760px){
+  #pendingSyncAlert{margin:0 0 8px!important}
+  .pendingSyncAlert{padding:9px 10px;gap:8px;align-items:stretch;flex-direction:column}
+  .pendingSyncAlert .pendingCopy{gap:7px}
+  .pendingSyncAlert .pendingIcon{font-size:18px}
+  .pendingSyncAlert strong{font-size:11px}
+  .pendingSyncAlert span{font-size:9px}
+  .pendingSyncAlert .btn{width:100%;min-height:40px}
+  body.admin-mode .top .nav .btn:not(:last-child){display:none!important}
+  body.admin-mode .top .nav .btn:last-child{display:none!important}
+  body.admin-mode .topin{min-height:58px!important}
+  body.admin-mode .brandCopy small{display:block!important}
+  #adminView{padding-top:8px!important}
+}
+</style>
+
 </head>
 <body>
   <header class="top"><div class="topin"><div class="brand"><img class="brandMark" src="logo-manggarai.png" alt="Logo Kabupaten Manggarai"><span class="brandCopy"><b>SIGAP GEMPA FLORES</b><small>Sistem Pendataan Kerusakan Rumah Akibat Gempa</small></span></div><div class="nav"><button class="btn light" onclick="showPublic()">⌂ Beranda</button><button id="installBtn" class="btn light" onclick="installPwa()">⬇ Pasang Aplikasi</button><button class="btn light" onclick="syncPendingReports()">↻ Sinkron Data</button><button class="btn light" onclick="openPwaSettings()">⚙ Server</button><button class="btn gold" onclick="openAdminLogin()">🔐 Admin</button></div></div></header>
 
   <main id="publicView" class="wrap">
+    <div id="pendingSyncAlert" class="pendingSyncAlert hide" role="status" aria-live="polite">
+      <div class="pendingCopy"><div class="pendingIcon">⚠</div><div class="pendingWords"><strong id="pendingSyncTitle">Data belum disinkronkan</strong><span id="pendingSyncText"></span></div></div>
+      <button id="pendingSyncBtn" type="button" class="btn gold" onclick="syncPendingReports()">↻ Sinkronkan Sekarang</button>
+    </div>
     <section class="hero"><div class="heroInner"><img class="heroSeal" src="logo-manggarai.png" alt="Logo Kabupaten Manggarai"><span class="badge">PEMERINTAH KABUPATEN MANGGARAI</span><h1>SIGAP <em>GEMPA FLORES</em></h1><h2 class="heroSubtitle">Sistem Pendataan Kerusakan Rumah Akibat Gempa</h2><div class="heroStats"><div><strong id="heroLocalCount">0</strong><small>Laporan perangkat</small></div><div><strong id="heroPendingCount">0</strong><small>Belum sinkron</small></div><div><strong id="heroNetState">Online</strong><small>Jaringan</small></div></div><div class="netbar"><span id="netDot" class="netdot"></span><b id="netText">Online</b></div><div id="syncStatus" class="syncBadge">Memeriksa...</div></div></section>
     <div id="draftBanner" class="draftbox hide"></div>
     <div id="editModeBanner" class="editbox hide"></div>
@@ -629,6 +669,7 @@ textarea.field.fieldError{
   </main>
 
   <main id="adminView" class="wrap hide">
+    <button type="button" class="btn ghost adminBackBtn" onclick="showPublic()">← Kembali ke Form Pendataan</button>
     <section class="hero"><div><span class="badge">DASHBOARD ADMIN</span><h1>Verifikasi Laporan Kerusakan Rumah</h1></div></section>
     <div id="adminStats" class="stats" style="margin-top:16px"></div>
     <div class="toolbar"><input id="searchAdmin" class="field" placeholder="Cari ID, nama, NIK, desa, alamat, petugas..." onkeydown="if(event.key==='Enter')loadAdmin()"><button class="btn green" onclick="loadAdmin()">Cari / Refresh</button><button class="btn ghost" onclick="showVillageSummary()">Rekap Desa</button><button class="btn gold" id="exportExcelBtn" onclick="exportAdminExcel()">⬇ Download Excel</button><button class="btn ghost" onclick="showSystemInfo()">Database</button><button class="btn ghost" onclick="openChangePassword()">Ganti Password</button><button class="btn red" onclick="adminLogout()">Logout</button></div>
@@ -719,7 +760,47 @@ async function pwaGetReportByAnyId(id){const all=await pwaGetReports();return al
 function pwaMakeLocalId(){const d=new Date(),p=n=>String(n).padStart(2,'0');return `OFF-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}-${Math.random().toString(36).slice(2,6).toUpperCase()}`}
 async function pwaQueueNewReport(payload,damagePhotos,ktpFile,kkFile){const localId=pwaMakeLocalId();const obj={localId,serverId:'',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),syncState:'pending',verificationStatus:'Belum Diverifikasi',payload,damagePhotos:damagePhotos.map(x=>x.file),ktpFile:ktpFile||null,kkFile:kkFile||null,photoCount:damagePhotos.length,lastSyncError:''};await pwaPutReport(obj);await pwaRefreshSyncStatus();return obj}
 async function pwaUpdateLocalReport(localId,payload,newPhotos,ktpFile,kkFile){const r=await pwaGetReportByAnyId(localId);if(!r)throw new Error('Laporan lokal tidak ditemukan.');r.payload=payload;r.updatedAt=new Date().toISOString();if(r.syncState==='pending'){r.damagePhotos=(r.damagePhotos||[]).concat(newPhotos.map(x=>x.file));r.photoCount=r.damagePhotos.length;if(ktpFile)r.ktpFile=ktpFile;if(kkFile)r.kkFile=kkFile}else{r.extraDamagePhotos=(r.extraDamagePhotos||[]).concat(newPhotos.map(x=>x.file));r.extraKtpFile=ktpFile||r.extraKtpFile||null;r.extraKkFile=kkFile||r.extraKkFile||null;r.syncState='updatePending'}await pwaPutReport(r);await pwaRefreshSyncStatus();return r}
-async function pwaRefreshSyncStatus(){const el=document.getElementById('syncStatus');let all=[];try{all=await pwaGetReports()}catch(e){}const n=all.filter(x=>x.syncState==='pending'||x.syncState==='updatePending').length;const backend=!!pwaBackendUrl();if(el){el.className='syncBadge '+(n?'':'ok');el.textContent=n?`${n} laporan menunggu sinkronisasi${navigator.onLine?'':' • offline'}`:(backend?'Semua data lokal sudah tersinkron':'Mode offline siap • server belum diatur')}const lc=document.getElementById('heroLocalCount'),pc=document.getElementById('heroPendingCount'),ns=document.getElementById('heroNetState');if(lc)lc.textContent=String(all.length);if(pc)pc.textContent=String(n);if(ns)ns.textContent=navigator.onLine?'Online':'Offline'}
+async function pwaRefreshSyncStatus(){
+  const el=document.getElementById('syncStatus');
+  let all=[];
+  try{all=await pwaGetReports()}catch(e){}
+  const n=all.filter(x=>x.syncState==='pending'||x.syncState==='updatePending').length;
+  const backend=!!pwaBackendUrl();
+  const online=!!navigator.onLine;
+  if(el){
+    el.className='syncBadge '+(n?'':'ok');
+    el.textContent=n?`${n} laporan menunggu sinkronisasi${online?'':' • offline'}`:(backend?'Semua data lokal sudah tersinkron':'Mode offline siap • server belum diatur');
+  }
+  const lc=document.getElementById('heroLocalCount'),pc=document.getElementById('heroPendingCount'),ns=document.getElementById('heroNetState');
+  if(lc)lc.textContent=String(all.length);
+  if(pc)pc.textContent=String(n);
+  if(ns)ns.textContent=online?'Online':'Offline';
+
+  const alertBox=document.getElementById('pendingSyncAlert');
+  const title=document.getElementById('pendingSyncTitle');
+  const text=document.getElementById('pendingSyncText');
+  const btn=document.getElementById('pendingSyncBtn');
+  if(alertBox){
+    alertBox.classList.toggle('hide',n===0);
+    alertBox.classList.toggle('offline',n>0&&!online);
+    alertBox.classList.toggle('no-server',n>0&&online&&!backend);
+    if(n>0){
+      if(!online){
+        if(title)title.textContent=`${n} laporan belum disinkronkan`;
+        if(text)text.textContent='Data aman di perangkat. Sinkronkan segera setelah internet tersedia.';
+        if(btn){btn.textContent='Menunggu Internet';btn.disabled=true;btn.onclick=null;}
+      }else if(!backend){
+        if(title)title.textContent=`${n} laporan belum disinkronkan`;
+        if(text)text.textContent='Internet tersedia. Hubungkan server terlebih dahulu agar data dapat dikirim.';
+        if(btn){btn.textContent='⚙ Hubungkan Server';btn.disabled=false;btn.onclick=()=>openPwaSettings();}
+      }else{
+        if(title)title.textContent=`${n} laporan belum disinkronkan`;
+        if(text)text.textContent='Internet tersedia. Segera sinkronkan agar data masuk ke database pusat.';
+        if(btn){btn.textContent='↻ Sinkronkan Sekarang';btn.disabled=false;btn.onclick=()=>syncPendingReports();}
+      }
+    }
+  }
+}
 
 async function pwaLocalPetugas(kecamatan){const all=await pwaGetReports(),m=new Map();for(const r of all){const p=r.payload||{};if(normText(p.kecamatan)!==normText(kecamatan))continue;const key=normText(p.namaPetugas);if(key&&!m.has(key))m.set(key,{nama:p.namaPetugas,noHp:p.noHpPetugas||''})}return {kecamatan,petugas:[...m.values()].sort((a,b)=>a.nama.localeCompare(b.nama,'id'))}}
 async function pwaLocalSubmitted(kecamatan,petugas){const all=await pwaGetReports();const rows=all.filter(r=>normText(r.payload?.kecamatan)===normText(kecamatan)&&normText(r.payload?.namaPetugas)===normText(petugas)).map(r=>({id:r.serverId||r.localId,timestamp:new Date(r.createdAt).toLocaleString('id-ID'),namaPemilik:r.payload.namaPemilik,desa:r.payload.desa,alamat:r.payload.alamat,jumlahFoto:r.photoCount||0,canEdit:r.verificationStatus!=='Terverifikasi',local:true,syncState:r.syncState}));return {kecamatan,petugas,rows}}
@@ -1245,7 +1326,13 @@ function showMsg(t,ok){$('msg').innerHTML=`<div class="notice ${ok?'ok':'err'}">
 function hideMsg(){$('msg').innerHTML=''}
 function showError(e){showMsg(errText(e),false)}
 
-function showPublic(){$('publicView').classList.remove('hide');$('adminView').classList.add('hide');window.scrollTo(0,0)}
+function showPublic(){
+  document.body.classList.remove('admin-mode');
+  $('publicView').classList.remove('hide');
+  $('adminView').classList.add('hide');
+  window.scrollTo(0,0);
+  setTimeout(pwaRefreshSyncStatus,0);
+}
 function openAdminLogin(){
   if(ADMIN_TOKEN){showAdmin();loadAdmin();return}
   if(!pwaBackendUrl()){
@@ -1273,7 +1360,12 @@ function adminLogin(){
   $('loginMsg').innerHTML='<div class="hint">Memeriksa...</div>';
   google.script.run.withSuccessHandler(r=>{ADMIN_TOKEN=r.token;closeModal();showAdmin();loadAdmin()}).withFailureHandler(e=>$('loginMsg').innerHTML=`<div class="notice err">${esc(errText(e))}</div>`).loginAdmin(p);
 }
-function showAdmin(){$('publicView').classList.add('hide');$('adminView').classList.remove('hide');window.scrollTo(0,0)}
+function showAdmin(){
+  document.body.classList.add('admin-mode');
+  $('publicView').classList.add('hide');
+  $('adminView').classList.remove('hide');
+  window.scrollTo(0,0);
+}
 function adminLogout(){if(ADMIN_TOKEN)google.script.run.logoutAdmin(ADMIN_TOKEN);ADMIN_TOKEN='';ADMIN_DATA=null;showPublic()}
 
 function loadAdmin(){if(!ADMIN_TOKEN){openAdminLogin();return}const q=v('searchAdmin');$('adminRows').innerHTML='<tr><td colspan="9">Memuat data...</td></tr>';google.script.run.withSuccessHandler(d=>{ADMIN_DATA=d;renderStats(d.stats);renderRows(d.rows)}).withFailureHandler(adminFail).getAdminDashboard(ADMIN_TOKEN,q)}
