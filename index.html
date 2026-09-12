@@ -687,6 +687,101 @@ body:not(.admin-mode) #adminView{display:none!important}
 }
 </style>
 
+
+<style id="desktop-v19-single-column">
+/* ===== V19 DESKTOP: SATU KOLOM, TANPA PANEL KIRI/KANAN ===== */
+@media (min-width:981px){
+  .topin,.wrap{max-width:1240px!important}
+  .wrap{width:calc(100% - 32px)!important;margin:14px auto 0!important;padding:0 0 38px!important}
+
+  /* Halaman publik menjadi satu alur vertikal */
+  #publicView{display:block!important;width:calc(100% - 32px)!important;max-width:1240px!important}
+  #pendingSyncAlert,#draftBanner,#editModeBanner,#msg{width:100%!important;margin:0 0 10px!important}
+
+  /* Identitas aplikasi menjadi banner ringkas di bagian atas */
+  #publicView>.hero{
+    position:relative!important;top:auto!important;width:100%!important;min-height:0!important;
+    margin:0 0 12px!important;padding:14px 18px!important;border-radius:12px!important;
+  }
+  #publicView>.hero .heroInner{
+    min-height:0!important;display:grid!important;
+    grid-template-columns:82px minmax(0,1fr) 320px!important;
+    grid-template-rows:auto auto auto!important;
+    column-gap:16px!important;row-gap:3px!important;align-items:center!important;
+  }
+  #publicView>.hero .heroSeal{
+    grid-column:1!important;grid-row:1 / span 3!important;width:72px!important;height:auto!important;
+    max-height:86px!important;margin:0!important;align-self:center!important;
+  }
+  #publicView>.hero .badge{
+    grid-column:2!important;grid-row:1!important;justify-self:start!important;
+    margin:0 0 2px!important;font-size:8px!important;padding:4px 8px!important;
+  }
+  #publicView>.hero h1{
+    grid-column:2!important;grid-row:2!important;margin:0!important;font-size:27px!important;
+    line-height:.98!important;white-space:normal!important;
+  }
+  #publicView>.hero h1 em{display:inline!important;font-size:1em!important;margin-left:5px!important}
+  #publicView>.hero .heroSubtitle{
+    grid-column:2!important;grid-row:3!important;margin:2px 0 0!important;max-width:none!important;
+    font-size:11px!important;line-height:1.25!important;
+  }
+  #publicView>.hero .heroStats{
+    grid-column:3!important;grid-row:1 / span 2!important;display:grid!important;
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:7px!important;margin:0!important;
+    align-self:center!important;
+  }
+  #publicView>.hero .heroStats>div{padding:8px!important;min-width:0!important}
+  #publicView>.hero .heroStats strong{font-size:16px!important}
+  #publicView>.hero .heroStats small{font-size:7px!important}
+  #publicView>.hero .netbar{
+    grid-column:3!important;grid-row:3!important;margin:3px 0 0!important;font-size:8px!important;
+    justify-self:end!important;
+  }
+  #publicView>.hero #syncStatus{display:none!important}
+
+  /* Form utama full-width */
+  #reportForm{
+    display:block!important;width:100%!important;max-width:none!important;margin:0!important;
+    padding:14px!important;border-radius:12px!important;
+  }
+  #reportForm .formTitle{padding:2px 2px 11px!important}
+  #reportForm .card{width:100%!important}
+  #reportForm .grid{grid-template-columns:repeat(12,minmax(0,1fr))!important;gap:10px!important}
+  #reportForm .c12{grid-column:span 12!important}
+  #reportForm .c8{grid-column:span 8!important}
+  #reportForm .c6{grid-column:span 6!important}
+  #reportForm .c4{grid-column:span 4!important}
+  #reportForm .c3{grid-column:span 3!important}
+  #reportForm .c2{grid-column:span 2!important}
+
+  /* Foto dan dokumen memanfaatkan lebar halaman */
+  #reportForm .photoPreviewGrid{grid-template-columns:repeat(6,minmax(0,1fr))!important}
+  #reportForm .docPreviewGrid{grid-template-columns:1fr 1fr!important}
+
+  /* Tabel penilaian selalu penuh dan tanpa scrollbar horizontal */
+  #reportForm .damageWrap{width:100%!important;overflow:visible!important}
+  #reportForm .damageTable{width:100%!important;min-width:0!important;table-layout:fixed!important}
+  #reportForm .damageTable th:nth-child(1),#reportForm .damageTable td:nth-child(1){width:21%!important}
+  #reportForm .damageTable th:nth-child(2),#reportForm .damageTable td:nth-child(2){width:51%!important}
+  #reportForm .damageTable th:nth-child(3),#reportForm .damageTable td:nth-child(3){width:17%!important}
+  #reportForm .damageTable th:nth-child(4),#reportForm .damageTable td:nth-child(4){width:11%!important}
+
+  /* Cek data terinput di bawah form, satu panel penuh */
+  #publicHistoryCard{display:block!important;width:100%!important;margin:12px 0 0!important}
+  #publicHistoryCard>.cardbody>.grid{grid-template-columns:1fr 1fr!important;gap:12px!important}
+  #publicHistoryCard .submitbar{justify-content:flex-end!important}
+
+  /* Admin juga satu area penuh */
+  #adminView{max-width:1240px!important;width:calc(100% - 32px)!important;margin:14px auto 0!important}
+}
+@media (min-width:1280px){
+  .topin,.wrap,#adminView{max-width:1320px!important}
+  #publicView{max-width:1320px!important}
+  #publicView>.hero .heroInner{grid-template-columns:88px minmax(0,1fr) 350px!important}
+}
+</style>
+
 </head>
 <body>
   <header class="top"><div class="topin"><div class="brand"><img class="brandMark" src="logo-manggarai.png" alt="Logo Kabupaten Manggarai"><span class="brandCopy"><b>SIGAP GEMPA FLORES</b><small>Sistem Pendataan Kerusakan Rumah Akibat Gempa</small></span></div><div class="nav"><button class="btn light" onclick="showPublic()">⌂ Beranda</button><button id="installBtn" class="btn light" onclick="installPwa()">⬇ Pasang Aplikasi</button><button class="btn light" onclick="syncPendingReports()">↻ Sinkron Data</button><button class="btn light" onclick="openPwaSettings()">⚙ Server</button><button class="btn gold" onclick="openAdminLogin()">🔐 Admin</button></div></div></header>
