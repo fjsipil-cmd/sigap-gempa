@@ -700,8 +700,9 @@ body:not(.admin-mode) #adminView{display:none!important}
 
   /* Identitas aplikasi menjadi banner ringkas di bagian atas */
   #publicView>.hero{
-    position:relative!important;top:auto!important;width:100%!important;min-height:0!important;
+    position:sticky!important;top:8px!important;z-index:38!important;width:100%!important;min-height:0!important;
     margin:0 0 12px!important;padding:14px 18px!important;border-radius:12px!important;
+    backdrop-filter:blur(14px)!important;
   }
   #publicView>.hero .heroInner{
     min-height:0!important;display:grid!important;
@@ -739,6 +740,23 @@ body:not(.admin-mode) #adminView{display:none!important}
     justify-self:end!important;
   }
   #publicView>.hero #syncStatus{display:none!important}
+
+  /* Menu desktop dipindahkan ke banner SIGAP, sejajar dengan status Online.
+     Header paling atas disembunyikan agar tulisan SIGAP tidak dobel. Banner ini sticky di desktop. */
+  body>.top{display:none!important}
+  #publicView>.hero .heroInner{grid-template-columns:82px minmax(280px,1fr) minmax(520px,650px)!important}
+  #publicView>.hero .heroStats{grid-column:3!important;grid-row:1 / span 2!important}
+  #publicView>.hero .heroControlRow{
+    grid-column:3!important;grid-row:3!important;display:flex!important;align-items:center!important;justify-content:flex-end!important;
+    gap:6px!important;min-width:0!important;margin-top:3px!important;position:static!important;
+  }
+  #publicView>.hero .heroControlRow .netbar{
+    margin:0!important;padding:6px 8px!important;flex:0 0 auto!important;white-space:nowrap!important;justify-self:auto!important;
+  }
+  #publicView>.hero .desktopHeroNav{display:flex!important;align-items:center!important;justify-content:flex-end!important;gap:5px!important;flex-wrap:nowrap!important;min-width:0!important}
+  #publicView>.hero .desktopHeroNav .btn{
+    min-height:30px!important;padding:6px 8px!important;font-size:8px!important;line-height:1!important;white-space:nowrap!important;border-radius:6px!important;
+  }
 
   /* Form utama full-width */
   #reportForm{
@@ -782,6 +800,26 @@ body:not(.admin-mode) #adminView{display:none!important}
 }
 </style>
 
+
+<style id="desktop-v22-hero-menu-tuning">
+/* V22: hanya desktop. Mobile tetap memakai header/menu versi V18/V19. */
+.desktopHeroNav{display:none}
+@media (min-width:981px){
+  body>.top{display:none!important}
+  #publicView>.hero .heroControlRow{position:static!important}
+}
+@media (min-width:981px) and (max-width:1160px){
+  #publicView>.hero .heroInner{grid-template-columns:72px minmax(220px,1fr) minmax(470px,1.35fr)!important;column-gap:10px!important}
+  #publicView>.hero .desktopHeroNav{gap:3px!important}
+  #publicView>.hero .desktopHeroNav .btn{padding:5px 6px!important;font-size:7px!important}
+  #publicView>.hero .heroControlRow .netbar{padding:5px 6px!important}
+}
+@media (max-width:980px){
+  body>.top{display:block!important}
+  .desktopHeroNav{display:none!important}
+  #publicView>.hero .heroControlRow{display:block!important}
+}
+</style>
 </head>
 <body>
   <header class="top"><div class="topin"><div class="brand"><img class="brandMark" src="logo-manggarai.png" alt="Logo Kabupaten Manggarai"><span class="brandCopy"><b>SIGAP GEMPA FLORES</b><small>Sistem Pendataan Kerusakan Rumah Akibat Gempa</small></span></div><div class="nav"><button class="btn light" onclick="showPublic()">⌂ Beranda</button><button id="installBtn" class="btn light" onclick="installPwa()">⬇ Pasang Aplikasi</button><button class="btn light" onclick="syncPendingReports()">↻ Sinkron Data</button><button class="btn light" onclick="openPwaSettings()">⚙ Server</button><button class="btn gold" onclick="openAdminLogin()">🔐 Admin</button></div></div></header>
@@ -791,7 +829,7 @@ body:not(.admin-mode) #adminView{display:none!important}
       <div class="pendingCopy"><div class="pendingIcon">⚠</div><div class="pendingWords"><strong id="pendingSyncTitle">Data belum disinkronkan</strong><span id="pendingSyncText"></span></div></div>
       <button id="pendingSyncBtn" type="button" class="btn gold" onclick="syncPendingReports()">↻ Sinkronkan Sekarang</button>
     </div>
-    <section class="hero"><div class="heroInner"><img class="heroSeal" src="logo-manggarai.png" alt="Logo Kabupaten Manggarai"><span class="badge">PEMERINTAH KABUPATEN MANGGARAI</span><h1>SIGAP <em>GEMPA FLORES</em></h1><h2 class="heroSubtitle">Sistem Pendataan Kerusakan Rumah Akibat Gempa</h2><div class="heroStats"><div><strong id="heroLocalCount">0</strong><small>Laporan perangkat</small></div><div><strong id="heroPendingCount">0</strong><small>Belum sinkron</small></div><div><strong id="heroNetState">Online</strong><small>Jaringan</small></div></div><div class="netbar"><span id="netDot" class="netdot"></span><b id="netText">Online</b></div><div id="syncStatus" class="syncBadge">Memeriksa...</div></div></section>
+    <section class="hero"><div class="heroInner"><img class="heroSeal" src="logo-manggarai.png" alt="Logo Kabupaten Manggarai"><span class="badge">PEMERINTAH KABUPATEN MANGGARAI</span><h1>SIGAP <em>GEMPA FLORES</em></h1><h2 class="heroSubtitle">Sistem Pendataan Kerusakan Rumah Akibat Gempa</h2><div class="heroStats"><div><strong id="heroLocalCount">0</strong><small>Laporan perangkat</small></div><div><strong id="heroPendingCount">0</strong><small>Belum sinkron</small></div><div><strong id="heroNetState">Online</strong><small>Jaringan</small></div></div><div class="heroControlRow"><div class="netbar"><span id="netDot" class="netdot"></span><b id="netText">Online</b></div><div class="desktopHeroNav" aria-label="Menu utama desktop"><button class="btn light" onclick="showPublic()">⌂ Beranda</button><button id="installBtnDesktop" class="btn light" onclick="installPwa()">⬇ Pasang Aplikasi</button><button class="btn light" onclick="syncPendingReports()">↻ Sinkron Data</button><button class="btn light" onclick="openPwaSettings()">⚙ Server</button><button class="btn gold" onclick="openAdminLogin()">🔐 Admin</button></div></div><div id="syncStatus" class="syncBadge">Memeriksa...</div></div></section>
     <div id="draftBanner" class="draftbox hide"></div>
     <div id="editModeBanner" class="editbox hide"></div>
     <div id="msg"></div>
@@ -921,7 +959,7 @@ const PWA_BACKEND_KEY='sigap_backend_exec_url';
 let PWA_DEFERRED_PROMPT=null, PWA_BRIDGE_FRAME=null, PWA_BRIDGE_READY=false, PWA_BRIDGE_SOURCE=null, PWA_BRIDGE_TOKEN='', PWA_BRIDGE_ORIGIN='*', PWA_RPC_SEQ=0;
 const PWA_RPC_PENDING=new Map();
 
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();PWA_DEFERRED_PROMPT=e;const b=document.getElementById('installBtn');if(b){b.classList.remove('hide');b.textContent='⬇ Pasang Aplikasi'}});
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();PWA_DEFERRED_PROMPT=e;const bs=[document.getElementById('installBtn'),document.getElementById('installBtnDesktop')].filter(Boolean);bs.forEach(b=>{b.classList.remove('hide');b.textContent='⬇ Pasang Aplikasi'})});
 window.addEventListener('appinstalled',()=>{const b=document.getElementById('installBtn');if(b){b.textContent='✓ Terpasang';b.disabled=true}PWA_DEFERRED_PROMPT=null});
 window.addEventListener('load',()=>{if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});setTimeout(pwaRefreshSyncStatus,800)});
 window.addEventListener('online',()=>{pwaRefreshSyncStatus();setTimeout(()=>syncPendingReports(true),1200)});
