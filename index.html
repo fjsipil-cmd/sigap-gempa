@@ -65,6 +65,17 @@
 }
 @media (max-width: 390px){.nav{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
 
+
+/* ===== V18 ADMIN DASHBOARD INTERAKTIF ===== */
+body.admin-mode #installBtn{display:none!important}
+#adminStats .adminStat{appearance:none;-webkit-appearance:none;text-align:left;font:inherit;cursor:pointer;transition:.16s ease;min-width:0}
+#adminStats .adminStat:hover{transform:translateY(-1px);border-color:rgba(255,209,47,.72)!important;box-shadow:0 7px 18px rgba(0,0,0,.16)}
+#adminStats .adminStat.active{border-color:var(--gold)!important;box-shadow:0 0 0 1px rgba(255,209,47,.28) inset,0 7px 18px rgba(0,0,0,.16)}
+#adminStats .adminStat:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.adminFilterBar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:9px 0 2px;padding:9px 11px;border:1px solid rgba(34,189,245,.28);border-radius:9px;background:rgba(6,37,63,.62);color:#dff4ff;font-size:10px}
+.adminFilterBar strong{color:var(--gold)}
+.adminFilterBar .btn{min-height:30px!important;padding:5px 9px!important;font-size:9px!important}
+@media(max-width:760px){.adminFilterBar{font-size:11px;align-items:flex-start}.adminFilterBar .btn{flex:0 0 auto}}
 </style>
 
 <style id="lapor-jalan-inspired-theme">
@@ -589,6 +600,93 @@ body:not(.admin-mode) #adminView{display:none!important}
 }
 </style>
 
+
+<style id="desktop-v17-clean-layout">
+/* ===== V17 DESKTOP CLEAN: layout lebih lebar, seimbang, tanpa scrollbar penilaian ===== */
+@media (min-width:981px){
+  html,body{overflow-x:hidden}
+  body{font-size:14px}
+  .topin,.wrap{max-width:1460px!important}
+  .topin{padding:9px 16px!important;gap:16px!important}
+  .brand{min-width:310px!important;display:flex!important;align-items:center!important;gap:9px!important}
+  .brandMark{width:38px!important;height:38px!important;object-fit:contain!important}
+  .brandCopy b{font-size:14px!important;line-height:1.1!important}
+  .brandCopy small{font-size:8px!important;line-height:1.25!important;margin-top:2px!important}
+  .nav{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;justify-content:flex-end!important;align-items:center!important;gap:6px!important;width:auto!important;overflow:visible!important}
+  .nav .btn{width:auto!important;min-width:auto!important;min-height:36px!important;padding:8px 11px!important;font-size:10px!important;line-height:1!important;white-space:nowrap!important;border-radius:7px!important}
+
+  .wrap{width:calc(100% - 28px)!important;margin:14px auto 0!important;padding:0 0 36px!important}
+  #publicView{display:grid!important;grid-template-columns:360px minmax(0,1fr)!important;gap:16px!important;align-items:start!important}
+  #pendingSyncAlert{grid-column:1/-1!important;margin:0!important}
+  #publicView>.hero{grid-column:1!important;grid-row:1!important;position:sticky!important;top:66px!important;min-height:520px!important;margin:0!important;padding:18px!important;border-radius:13px!important}
+  .heroInner{min-height:482px!important}
+  .heroSeal{width:96px!important;max-height:108px!important;margin:4px 0 12px!important}
+  .hero .badge{font-size:8px!important;padding:5px 9px!important;margin-bottom:8px!important}
+  .hero h1{font-size:34px!important;line-height:.94!important;margin:6px 0 7px!important}
+  .heroSubtitle{font-size:13px!important;line-height:1.22!important;max-width:320px!important;margin-bottom:9px!important}
+  .heroStats{gap:7px!important}.heroStats>div{padding:9px 8px!important}.heroStats strong{font-size:18px!important}.heroStats small{font-size:8px!important}
+  .netbar{margin:9px 0 0!important;font-size:9px!important}.syncBadge{font-size:9px!important;padding:6px 8px!important;margin-top:7px!important}
+
+  #draftBanner,#editModeBanner,#msg{grid-column:2!important;margin:0!important}
+  #reportForm{grid-column:2!important;grid-row:1 / span 8!important;width:100%!important;margin:0!important;padding:13px!important;border-radius:13px!important}
+  .formTitle{padding:2px 2px 10px!important;margin-bottom:1px!important}.formTitle b{font-size:14px!important}.formIcon{width:30px!important;height:30px!important;font-size:13px!important}.formState{font-size:8px!important}
+  #reportForm .card{margin-top:10px!important;border-radius:9px!important}
+  #reportForm .cardhead{padding:9px 11px!important;font-size:11px!important}
+  #reportForm .cardbody{padding:11px!important}
+  #reportForm .grid{gap:10px!important}
+  #reportForm label{font-size:10px!important;margin-bottom:4px!important}
+  #reportForm .field,#reportForm select.field,#reportForm textarea.field{min-height:38px!important;padding:8px 9px!important;font-size:11px!important;border-radius:7px!important}
+  #reportForm textarea.field{min-height:58px!important}
+  #reportForm .hint,#reportForm .status{font-size:8px!important;margin-top:3px!important}
+  #reportForm .btn{min-height:36px!important;padding:8px 10px!important;font-size:10px!important;border-radius:7px!important}
+  #reportForm .coord{gap:7px!important}
+
+  .multiUploadZone.simpleUpload{grid-template-columns:auto 1fr!important;align-items:center!important;gap:9px!important;padding:8px!important}
+  .multiUploadZone .uploadPrimary{width:auto!important;min-width:150px!important;margin:0!important}
+  .photoPreviewGrid{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:7px!important}
+  .photoPreviewCard{padding:6px!important}.photoPreviewCard .preview{height:88px!important}.photoIndex{font-size:8px!important}.fileName{font-size:7px!important}
+  .photoActions{display:flex!important;gap:7px!important;margin-top:8px!important}.photoActions .btn{width:auto!important}
+  .docsUploadBlock{margin-top:11px!important;padding-top:10px!important}.docPreviewGrid{grid-template-columns:1fr 1fr!important;gap:8px!important}.docPreview{min-height:88px!important}.docPreview img{height:88px!important}
+
+  .damageWrap{overflow:visible!important;border-radius:8px!important}
+  .damageTable{width:100%!important;min-width:0!important;table-layout:fixed!important}
+  .damageTable th,.damageTable td{padding:7px 8px!important;font-size:9px!important;line-height:1.25!important}
+  .damageTable th:nth-child(1),.damageTable td:nth-child(1){width:22%!important}
+  .damageTable th:nth-child(2),.damageTable td:nth-child(2){width:50%!important}
+  .damageTable th:nth-child(3),.damageTable td:nth-child(3){width:17%!important}
+  .damageTable th:nth-child(4),.damageTable td:nth-child(4){width:11%!important}
+  .damageTable select{min-height:34px!important;padding:6px 7px!important;font-size:10px!important;font-weight:400!important}
+  .damageWeight{font-size:12px!important;font-weight:700!important}
+  .totalWeight{position:relative!important;bottom:auto!important;margin-top:8px!important;padding:8px 10px!important;border-radius:8px!important;font-size:10px!important;box-shadow:none!important}.totalWeight strong{font-size:16px!important}
+
+  .submitbar{position:relative!important;bottom:auto!important;display:flex!important;justify-content:flex-end!important;gap:7px!important;margin:11px 0 0!important;padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important}
+  .submitbar .btn{width:auto!important;min-width:120px!important}.submitbar #submitBtn{min-width:150px!important}
+
+  #publicHistoryCard{grid-column:1/-1!important;width:100%!important;margin-top:0!important;border:1px solid rgba(34,189,245,.30)!important;background:rgba(5,31,55,.92)!important;border-radius:11px!important;overflow:hidden!important}
+  #publicHistoryCard>.cardhead{padding:10px 12px!important;background:rgba(9,55,84,.78)!important;border-bottom:1px solid rgba(34,189,245,.25)!important;font-size:11px!important}
+  #publicHistoryCard>.cardbody{padding:12px!important}
+  #publicHistoryCard>.cardbody>.grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:12px!important;max-width:none!important}
+  #publicHistoryCard .submitbar{justify-content:flex-end!important;margin-top:9px!important}
+  #publicHistoryCard #lookupBtn{min-width:180px!important}
+  #publicHistoryCard .tableWrap{margin-top:10px!important}
+
+  #adminView{width:calc(100% - 28px)!important;max-width:1460px!important;margin:14px auto 0!important;padding:0 0 36px!important}
+  #adminView .hero{padding:15px 17px!important;margin-bottom:12px!important;border-radius:12px!important}
+  #adminView .hero h1{font-size:22px!important;margin:4px 0!important}
+  #adminView .stats{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:8px!important}
+  #adminView .stat{padding:12px!important;border-radius:10px!important}.stat strong{font-size:22px!important}
+  #adminView .toolbar{display:flex!important;align-items:center!important;gap:7px!important;flex-wrap:wrap!important;margin:11px 0!important}
+  #adminView .toolbar input{min-width:320px!important;flex:1 1 380px!important}
+  #adminView .toolbar .btn{min-height:38px!important;padding:8px 10px!important;font-size:10px!important}
+  #adminView .tableWrap{border-radius:10px!important}.table{min-width:1100px!important}.table th,.table td{padding:9px!important;font-size:10px!important}
+}
+@media (min-width:1280px){
+  #publicView{grid-template-columns:390px minmax(0,1fr)!important;gap:18px!important}
+  .photoPreviewGrid{grid-template-columns:repeat(6,minmax(0,1fr))!important}
+  #reportForm{padding:14px!important}
+}
+</style>
+
 </head>
 <body>
   <header class="top"><div class="topin"><div class="brand"><img class="brandMark" src="logo-manggarai.png" alt="Logo Kabupaten Manggarai"><span class="brandCopy"><b>SIGAP GEMPA FLORES</b><small>Sistem Pendataan Kerusakan Rumah Akibat Gempa</small></span></div><div class="nav"><button class="btn light" onclick="showPublic()">⌂ Beranda</button><button id="installBtn" class="btn light" onclick="installPwa()">⬇ Pasang Aplikasi</button><button class="btn light" onclick="syncPendingReports()">↻ Sinkron Data</button><button class="btn light" onclick="openPwaSettings()">⚙ Server</button><button class="btn gold" onclick="openAdminLogin()">🔐 Admin</button></div></div></header>
@@ -671,8 +769,8 @@ body:not(.admin-mode) #adminView{display:none!important}
   <main id="adminView" class="wrap hide">
     <button type="button" class="btn ghost adminBackBtn" onclick="showPublic()">← Kembali ke Form Pendataan</button>
     <section class="hero"><div><span class="badge">DASHBOARD ADMIN</span><h1>Verifikasi Laporan Kerusakan Rumah</h1></div></section>
-    <div id="adminStats" class="stats" style="margin-top:16px"></div>
-    <div class="toolbar"><input id="searchAdmin" class="field" placeholder="Cari ID, nama, NIK, desa, alamat, petugas..." onkeydown="if(event.key==='Enter')loadAdmin()"><button class="btn green" onclick="loadAdmin()">Cari / Refresh</button><button class="btn ghost" onclick="showVillageSummary()">Rekap Desa</button><button class="btn gold" id="exportExcelBtn" onclick="exportAdminExcel()">⬇ Download Excel</button><button class="btn ghost" onclick="showSystemInfo()">Database</button><button class="btn ghost" onclick="openChangePassword()">Ganti Password</button><button class="btn red" onclick="adminLogout()">Logout</button></div>
+    <div id="adminStats" class="stats" style="margin-top:16px"></div><div id="adminFilterBar" class="adminFilterBar hide"></div>
+    <div class="toolbar"><input id="searchAdmin" class="field" placeholder="Cari ID, nama, NIK, desa, alamat, petugas..." onkeydown="if(event.key==='Enter')loadAdmin(true)"><button class="btn green" onclick="loadAdmin(true)">Cari / Refresh</button><button class="btn ghost" onclick="showVillageSummary()">Rekap Desa</button><button class="btn gold" id="exportExcelBtn" onclick="exportAdminExcel()">⬇ Download Excel</button><button class="btn ghost" onclick="showSystemInfo()">Database</button><button class="btn ghost" onclick="openChangePassword()">Ganti Password</button><button class="btn red" onclick="adminLogout()">Logout</button></div>
     <div class="tableWrap"><table class="table"><thead><tr><th>ID</th><th>Tanggal</th><th>Nama Pemilik</th><th>Desa/Kelurahan</th><th>Petugas</th><th>Bobot (%)</th><th>Tingkat Kerusakan</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="adminRows"></tbody></table></div>
   </main>
 
@@ -857,7 +955,7 @@ async function syncPendingReports(silent=false){
 </script>
 
 <script>
-let CONFIG=null, ADMIN_TOKEN='', ADMIN_DATA=null, PHOTO_SEQ=0, EDIT_CONTEXT=null;
+let CONFIG=null, ADMIN_TOKEN='', ADMIN_DATA=null, ADMIN_QUICK_FILTER='all', PHOTO_SEQ=0, EDIT_CONTEXT=null;
 let OFFLINE_DRAFT_FILES={damage:{},ktp:null,kk:null};
 const DRAFT_DB='sigap_gempa_draft_db', DRAFT_STORE='drafts', DRAFT_KEY='current', CONFIG_CACHE_KEY='sigap_config_v1', TEXT_DRAFT_KEY='sigap_text_draft_v1';
 let AUTO_DRAFT_TIMER=null;
@@ -1366,11 +1464,73 @@ function showAdmin(){
   $('adminView').classList.remove('hide');
   window.scrollTo(0,0);
 }
-function adminLogout(){if(ADMIN_TOKEN)google.script.run.logoutAdmin(ADMIN_TOKEN);ADMIN_TOKEN='';ADMIN_DATA=null;showPublic()}
+function adminLogout(){if(ADMIN_TOKEN)google.script.run.logoutAdmin(ADMIN_TOKEN);ADMIN_TOKEN='';ADMIN_DATA=null;ADMIN_QUICK_FILTER='all';showPublic()}
 
-function loadAdmin(){if(!ADMIN_TOKEN){openAdminLogin();return}const q=v('searchAdmin');$('adminRows').innerHTML='<tr><td colspan="9">Memuat data...</td></tr>';google.script.run.withSuccessHandler(d=>{ADMIN_DATA=d;renderStats(d.stats);renderRows(d.rows)}).withFailureHandler(adminFail).getAdminDashboard(ADMIN_TOKEN,q)}
-function renderStats(s){$('adminStats').innerHTML=[['Total Laporan',s.total],['Belum Diverifikasi',s.belum],['Rusak Ringan',s.ringan],['Rusak Sedang',s.sedang],['Rusak Berat',s.berat]].map(x=>`<div class="stat"><small>${x[0]}</small><strong>${x[1]}</strong></div>`).join('')}
-function renderRows(rows){$('adminRows').innerHTML=rows.length?rows.map(r=>`<tr><td><b>${esc(r.id)}</b></td><td>${esc(r.timestamp)}</td><td>${esc(r.namaPemilik)}<br><small>${esc(r.nik)}</small></td><td>${esc(r.desa)}</td><td>${esc(r.petugas)}</td><td><b>${r.score}%</b></td><td>${r.tingkat?levelPill(r.tingkat):'<span class="pill p-wait">Belum ditetapkan</span>'}</td><td>${r.status==='Terverifikasi'?'<span class="pill p-ok">Terverifikasi</span>':'<span class="pill p-wait">Belum</span>'}</td><td><button class="btn ghost" onclick="openDetail('${escAttr(r.id)}')">Detail</button></td></tr>`).join(''):'<tr><td colspan="9">Tidak ada data.</td></tr>'}
+function loadAdmin(resetQuick=false){
+  if(!ADMIN_TOKEN){openAdminLogin();return}
+  if(resetQuick)ADMIN_QUICK_FILTER='all';
+  const q=v('searchAdmin');
+  if(q)ADMIN_QUICK_FILTER='all';
+  $('adminRows').innerHTML='<tr><td colspan="9">Memuat data...</td></tr>';
+  google.script.run.withSuccessHandler(d=>{
+    ADMIN_DATA=d;
+    renderStats(d.stats);
+    renderRows(filterAdminRows(d.rows||[]));
+    renderAdminFilterBar();
+  }).withFailureHandler(adminFail).getAdminDashboard(ADMIN_TOKEN,q)
+}
+function adminFilterMeta(key){
+  const m={
+    all:['Semua Laporan','total'],
+    belum:['Belum Diverifikasi','belum'],
+    ringan:['Rusak Ringan','ringan'],
+    sedang:['Rusak Sedang','sedang'],
+    berat:['Rusak Berat','berat']
+  };
+  return m[key]||m.all
+}
+function filterAdminRows(rows){
+  if(ADMIN_QUICK_FILTER==='belum')return rows.filter(r=>r.status!=='Terverifikasi');
+  if(ADMIN_QUICK_FILTER==='ringan')return rows.filter(r=>r.tingkat==='Rusak Ringan');
+  if(ADMIN_QUICK_FILTER==='sedang')return rows.filter(r=>r.tingkat==='Rusak Sedang');
+  if(ADMIN_QUICK_FILTER==='berat')return rows.filter(r=>r.tingkat==='Rusak Berat');
+  return rows
+}
+function setAdminQuickFilter(key){
+  ADMIN_QUICK_FILTER=key||'all';
+  if($('searchAdmin'))$('searchAdmin').value='';
+  $('adminRows').innerHTML='<tr><td colspan="9">Memuat data...</td></tr>';
+  google.script.run.withSuccessHandler(d=>{
+    ADMIN_DATA=d;
+    renderStats(d.stats);
+    renderRows(filterAdminRows(d.rows||[]));
+    renderAdminFilterBar();
+    const table=$('adminRows')?.closest('.tableWrap');
+    if(table)table.scrollIntoView({behavior:'smooth',block:'start'});
+  }).withFailureHandler(adminFail).getAdminDashboard(ADMIN_TOKEN,'')
+}
+function clearAdminQuickFilter(){setAdminQuickFilter('all')}
+function renderStats(s){
+  const items=[
+    ['all','Total Laporan',s.total],
+    ['belum','Belum Diverifikasi',s.belum],
+    ['ringan','Rusak Ringan',s.ringan],
+    ['sedang','Rusak Sedang',s.sedang],
+    ['berat','Rusak Berat',s.berat]
+  ];
+  $('adminStats').innerHTML=items.map(x=>`<button type="button" class="stat adminStat ${ADMIN_QUICK_FILTER===x[0]?'active':''}" onclick="setAdminQuickFilter('${x[0]}')" title="Tampilkan ${escAttr(x[1])}"><small>${esc(x[1])}</small><strong>${x[2]}</strong></button>`).join('')
+}
+function renderAdminFilterBar(){
+  const bar=$('adminFilterBar');if(!bar)return;
+  const q=v('searchAdmin');
+  if(q){bar.classList.remove('hide');bar.innerHTML=`<span>Hasil pencarian: <strong>${esc(q)}</strong></span><button type="button" class="btn ghost" onclick="$('searchAdmin').value='';loadAdmin(true)">Tampilkan Semua</button>`;return}
+  const meta=adminFilterMeta(ADMIN_QUICK_FILTER);
+  if(ADMIN_QUICK_FILTER==='all'){bar.classList.add('hide');bar.innerHTML='';return}
+  const count=ADMIN_DATA?.stats?.[meta[1]]??filterAdminRows(ADMIN_DATA?.rows||[]).length;
+  bar.classList.remove('hide');
+  bar.innerHTML=`<span>Menampilkan: <strong>${esc(meta[0])}</strong> (${count} laporan)</span><button type="button" class="btn ghost" onclick="clearAdminQuickFilter()">Tampilkan Semua</button>`
+}
+function renderRows(rows){$('adminRows').innerHTML=rows.length?rows.map(r=>`<tr><td><b>${esc(r.id)}</b></td><td>${esc(r.timestamp)}</td><td>${esc(r.namaPemilik)}<br><small>${esc(r.nik)}</small></td><td>${esc(r.desa)}</td><td>${esc(r.petugas)}</td><td><b>${r.score}%</b></td><td>${r.tingkat?levelPill(r.tingkat):'<span class="pill p-wait">Belum ditetapkan</span>'}</td><td>${r.status==='Terverifikasi'?'<span class="pill p-ok">Terverifikasi</span>':'<span class="pill p-wait">Belum</span>'}</td><td><button class="btn ghost" onclick="openDetail('${escAttr(r.id)}')">Detail</button></td></tr>`).join(''):'<tr><td colspan="9">Tidak ada data pada kategori ini.</td></tr>'}
 function levelPill(x){const c=x.includes('Berat')?'p-heavy':x.includes('Sedang')?'p-mid':'p-light';return `<span class="pill ${c}">${esc(x)}</span>`}
 function adminFail(e){const t=errText(e);if(t.toLowerCase().includes('sesi')){ADMIN_TOKEN='';openAdminLogin()}else alert(t)}
 
