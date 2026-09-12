@@ -253,12 +253,37 @@
   #damagePhotoCount{font-size:11px!important;margin-bottom:0!important}
 }
 </style>
+
+<style id="mobile-v8-readable-damage">
+/* V8: subtitle tetap tampil + area penilaian kerusakan lebih mudah dibaca/disentuh */
+.brandCopy{min-width:0}
+.brandCopy small{display:block!important;margin-top:2px;line-height:1.2;color:#b9d8e9!important;font-weight:600;white-space:normal}
+.damageSectionHead{font-size:15px!important;font-weight:900!important;letter-spacing:.01em;color:#f4fbff!important}
+.damageSection .damageTable td:nth-child(1){font-size:13px!important;line-height:1.25!important}
+.damageSection .damageTable select.field{min-height:48px!important;font-size:15px!important;line-height:1.25!important;padding:10px 38px 10px 11px!important;font-weight:700!important}
+.damageSection .damageWeight{font-size:14px!important;font-weight:900!important;display:inline-flex;align-items:center;justify-content:center;min-width:46px;min-height:28px;padding:4px 8px;border-radius:7px;background:rgba(255,209,47,.10);border:1px solid rgba(255,209,47,.34);color:#ffe369}
+@media(max-width:768px){
+  .brandCopy b{font-size:13px!important;line-height:1.15!important}
+  .brandCopy small{font-size:9.5px!important;max-width:250px}
+  .damageSectionHead{font-size:15px!important;padding-top:11px!important;padding-bottom:11px!important}
+  .damageTable tr{padding:10px!important;margin-bottom:9px!important}
+  .damageTable td:nth-child(1){font-size:14px!important;padding-bottom:8px!important}
+  .damageTable td:nth-child(2)::before,.damageTable td:nth-child(3)::before,.damageTable td:nth-child(4)::before{font-size:10px!important;margin-bottom:5px!important}
+  .damageSection .damageTable select.field{width:100%!important;min-height:54px!important;font-size:16px!important;padding:13px 42px 13px 12px!important;border-radius:10px!important;font-weight:800!important}
+  .damageSection .damageTable td{padding:5px 0!important}
+  .damageSection .damageWeight{font-size:14px!important;min-height:30px!important;padding:5px 9px!important}
+}
+@media(max-width:390px){
+  .brandCopy small{font-size:9px!important;max-width:210px}
+  .damageSection .damageTable select.field{min-height:52px!important;font-size:15.5px!important}
+}
+</style>
 </head>
 <body>
-  <header class="top"><div class="topin"><div class="brand"><img class="brandMark" src="logo-manggarai.png" alt="Logo Kabupaten Manggarai"><span class="brandCopy"><b>SIGAP GEMPA FLORES</b></span></div><div class="nav"><button class="btn light" onclick="showPublic()">⌂ Beranda</button><button id="installBtn" class="btn light" onclick="installPwa()">⬇ Pasang Aplikasi</button><button class="btn light" onclick="syncPendingReports()">↻ Sinkron Data</button><button class="btn light" onclick="openPwaSettings()">⚙ Server</button><button class="btn gold" onclick="openAdminLogin()">🔐 Admin</button></div></div></header>
+  <header class="top"><div class="topin"><div class="brand"><img class="brandMark" src="logo-manggarai.png" alt="Logo Kabupaten Manggarai"><span class="brandCopy"><b>SIGAP GEMPA FLORES</b><small>Sistem Pendataan Kerusakan Rumah Akibat Gempa</small></span></div><div class="nav"><button class="btn light" onclick="showPublic()">⌂ Beranda</button><button id="installBtn" class="btn light" onclick="installPwa()">⬇ Pasang Aplikasi</button><button class="btn light" onclick="syncPendingReports()">↻ Sinkron Data</button><button class="btn light" onclick="openPwaSettings()">⚙ Server</button><button class="btn gold" onclick="openAdminLogin()">🔐 Admin</button></div></div></header>
 
   <main id="publicView" class="wrap">
-    <section class="hero"><div class="heroInner"><img class="heroSeal" src="logo-manggarai.png" alt="Logo Kabupaten Manggarai"><span class="badge">PEMERINTAH KABUPATEN MANGGARAI</span><h1>SIGAP <em>GEMPA FLORES</em></h1><h2 class="heroSubtitle">Pendataan Kerusakan Rumah Akibat Gempa</h2><div class="heroStats"><div><strong id="heroLocalCount">0</strong><small>Laporan perangkat</small></div><div><strong id="heroPendingCount">0</strong><small>Belum sinkron</small></div><div><strong id="heroNetState">Online</strong><small>Jaringan</small></div></div><div class="netbar"><span id="netDot" class="netdot"></span><b id="netText">Online</b></div><div id="syncStatus" class="syncBadge">Memeriksa...</div></div></section>
+    <section class="hero"><div class="heroInner"><img class="heroSeal" src="logo-manggarai.png" alt="Logo Kabupaten Manggarai"><span class="badge">PEMERINTAH KABUPATEN MANGGARAI</span><h1>SIGAP <em>GEMPA FLORES</em></h1><h2 class="heroSubtitle">Sistem Pendataan Kerusakan Rumah Akibat Gempa</h2><div class="heroStats"><div><strong id="heroLocalCount">0</strong><small>Laporan perangkat</small></div><div><strong id="heroPendingCount">0</strong><small>Belum sinkron</small></div><div><strong id="heroNetState">Online</strong><small>Jaringan</small></div></div><div class="netbar"><span id="netDot" class="netdot"></span><b id="netText">Online</b></div><div id="syncStatus" class="syncBadge">Memeriksa...</div></div></section>
     <div id="draftBanner" class="draftbox hide"></div>
     <div id="editModeBanner" class="editbox hide"></div>
     <div id="msg"></div>
@@ -303,7 +328,7 @@
         </div>
       </div></section>
 
-      <section class="card"><div class="cardhead">4. Data kerusakan bangunan</div><div class="cardbody"><div class="damageWrap"><table class="damageTable"><thead><tr><th style="width:190px">Bagian Bangunan</th><th>Jenis Kerusakan — pilih satu</th><th style="width:155px">Jumlah Komponen</th><th style="width:100px">Bobot (%)</th></tr></thead><tbody id="damageRows"></tbody></table></div><div class="totalWeight"><span>Total Bobot Kerusakan</span><strong id="totalDamageWeight">0%</strong></div></div></section>
+      <section class="card damageSection"><div class="cardhead damageSectionHead">4. Data Kerusakan Rumah</div><div class="cardbody"><div class="damageWrap"><table class="damageTable"><thead><tr><th style="width:190px">Bagian Bangunan</th><th>Jenis Kerusakan — pilih satu</th><th style="width:155px">Jumlah Komponen</th><th style="width:100px">Bobot (%)</th></tr></thead><tbody id="damageRows"></tbody></table></div><div class="totalWeight"><span>Total Bobot Kerusakan</span><strong id="totalDamageWeight">0%</strong></div></div></section>
 
       <section class="card"><div class="cardhead">5. Petugas dan kepemilikan aset</div><div class="cardbody"><div class="grid">
         <div class="c6"><label class="req">Nama Petugas</label><input id="namaPetugas" class="field" list="petugasHistoryList" required autocomplete="off" oninput="applyPetugasHistory()" placeholder="Pilih/ketik nama"><datalist id="petugasHistoryList"></datalist><div class="hint compactHiddenHint" id="petugasHistoryHint"></div></div>
