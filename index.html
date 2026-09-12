@@ -419,38 +419,47 @@
 }
 </style>
 
-<style id="mobile-v13-damage-10px-muted">
-/* V13: Jenis Kerusakan + Jumlah Komponen = 10px, normal; placeholder/default dibuat lebih redup. */
+<style id="mobile-v14-damage-11px-extra-muted">
+/* V14: Jenis Kerusakan + Jumlah Komponen = 11px, normal; placeholder/default dibuat lebih redup. */
 .field::placeholder, textarea.field::placeholder, input.field::placeholder{
-  color:rgba(172,202,219,.44)!important;
+  color:rgba(172,202,219,.28)!important;
   opacity:1!important;
   font-weight:400!important;
 }
 select.field:has(option[value=""]:checked){
-  color:rgba(172,202,219,.52)!important;
+  color:rgba(172,202,219,.34)!important;
+  font-weight:400!important;
+}
+.damageSection .damageTable td::before{
+  color:rgba(159,193,212,.48)!important;
   font-weight:400!important;
 }
 .damageSection .damageTable td:nth-child(2) select.field.damageEmpty{
-  color:rgba(172,202,219,.46)!important;
+  color:rgba(172,202,219,.30)!important;
+  font-weight:400!important;
 }
 .damageSection .damageTable td:nth-child(3) select.field:disabled{
-  color:rgba(172,202,219,.42)!important;
-  opacity:.75!important;
+  color:rgba(172,202,219,.26)!important;
+  opacity:.60!important;
+  font-weight:400!important;
+}
+.damageSection .damageTable td:nth-child(2) select.field.damageEmpty option[value=""]{
+  color:#7894a6!important;
 }
 @media(max-width:768px){
   .damageSection .damageTable td:nth-child(2) select.field,
   .damageSection .damageTable td:nth-child(2) select.field option,
   .damageSection .damageTable td:nth-child(3) select.field,
   .damageSection .damageTable td:nth-child(3) select.field option{
-    font-size:10px!important;
+    font-size:11px!important;
     font-weight:400!important;
     font-family:inherit!important;
     line-height:1.15!important;
   }
   .damageSection .damageTable td:nth-child(2) select.field{
-    min-height:36px!important;
-    height:36px!important;
-    padding:5px 32px 5px 8px!important;
+    min-height:38px!important;
+    height:38px!important;
+    padding:6px 32px 6px 8px!important;
   }
   .damageSection .damageTable td:nth-child(3) select.field{
     width:112px!important;
@@ -465,7 +474,7 @@ select.field:has(option[value=""]:checked){
   .damageSection .damageTable td:nth-child(2) select.field option,
   .damageSection .damageTable td:nth-child(3) select.field,
   .damageSection .damageTable td:nth-child(3) select.field option{
-    font-size:10px!important;
+    font-size:11px!important;
     font-weight:400!important;
   }
   .damageSection .damageTable td:nth-child(3) select.field{
