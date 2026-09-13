@@ -838,6 +838,71 @@ body:not(.admin-mode) #adminView{display:none!important}
 #publicHistoryCard .lookupActionBtns{display:flex;gap:5px;flex-wrap:wrap;align-items:center}
 #publicHistoryCard .lookupActionBtns .btn{min-height:32px!important;padding:6px 9px!important;font-size:9px!important}
 </style>
+
+<style>
+/* V26: Data Terinput desktop penuh + scrollbar horizontal yang jelas. */
+@media (min-width:981px){
+  #publicHistoryCard>.cardbody{
+    display:block!important;
+    width:100%!important;
+  }
+  #publicHistoryCard>.cardbody>p,
+  #publicHistoryCard>.cardbody>.grid,
+  #publicHistoryCard>.cardbody>.submitbar,
+  #publicHistoryCard>.cardbody>#lookupMsg,
+  #publicHistoryCard #lookupResults{
+    width:100%!important;
+    max-width:100%!important;
+    margin-left:0!important;
+    margin-right:0!important;
+  }
+  #publicHistoryCard>.cardbody>.grid{
+    display:grid!important;
+    grid-template-columns:minmax(260px,1fr) minmax(320px,1fr)!important;
+    gap:12px!important;
+  }
+  #publicHistoryCard>.cardbody>.grid>.c6{
+    grid-column:auto!important;
+    width:auto!important;
+    min-width:0!important;
+  }
+  #publicHistoryCard>.cardbody>.submitbar{
+    display:flex!important;
+    justify-content:flex-start!important;
+    position:static!important;
+    background:transparent!important;
+    box-shadow:none!important;
+  }
+  #publicHistoryCard>.cardbody>.submitbar .btn{
+    width:auto!important;
+    min-width:230px!important;
+  }
+  #publicHistoryCard #lookupResults{
+    display:block!important;
+    margin-top:12px!important;
+  }
+  #publicHistoryCard #lookupResults.hide{display:none!important}
+  #publicHistoryCard #lookupResults .tableWrap{
+    display:block!important;
+    width:100%!important;
+    max-width:100%!important;
+    overflow-x:scroll!important;
+    overflow-y:visible!important;
+    -webkit-overflow-scrolling:touch!important;
+    scrollbar-gutter:stable both-edges;
+    padding-bottom:3px;
+  }
+  #publicHistoryCard #lookupResults .table{
+    width:1150px!important;
+    min-width:1150px!important;
+    max-width:none!important;
+  }
+  #publicHistoryCard #lookupResults .tableWrap::-webkit-scrollbar{height:12px}
+  #publicHistoryCard #lookupResults .tableWrap::-webkit-scrollbar-track{background:#04182b;border-radius:999px}
+  #publicHistoryCard #lookupResults .tableWrap::-webkit-scrollbar-thumb{background:#1678a7;border-radius:999px;border:2px solid #04182b}
+}
+</style>
+
 </head>
 <body>
   <header class="top"><div class="topin"><div class="brand"><img class="brandMark" src="logo-manggarai.png" alt="Logo Kabupaten Manggarai"><span class="brandCopy"><b>SIGAP GEMPA FLORES</b><small>Sistem Pendataan Kerusakan Rumah Akibat Gempa</small></span></div><div class="nav"><button class="btn light" onclick="showPublic()">⌂ Beranda</button><button id="installBtn" class="btn light" onclick="installPwa()">⬇ Pasang Aplikasi</button><button class="btn light" onclick="syncPendingReports()">↻ Sinkron Data</button><button class="btn light" onclick="openPwaSettings()">⚙ Server</button><button class="btn gold" onclick="openAdminLogin()">🔐 Admin</button></div></div></header>
@@ -982,7 +1047,7 @@ const PWA_RPC_PENDING=new Map();
 
 window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();PWA_DEFERRED_PROMPT=e;const bs=[document.getElementById('installBtn'),document.getElementById('installBtnDesktop')].filter(Boolean);bs.forEach(b=>{b.classList.remove('hide');b.textContent='⬇ Pasang Aplikasi'})});
 window.addEventListener('appinstalled',()=>{const b=document.getElementById('installBtn');if(b){b.textContent='✓ Terpasang';b.disabled=true}PWA_DEFERRED_PROMPT=null});
-window.addEventListener('load',()=>{if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});setTimeout(pwaRefreshSyncStatus,800)});
+window.addEventListener('load',()=>{if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(()=>{});if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});setTimeout(pwaRefreshSyncStatus,800);setTimeout(()=>{if(navigator.onLine&&pwaBackendUrl())syncPendingReports(true).catch(()=>{})},2200)});
 window.addEventListener('online',()=>{pwaRefreshSyncStatus();setTimeout(()=>syncPendingReports(true),1200)});
 window.addEventListener('offline',pwaRefreshSyncStatus);
 
@@ -1002,7 +1067,7 @@ function installPwa(){
 function pwaBackendUrl(){return (localStorage.getItem(PWA_BACKEND_KEY)||'').trim()}
 function pwaSetBackendUrl(u){u=String(u||'').trim();if(u&& !/\/exec(?:\?|$)/.test(u))throw new Error('Gunakan URL deployment Google Apps Script yang berakhir /exec.');localStorage.setItem(PWA_BACKEND_KEY,u);PWA_BRIDGE_READY=false;PWA_BRIDGE_SOURCE=null;PWA_BRIDGE_TOKEN='';PWA_BRIDGE_ORIGIN='*';if(PWA_BRIDGE_FRAME){PWA_BRIDGE_FRAME.remove();PWA_BRIDGE_FRAME=null}}
 function openPwaSettings(){const u=pwaBackendUrl();modal(`<div class="modalbox loginbox"><div class="modalhead"><b>Pengaturan Server & Offline</b><button class="btn ghost" onclick="closeModal()">✕</button></div><div class="modalbody"><p class="hint">Aplikasi tetap dapat dipakai tanpa server saat offline. URL server hanya diperlukan untuk sinkronisasi ke Google Sheet/Drive dan Dashboard Admin.</p><label>URL Web App Google Apps Script (/exec)</label><input id="pwaBackendInput" class="field" value="${escAttr(u)}" placeholder="https://script.google.com/macros/s/.../exec"><div class="submitbar"><button class="btn ghost" onclick="testPwaServer()">Tes Server</button><button class="btn green" onclick="savePwaServer()">Simpan</button></div><div id="pwaServerMsg"></div><hr style="border:0;border-top:1px solid #ddd;margin:16px 0"><button class="btn ghost" onclick="syncPendingReports()">↻ Sinkronkan Data Offline Sekarang</button></div></div>`)}
-function savePwaServer(){try{pwaSetBackendUrl(document.getElementById('pwaBackendInput').value);document.getElementById('pwaServerMsg').innerHTML='<div class="notice ok">URL server tersimpan di perangkat ini.</div>';pwaRefreshSyncStatus()}catch(e){document.getElementById('pwaServerMsg').innerHTML=`<div class="notice err">${esc(e.message)}</div>`}}
+function savePwaServer(){try{pwaSetBackendUrl(document.getElementById('pwaBackendInput').value);document.getElementById('pwaServerMsg').innerHTML='<div class="notice ok">URL server pusat tersimpan di perangkat ini.</div>';pwaRefreshSyncStatus();if(navigator.onLine&&pwaBackendUrl())setTimeout(()=>syncPendingReports(true).catch(()=>{}),400)}catch(e){document.getElementById('pwaServerMsg').innerHTML=`<div class="notice err">${esc(e.message)}</div>`}}
 async function testPwaServer(){const m=document.getElementById('pwaServerMsg');try{pwaSetBackendUrl(document.getElementById('pwaBackendInput').value);m.innerHTML='<div class="hint">Menghubungkan...</div>';const c=await pwaRemoteRpc('getPublicConfig',[]);m.innerHTML=`<div class="notice ok">Server terhubung: ${esc(c.appName||'SIGAP GEMPA FLORES')}</div>`}catch(e){m.innerHTML=`<div class="notice err">${esc(e.message||String(e))}</div>`}}
 
 function pwaOpenDb(){return new Promise((resolve,reject)=>{const r=indexedDB.open(PWA_DB,1);r.onupgradeneeded=()=>{const db=r.result;if(!db.objectStoreNames.contains(PWA_REPORT_STORE))db.createObjectStore(PWA_REPORT_STORE,{keyPath:'localId'})};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)})}
@@ -1098,7 +1163,23 @@ async function pwaRpc(method,args){
     if(navigator.onLine&&pwaBackendUrl()){try{return merge(await refresh())}catch(e){}}
     return merge(null)
   }
-  if(method==='getPublicSubmittedReports'){const local=await pwaLocalSubmitted(args[0],args[1]);if(navigator.onLine&&pwaBackendUrl()){try{const rem=await pwaRemoteRpc(method,args);const seen=new Set((rem.rows||[]).map(x=>x.id));return {...rem,rows:[...(local.rows||[]).filter(x=>!seen.has(x.id)),...(rem.rows||[])]}}catch(e){}}return local}
+  if(method==='getPublicSubmittedReports'){
+    const local=await pwaLocalSubmitted(args[0],args[1]);
+    if(navigator.onLine&&pwaBackendUrl()){
+      try{
+        // Database server adalah sumber utama agar laporan dari HP/laptop yang berbeda
+        // tetap muncul dalam satu sistem. Lokal hanya ditambahkan bila BELUM tersinkron.
+        const rem=await pwaRemoteRpc(method,args);
+        const serverRows=(rem&&rem.rows)||[];
+        const seen=new Set(serverRows.map(x=>String(x.id||'')));
+        const pendingLocal=(local.rows||[]).filter(x=>x.syncState!=='synced'&&!seen.has(String(x.id||'')));
+        return {...rem,centralized:true,rows:[...pendingLocal,...serverRows]};
+      }catch(e){
+        // Jika server sementara tidak terjangkau, data lokal tetap dapat dilihat.
+      }
+    }
+    return {...local,centralized:false}
+  }
   if(method==='getPublicEditableReport'){const local=await pwaGetReportByAnyId(args[2]);if(local)return pwaLocalEditable(args[2]);return pwaRemoteRpc(method,args)}
   return pwaRemoteRpc(method,args);
 }
@@ -1785,14 +1866,25 @@ async function cancelVerificationUI(id,button){
   const oldText=button?button.textContent:'';
   if(button){button.disabled=true;button.textContent='Membatalkan...'}
   try{
-    const r=await gsCall('cancelVerification',ADMIN_TOKEN,id);
+    if(!navigator.onLine)throw new Error('Batalkan verifikasi membutuhkan koneksi internet.');
+    if(!pwaBackendUrl())throw new Error('Server pusat belum diatur.');
+    // healthCheck memberi pesan yang lebih jelas jika frontend dan backend berbeda versi.
+    const hc=await pwaRemoteRpc('healthCheck',[]);
+    const bv=String(hc&&hc.backendVersion||'');
+    if(!bv || Number(bv.split('.')[0])<26){
+      throw new Error('Backend Google Apps Script masih versi lama. Ganti Code.gs dan Bridge.html V26 lalu Deploy sebagai New version.');
+    }
+    const r=await pwaRemoteRpc('cancelVerification',[ADMIN_TOKEN,id]);
     const local=await pwaGetReportByAnyId(id).catch(()=>null);
     if(local){local.verificationStatus='Belum Diverifikasi';local.updatedAt=new Date().toISOString();await pwaPutReport(local).catch(()=>{})}
     closeModal();
     await loadAdmin();
     showSuccessOverlay('Verifikasi Dibatalkan',`Laporan ${r?.id||id} kembali berstatus Belum Diverifikasi.`);
   }catch(e){
-    adminFail(e);
+    const msg=errText(e);
+    if(/undefined is not an object|runner\[|not a function/i.test(msg)){
+      alert('Backend/Bridge masih versi lama. Upload Code.gs dan Bridge.html V26 ke Google Apps Script, lalu Deploy → Manage deployments → Edit → New version → Deploy.');
+    }else adminFail(e);
   }finally{
     if(button){button.disabled=false;button.textContent=oldText||'Batalkan Verifikasi'}
   }
@@ -1843,6 +1935,6 @@ function errText(e){return (e&&e.message)?e.message:String(e||'Terjadi kesalahan
 function esc(s){return String(s==null?'':s).replace(/[&<>'"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[m]))}
 function escAttr(s){return esc(s).replace(/`/g,'&#96;')}
 </script>
-<!-- V25 FIX: hapus pelapor, batal verifikasi, dropdown petugas desktop. -->
+<!-- V26 FIX: bridge RPC aman, tabel desktop dapat digeser, data terpusat lintas HP/laptop. -->
 </body>
 </html>
