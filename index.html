@@ -960,8 +960,8 @@ body:not(.admin-mode) #adminView{display:none!important}
       <section class="card damageSection"><div class="cardhead damageSectionHead">4. Data Kerusakan Rumah</div><div class="cardbody"><div class="damageWrap"><table class="damageTable"><thead><tr><th style="width:190px">Bagian Bangunan</th><th>Jenis Kerusakan — pilih satu</th><th style="width:155px">Jumlah Komponen</th><th style="width:100px">Bobot (%)</th></tr></thead><tbody id="damageRows"></tbody></table></div><div class="totalWeight"><span>Total Bobot Kerusakan</span><strong id="totalDamageWeight">0%</strong></div></div></section>
 
       <section class="card"><div class="cardhead">5. Petugas dan kepemilikan aset</div><div class="cardbody"><div class="grid">
-        <div class="c6"><label class="req">Nama Petugas</label><input id="namaPetugas" class="field" list="petugasHistoryList" required autocomplete="off" oninput="applyPetugasHistory()" placeholder="Pilih/ketik nama"><datalist id="petugasHistoryList"></datalist><div class="hint compactHiddenHint" id="petugasHistoryHint"></div></div>
-        <div class="c6"><label class="req">No. HP Petugas</label><input id="noHpPetugas" class="field" inputmode="tel" required placeholder="08xxxxxxxxxx"></div>
+        <div class="c6"><label class="req">Nama Petugas</label><input id="namaPetugas" class="field" required autocomplete="off" list="petugasHistoryList" oninput="onEntryPetugasInput()" onchange="onEntryPetugasInput(true)" placeholder="Ketik atau pilih nama petugas"><datalist id="petugasHistoryList"></datalist><div class="hint compactHiddenHint" id="petugasHistoryHint"></div></div>
+        <div class="c6"><label class="req">No. HP Petugas</label><input id="noHpPetugas" class="field" inputmode="tel" required autocomplete="tel" placeholder="08xxxxxxxxxx"></div>
         <div class="c6"><label>Kepemilikan Bangunan</label><select id="kepemilikanBangunan" class="field"><option value="">Pilih</option><option>Sendiri</option><option>Pihak Lain</option></select></div>
         <div class="c6"><label>Kepemilikan Tanah</label><select id="kepemilikanTanah" class="field"><option value="">Pilih</option><option>Sendiri</option><option>Pihak Lain</option></select></div>
       </div><div class="submitbar"><button type="button" class="btn ghost" onclick="saveOfflineDraft(true)">💾 Simpan Draft</button><button id="cancelEditBtn" type="button" class="btn red hide" onclick="cancelEdit()">Batalkan Edit</button><button type="button" class="btn ghost" onclick="clearFormAndDraft()">Bersihkan</button><button id="submitBtn" type="submit" class="btn green">Kirim Laporan</button></div></div></section>
@@ -1148,7 +1148,7 @@ async function pwaRpc(method,args){
     const ck=PETUGAS_CACHE_PREFIX+encodeURIComponent(normText(kec));
     let cached=null;
     try{cached=JSON.parse(localStorage.getItem(ck)||'null')}catch(e){}
-    const merge=(remote)=>{const m=new Map();[...((remote&&remote.petugas)||[]),...(local.petugas||[])].forEach(x=>{if(x&&x.nama)m.set(normText(x.nama),x)});return {kecamatan:kec,petugas:[...m.values()].sort((a,b)=>a.nama.localeCompare(b.nama,'id'))}};
+    const merge=(remote)=>{const m=new Map();[...(local.petugas||[]),...((remote&&remote.petugas)||[])].forEach(x=>{if(x&&x.nama)m.set(normText(x.nama),x)});return {kecamatan:kec,petugas:[...m.values()].sort((a,b)=>a.nama.localeCompare(b.nama,'id'))}};
     const refresh=()=>{
       if(!navigator.onLine||!pwaBackendUrl())return Promise.resolve(null);
       if(PETUGAS_REMOTE_INFLIGHT.has(ck))return PETUGAS_REMOTE_INFLIGHT.get(ck);
@@ -1267,27 +1267,72 @@ function updateDesaOptions(){
 
 
 let ENTRY_PETUGAS_HISTORY=[];
+let ENTRY_PETUGAS_AUTO_NAME='';
+
+async function getLocalPetugasNames(){
+  // Poin 5 memakai histori pada perangkat ini. Simpan nama + nomor HP terakhir untuk tiap petugas.
+  const all=await pwaGetReports();
+  const items=[...all].sort((a,b)=>Number(a.createdAt||0)-Number(b.createdAt||0));
+  const map=new Map();
+  for(const r of items){
+    const p=r.payload||{};
+    const name=String(p.namaPetugas||'').trim();
+    if(!name)continue;
+    const key=normText(name);
+    map.set(key,{nama:name,noHp:String(p.noHpPetugas||'').trim(),createdAt:Number(r.createdAt||0)});
+  }
+  return [...map.values()].sort((a,b)=>a.nama.localeCompare(b.nama,'id'));
+}
+
+function renderEntryPetugasOptions(){
+  const list=$('petugasHistoryList');
+  if(!list)return;
+  list.innerHTML=ENTRY_PETUGAS_HISTORY.map(x=>`<option value="${escAttr(x.nama)}"></option>`).join('');
+}
+
+function findEntryPetugasHistory(name){
+  const key=normText(name);
+  if(!key)return null;
+  return ENTRY_PETUGAS_HISTORY.find(x=>normText(x.nama)===key)||null;
+}
 
 async function loadEntryPetugasHistory(){
-  const kecamatan=v('kecamatan');
-  ENTRY_PETUGAS_HISTORY=[];
-  const dl=$('petugasHistoryList'), hint=$('petugasHistoryHint');
-  if(dl)dl.innerHTML='';
-  if(!kecamatan){if(hint)hint.textContent='Setelah Kecamatan dipilih, nama petugas dari histori kecamatan tersebut akan tersedia sebagai pilihan.';return}
-  if(hint)hint.textContent='Memuat histori petugas...';
+  const hint=$('petugasHistoryHint');
+  if(hint)hint.textContent='';
   try{
-    const r=await gsCall('getPetugasHistoryByKecamatan',kecamatan);
-    ENTRY_PETUGAS_HISTORY=(r.petugas||[]);
-    if(dl)dl.innerHTML=ENTRY_PETUGAS_HISTORY.map(x=>`<option value="${escAttr(x.nama)}">${esc(x.noHp||'')}</option>`).join('');
-    if(hint)hint.textContent=ENTRY_PETUGAS_HISTORY.length?`${ENTRY_PETUGAS_HISTORY.length} nama petugas ditemukan pada histori Kecamatan ${kecamatan}. Pilih nama untuk mengisi nomor HP otomatis.`:`Belum ada histori petugas pada Kecamatan ${kecamatan}. Nama dan nomor HP dapat diisi sebagai petugas baru.`;
-    applyPetugasHistory();
-  }catch(e){if(hint)hint.textContent='Histori petugas belum dapat dimuat. Nama dan nomor HP tetap dapat diisi manual.'}
+    ENTRY_PETUGAS_HISTORY=await getLocalPetugasNames();
+    renderEntryPetugasOptions();
+    if(hint)hint.textContent=ENTRY_PETUGAS_HISTORY.length?`${ENTRY_PETUGAS_HISTORY.length} nama petugas tersimpan di perangkat ini.`:'Belum ada histori petugas. Ketik nama petugas langsung.';
+    onEntryPetugasInput(true);
+  }catch(e){
+    ENTRY_PETUGAS_HISTORY=[];
+    renderEntryPetugasOptions();
+    if(hint)hint.textContent='Ketik nama petugas langsung.';
+  }
+}
+
+function onEntryPetugasInput(force=false){
+  const nameEl=$('namaPetugas'), hpEl=$('noHpPetugas');
+  if(!nameEl||!hpEl)return;
+  const typed=String(nameEl.value||'').trim();
+  const found=findEntryPetugasHistory(typed);
+  if(found){
+    if(force || ENTRY_PETUGAS_AUTO_NAME!==normText(found.nama) || !String(hpEl.value||'').trim()){
+      hpEl.value=found.noHp||'';
+    }
+    ENTRY_PETUGAS_AUTO_NAME=normText(found.nama);
+    return;
+  }
+  // Jika pengguna berganti dari nama histori ke nama baru, kosongkan nomor yang sebelumnya terisi otomatis.
+  if(ENTRY_PETUGAS_AUTO_NAME){
+    hpEl.value='';
+    ENTRY_PETUGAS_AUTO_NAME='';
+  }
 }
 
 function applyPetugasHistory(){
-  const name=v('namaPetugas').toLowerCase().replace(/\s+/g,' ');
-  const found=ENTRY_PETUGAS_HISTORY.find(x=>String(x.nama||'').trim().toLowerCase().replace(/\s+/g,' ')===name);
-  if(found && found.noHp)$('noHpPetugas').value=found.noHp;
+  // Histori perangkat dipakai sebagai saran Nama Petugas dan pengisian otomatis No. HP.
+  onEntryPetugasInput(true);
 }
 
 async function loadLookupPetugas(selectedName=''){
@@ -1540,12 +1585,16 @@ async function submitReport(ev){
 window.addEventListener('sigap-petugas-refreshed',e=>{
   try{
     const d=e.detail||{};
+    const items=(d.data&&d.data.petugas)||[];
+
+    // Poin 5 tidak diperbarui dari server. Nama Petugas hanya berasal dari histori perangkat ini.
+
+    // Poin 6: perbarui dropdown pencarian Data Terinput dari server pusat.
     const current=v('lookupKecamatan');
     if(normText(current)!==normText(d.kecamatan))return;
     const sel=$('lookupPetugas');
     if(!sel||document.activeElement===sel)return;
     const selected=sel.value;
-    const items=(d.data&&d.data.petugas)||[];
     sel.innerHTML='<option value="">Pilih Nama Petugas</option>'+items.map(x=>`<option value="${escAttr(x.nama)}">${esc(x.nama)}</option>`).join('');
     if(selected&&items.some(x=>normText(x.nama)===normText(selected)))sel.value=items.find(x=>normText(x.nama)===normText(selected)).nama;
     sel.disabled=false;
