@@ -915,6 +915,14 @@ body:not(.admin-mode) #adminView{display:none!important}
 .petugasSuggestionEmpty{padding:10px 11px;color:#90a9b9;font-size:11px}
 @media(max-width:980px){.petugasSuggestions{max-height:190px}.petugasSuggestion{padding:9px 10px}.petugasSuggestion .pname{font-size:12px}.petugasSuggestion .php{font-size:10px}}
 </style>
+
+<style id="v31-catatan-duplicate">
+.damageNoteField{margin-top:14px;padding-top:14px;border-top:1px solid rgba(130,190,215,.18)}
+.damageNoteField label{display:block;margin-bottom:7px}
+.damageNoteField textarea{min-height:84px;resize:vertical}
+.identityDuplicateHint{margin-top:5px;font-size:10px;color:#93adbd}
+</style>
+
 </head>
 <body>
   <header class="top"><div class="topin"><div class="brand"><img class="brandMark" src="logo-manggarai.png" alt="Logo Kabupaten Manggarai"><span class="brandCopy"><b>SIGAP GEMPA FLORES</b><small>Sistem Pendataan Kerusakan Rumah Akibat Gempa</small></span></div><div class="nav"><button class="btn light" onclick="showPublic()">⌂ Beranda</button><button id="installBtn" class="btn light" onclick="installPwa()">⬇ Pasang Aplikasi</button><button class="btn light" onclick="syncPendingReports()">↻ Sinkron Data</button><button class="btn light" onclick="openPwaSettings()">⚙ Server</button><button class="btn gold" onclick="openAdminLogin()">🔐 Admin</button></div></div></header>
@@ -938,8 +946,8 @@ body:not(.admin-mode) #adminView{display:none!important}
 
       <section class="card"><div class="cardhead">2. Identitas pemilik dan lokasi rumah</div><div class="cardbody"><div class="grid">
         <div class="c4"><label class="req">Nama Pemilik</label><input id="namaPemilik" class="field" required></div>
-        <div class="c4"><label>NIK</label><input id="nik" class="field" inputmode="numeric" maxlength="16"></div>
-        <div class="c4"><label>No. KK</label><input id="noKK" class="field" inputmode="numeric" maxlength="16"></div>
+        <div class="c4"><label>NIK</label><input id="nik" class="field" inputmode="numeric" maxlength="16"><div class="identityDuplicateHint">NIK yang sudah terdaftar tidak dapat digunakan kembali.</div></div>
+        <div class="c4"><label>No. KK</label><input id="noKK" class="field" inputmode="numeric" maxlength="16"><div class="identityDuplicateHint">No. KK yang sudah terdaftar tidak dapat digunakan kembali.</div></div>
         <div class="c12"><label class="req">Alamat (RT, RW, DUSUN)</label><textarea id="alamat" class="field" rows="2" required placeholder="RT 001, RW 002, Dusun Lada"></textarea></div>
         <div class="c12"><label>Koordinat</label><div class="coord"><div><label>Latitude</label><input id="latitude" class="field" inputmode="decimal" placeholder="-8.612345"></div><div><label>Longitude</label><input id="longitude" class="field" inputmode="decimal" placeholder="120.456789"></div><button type="button" class="btn green" onclick="getLocation()">📍 Ambil Lokasi</button></div><div id="locStatus" class="status"></div></div>
       </div></div></section>
@@ -969,7 +977,12 @@ body:not(.admin-mode) #adminView{display:none!important}
         </div>
       </div></section>
 
-      <section class="card damageSection"><div class="cardhead damageSectionHead">4. Data Kerusakan Rumah</div><div class="cardbody"><div class="damageWrap"><table class="damageTable"><thead><tr><th style="width:190px">Bagian Bangunan</th><th>Jenis Kerusakan — pilih satu</th><th style="width:155px">Jumlah Komponen</th><th style="width:100px">Bobot (%)</th></tr></thead><tbody id="damageRows"></tbody></table></div><div class="totalWeight"><span>Total Bobot Kerusakan</span><strong id="totalDamageWeight">0%</strong></div></div></section>
+      <section class="card damageSection"><div class="cardhead damageSectionHead">4. Data Kerusakan Rumah</div><div class="cardbody"><div class="damageWrap"><table class="damageTable"><thead><tr><th style="width:190px">Bagian Bangunan</th><th>Jenis Kerusakan — pilih satu</th><th style="width:155px">Jumlah Komponen</th><th style="width:100px">Bobot (%)</th></tr></thead><tbody id="damageRows"></tbody></table></div><div class="totalWeight"><span>Total Bobot Kerusakan</span><strong id="totalDamageWeight">0%</strong></div>
+        <div class="damageNoteField">
+          <label>Catatan Petugas</label>
+          <textarea id="catatanPetugas" class="field" rows="3" maxlength="1500" placeholder="Keterangan tambahan hasil pemeriksaan kerusakan (opsional)"></textarea>
+        </div>
+      </div></section>
 
       <section class="card"><div class="cardhead">5. Petugas dan kepemilikan aset</div><div class="cardbody"><div class="grid">
         <div class="c6"><label class="req">Nama Petugas</label><div class="petugasCombo"><input id="namaPetugas" class="field" required autocomplete="off" onfocus="showEntryPetugasSuggestions()" oninput="onEntryPetugasInput()" onchange="onEntryPetugasInput(true)" onblur="setTimeout(hideEntryPetugasSuggestions,180)" placeholder="Ketik nama petugas"><div id="petugasSuggestions" class="petugasSuggestions hide"></div></div><div class="hint compactHiddenHint" id="petugasHistoryHint"></div></div>
@@ -988,7 +1001,8 @@ body:not(.admin-mode) #adminView{display:none!important}
       <div id="lookupMsg"></div>
       <div id="lookupResults" class="hide" style="margin-top:12px">
         <div id="lookupSummary" class="notice ok"></div>
-        <div class="tableWrap"><table class="table" style="min-width:900px"><thead><tr><th>ID Laporan</th><th>Tanggal Input</th><th>Nama Pemilik</th><th>Desa/Kelurahan</th><th>Alamat (RT, RW, DUSUN)</th><th>Foto</th><th>Status Verifikasi</th><th>Aksi</th></tr></thead><tbody id="lookupRows"></tbody></table></div>
+        <div class="notice" style="background:rgba(8,45,75,.72);color:#dff5ff;border:1px solid rgba(34,189,245,.32)"><b>Keamanan data:</b> laporan yang sudah terinput hanya dapat dilihat oleh pelapor. Fitur Edit dan Hapus dinonaktifkan. Perbaikan data dilakukan melalui Admin/Verifikator.</div>
+        <div class="tableWrap"><table class="table" style="min-width:820px"><thead><tr><th>ID Laporan</th><th>Tanggal Input</th><th>Nama Pemilik</th><th>Desa/Kelurahan</th><th>Alamat (RT, RW, DUSUN)</th><th>Foto</th><th>Status Verifikasi</th></tr></thead><tbody id="lookupRows"></tbody></table></div>
         
       </div>
     </div></section>
@@ -1146,11 +1160,11 @@ async function pwaRefreshSyncStatus(){
 }
 
 async function pwaLocalPetugas(kecamatan){const all=await pwaGetReports(),m=new Map();for(const r of all){const p=r.payload||{};if(normText(p.kecamatan)!==normText(kecamatan))continue;const key=normText(p.namaPetugas);if(key&&!m.has(key))m.set(key,{nama:p.namaPetugas,noHp:p.noHpPetugas||''})}return {kecamatan,petugas:[...m.values()].sort((a,b)=>a.nama.localeCompare(b.nama,'id'))}}
-async function pwaLocalSubmitted(kecamatan,petugas){const all=await pwaGetReports();const rows=all.filter(r=>normText(r.payload?.kecamatan)===normText(kecamatan)&&normText(r.payload?.namaPetugas)===normText(petugas)).map(r=>({id:r.serverId||r.localId,timestamp:new Date(r.createdAt).toLocaleString('id-ID'),namaPemilik:r.payload.namaPemilik,desa:r.payload.desa,alamat:r.payload.alamat,jumlahFoto:r.photoCount||0,canEdit:r.verificationStatus!=='Terverifikasi',local:true,syncState:r.syncState}));return {kecamatan,petugas,rows}}
-async function pwaLocalEditable(id){const r=await pwaGetReportByAnyId(id);if(!r)throw new Error('Laporan ini belum tersimpan di perangkat dan memerlukan internet.');if(r.verificationStatus==='Terverifikasi')throw new Error('Laporan sudah terverifikasi dan terkunci.');return {editToken:'LOCAL:'+r.localId,localId:r.localId,existingPhotoCount:Number(r.photoCount||0),record:{kecamatan:r.payload.kecamatan,desa:r.payload.desa,namaPemilik:r.payload.namaPemilik,nik:r.payload.nik,noKK:r.payload.noKK,alamat:r.payload.alamat,latitude:r.payload.latitude,longitude:r.payload.longitude,petugas:r.payload.namaPetugas,noHpPetugas:r.payload.noHpPetugas,kepemilikanBangunan:r.payload.kepemilikanBangunan,kepemilikanTanah:r.payload.kepemilikanTanah,damage:r.payload.damage||{},jumlahFoto:r.photoCount||0}}}
+async function pwaLocalSubmitted(kecamatan,petugas){const all=await pwaGetReports();const rows=all.filter(r=>normText(r.payload?.kecamatan)===normText(kecamatan)&&normText(r.payload?.namaPetugas)===normText(petugas)).map(r=>{const statusVerifikasi=r.verificationStatus||'Belum Diverifikasi';return {id:r.serverId||r.localId,timestamp:new Date(r.createdAt).toLocaleString('id-ID'),namaPemilik:r.payload.namaPemilik,desa:r.payload.desa,alamat:r.payload.alamat,jumlahFoto:r.photoCount||0,statusVerifikasi,canEdit:false,local:true,syncState:r.syncState}});return {kecamatan,petugas,rows}}
+async function pwaLocalEditable(id){const r=await pwaGetReportByAnyId(id);if(!r)throw new Error('Laporan ini belum tersimpan di perangkat dan memerlukan internet.');if(r.verificationStatus==='Terverifikasi')throw new Error('Laporan sudah terverifikasi dan terkunci.');return {editToken:'LOCAL:'+r.localId,localId:r.localId,existingPhotoCount:Number(r.photoCount||0),record:{kecamatan:r.payload.kecamatan,desa:r.payload.desa,namaPemilik:r.payload.namaPemilik,nik:r.payload.nik,noKK:r.payload.noKK,alamat:r.payload.alamat,latitude:r.payload.latitude,longitude:r.payload.longitude,petugas:r.payload.namaPetugas,noHpPetugas:r.payload.noHpPetugas,kepemilikanBangunan:r.payload.kepemilikanBangunan,kepemilikanTanah:r.payload.kepemilikanTanah,catatanPetugas:r.payload.catatanPetugas||'',damage:r.payload.damage||{},jumlahFoto:r.photoCount||0}}}
 
 function pwaMakeBridgeToken(){try{if(window.crypto&&crypto.randomUUID)return crypto.randomUUID()}catch(e){}return 'br_'+Date.now()+'_'+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2)}
-function pwaEnsureBridge(){return new Promise((resolve,reject)=>{const url=pwaBackendUrl();if(!url)return reject(new Error('Server belum diatur. Buka ⚙ Server dan masukkan URL Web App /exec.'));if(!navigator.onLine)return reject(new Error('Tidak ada koneksi internet.'));if(PWA_BRIDGE_READY&&PWA_BRIDGE_SOURCE)return resolve();if(PWA_BRIDGE_FRAME){PWA_BRIDGE_FRAME.remove();PWA_BRIDGE_FRAME=null}PWA_BRIDGE_READY=false;PWA_BRIDGE_SOURCE=null;PWA_BRIDGE_ORIGIN='*';const token=pwaMakeBridgeToken();PWA_BRIDGE_TOKEN=token;const f=document.createElement('iframe');f.style.position='fixed';f.style.width='1px';f.style.height='1px';f.style.opacity='0';f.style.pointerEvents='none';f.style.border='0';f.setAttribute('aria-hidden','true');f.src=url+(url.includes('?')?'&':'?')+'mode=bridge&bridgeToken='+encodeURIComponent(token)+'&t='+Date.now();PWA_BRIDGE_FRAME=f;const timer=setTimeout(()=>{window.removeEventListener('message',onmsg);reject(new Error('Server tidak merespons. Bridge Apps Script terbuka, tetapi belum dapat berkomunikasi dengan PWA. Pastikan Code.gs dan Bridge.html memakai versi FIX V2 lalu deploy sebagai New version.'))},20000);const onmsg=e=>{const d=e.data;if(!d||d.type!=='sigap-bridge-ready'||d.bridgeToken!==token)return;clearTimeout(timer);window.removeEventListener('message',onmsg);PWA_BRIDGE_SOURCE=e.source;PWA_BRIDGE_ORIGIN=(e.origin&&e.origin!=='null')?e.origin:'*';PWA_BRIDGE_READY=true;resolve()};window.addEventListener('message',onmsg);document.body.appendChild(f)})}
+function pwaEnsureBridge(){return new Promise((resolve,reject)=>{const url=pwaBackendUrl();if(!url)return reject(new Error('Server belum diatur. Buka ⚙ Server dan masukkan URL Web App /exec.'));if(!navigator.onLine)return reject(new Error('Tidak ada koneksi internet.'));if(PWA_BRIDGE_READY&&PWA_BRIDGE_SOURCE)return resolve();if(PWA_BRIDGE_FRAME){PWA_BRIDGE_FRAME.remove();PWA_BRIDGE_FRAME=null}PWA_BRIDGE_READY=false;PWA_BRIDGE_SOURCE=null;PWA_BRIDGE_ORIGIN='*';const token=pwaMakeBridgeToken();PWA_BRIDGE_TOKEN=token;const f=document.createElement('iframe');f.style.position='fixed';f.style.width='1px';f.style.height='1px';f.style.opacity='0';f.style.pointerEvents='none';f.style.border='0';f.setAttribute('aria-hidden','true');f.src=url+(url.includes('?')?'&':'?')+'mode=bridge&bridgeToken='+encodeURIComponent(token)+'&t='+Date.now();PWA_BRIDGE_FRAME=f;const timer=setTimeout(()=>{window.removeEventListener('message',onmsg);reject(new Error('Server tidak merespons. Bridge Apps Script terbuka, tetapi belum dapat berkomunikasi dengan PWA. Pastikan Code.gs dan Bridge.html sudah disimpan lalu deploy sebagai New version.'))},20000);const onmsg=e=>{const d=e.data;if(!d||d.type!=='sigap-bridge-ready'||d.bridgeToken!==token)return;clearTimeout(timer);window.removeEventListener('message',onmsg);PWA_BRIDGE_SOURCE=e.source;PWA_BRIDGE_ORIGIN=(e.origin&&e.origin!=='null')?e.origin:'*';PWA_BRIDGE_READY=true;resolve()};window.addEventListener('message',onmsg);document.body.appendChild(f)})}
 window.addEventListener('message',e=>{const d=e.data;if(!d||d.type!=='sigap-rpc-result'||d.bridgeToken!==PWA_BRIDGE_TOKEN||!PWA_RPC_PENDING.has(d.id))return;if(PWA_BRIDGE_SOURCE&&e.source!==PWA_BRIDGE_SOURCE)return;const p=PWA_RPC_PENDING.get(d.id);PWA_RPC_PENDING.delete(d.id);clearTimeout(p.timer);d.ok?p.resolve(d.value):p.reject(new Error(d.error||'Kesalahan server'))});
 async function pwaRemoteRpc(method,args){await pwaEnsureBridge();return new Promise((resolve,reject)=>{const id='rpc_'+(++PWA_RPC_SEQ)+'_'+Date.now();const timer=setTimeout(()=>{PWA_RPC_PENDING.delete(id);reject(new Error('Waktu koneksi ke server habis.'))},120000);PWA_RPC_PENDING.set(id,{resolve,reject,timer});try{PWA_BRIDGE_SOURCE.postMessage({type:'sigap-rpc-call',bridgeToken:PWA_BRIDGE_TOKEN,id,method,args},PWA_BRIDGE_ORIGIN||'*')}catch(e){PWA_RPC_PENDING.delete(id);clearTimeout(timer);reject(new Error('Gagal mengirim perintah ke bridge server: '+(e.message||e)))}})}
 async function pwaRpc(method,args){
@@ -1212,7 +1226,7 @@ async function syncPendingReports(silent=false){
   if(!pwaBackendUrl()){if(!silent)openPwaSettings();return}
   let all=await pwaGetReports(), pending=all.filter(x=>x.syncState==='pending'||x.syncState==='updatePending');
   if(!pending.length){await pwaRefreshSyncStatus();if(!silent)alert('Tidak ada laporan yang menunggu sinkronisasi.');return}
-  const st=document.getElementById('syncStatus');let ok=0,fail=0;
+  const st=document.getElementById('syncStatus');let ok=0,fail=0;const syncErrors=[];
   for(let i=0;i<pending.length;i++){const r=pending[i];if(st)st.textContent=`Sinkronisasi ${i+1}/${pending.length}: ${r.payload?.namaPemilik||r.localId}`;
     try{
       if(r.syncState==='pending'){
@@ -1231,10 +1245,10 @@ async function syncPendingReports(silent=false){
         const fin=await pwaRemoteRpc('finalizeReportUpload',[created.id,created.uploadKey]);clearPetugasDeviceCache(r.payload&&r.payload.kecamatan);r.photoCount=fin.photoCount;r.syncState='synced';r.syncedAt=new Date().toISOString();r.extraDamagePhotos=[];r.extraKtpFile=null;r.extraKkFile=null;r.lastSyncError='';
       }
       await pwaPutReport(r);ok++;
-    }catch(e){r.lastSyncError=e.message||String(e);await pwaPutReport(r);fail++}
+    }catch(e){r.lastSyncError=e.message||String(e);syncErrors.push(r.lastSyncError);await pwaPutReport(r);fail++}
   }
   await pwaRefreshSyncStatus();
-  if(!silent)alert(`Sinkronisasi selesai. Berhasil: ${ok}. Gagal: ${fail}.${fail?' Periksa koneksi/server lalu coba lagi.':''}`);
+  if(!silent){const dup=syncErrors.find(x=>/DUPLICATE_IDENTITY:/i.test(x||''));alert(`Sinkronisasi selesai. Berhasil: ${ok}. Gagal: ${fail}.${dup?' '+duplicateIdentityMessage({message:dup}):fail?' Periksa koneksi/server lalu coba lagi.':''}`)};
   try{if(document.getElementById('lookupKecamatan')?.value&&document.getElementById('lookupPetugas')?.value)await lookupPublicReports()}catch(e){}
 }
 </script>
@@ -1573,10 +1587,19 @@ async function submitReport(ev){
     provinsi:v('provinsi'),kabKota:v('kabKota'),kecamatan:v('kecamatan'),desa:v('desa'),dusun:'',
     namaPemilik:v('namaPemilik'),nik:v('nik'),noKK:v('noKK'),alamat:v('alamat'),
     latitude:v('latitude'),longitude:v('longitude'),namaPetugas:v('namaPetugas'),noHpPetugas:v('noHpPetugas'),
-    kepemilikanBangunan:v('kepemilikanBangunan'),kepemilikanTanah:v('kepemilikanTanah'),damage:collectDamage(),expectedPhotoCount:existingCount+damagePhotos.length
+    kepemilikanBangunan:v('kepemilikanBangunan'),kepemilikanTanah:v('kepemilikanTanah'),catatanPetugas:v('catatanPetugas'),damage:collectDamage(),expectedPhotoCount:existingCount+damagePhotos.length
   };
   const ktpFile=getDocFile('ktp'), kkFile=getDocFile('kk');
   const submittedKecamatan=payload.kecamatan, submittedPetugas=payload.namaPetugas;
+
+  // Cegah NIK/KK ganda yang sudah tersimpan pada perangkat ini.
+  const localDuplicate=await pwaFindLocalIdentityDuplicate(payload,EDIT_CONTEXT&&EDIT_CONTEXT.localId||'',EDIT_CONTEXT&&EDIT_CONTEXT.id||'');
+  if(localDuplicate){
+    const field=$(localDuplicate.field);
+    btn.disabled=false;btn.textContent=EDIT_CONTEXT?'Simpan Perubahan':'Kirim Laporan';$('uploadProgress').textContent='';
+    return focusInvalid(field,`${localDuplicate.field==='nik'?'NIK':'No. KK'} sudah terdaftar pada perangkat ini${localDuplicate.nama?' atas nama '+localDuplicate.nama:''}${localDuplicate.id?' (ID '+localDuplicate.id+')':''}. Data tidak dapat disimpan ganda.`);
+  }
+
   // Simpan histori petugas lokal pada perangkat ini untuk autocomplete berikutnya.
   rememberPetugasLocal(payload.namaPetugas,payload.noHpPetugas);
   try{
@@ -1616,11 +1639,20 @@ async function submitReport(ev){
       await clearOfflineDraft(false);EDIT_CONTEXT=null;updateEditModeUI();showMsg(`${wasEdit?'Perubahan laporan':'Laporan'} berhasil disimpan ke server. ID: ${fin.id}. Total foto: ${fin.photoCount}.`,true);showSuccessOverlay(wasEdit?'Perubahan Berhasil Disimpan':'Laporan Berhasil Dikirim',`ID Laporan: ${fin.id}`);resetForm(true);
       if($('lookupKecamatan')){$('lookupKecamatan').value=submittedKecamatan;await loadLookupPetugas(submittedPetugas);await lookupPublicReports()}
     }catch(e){
-      // Jika gagal sebelum server membuat ID, amankan laporan sebagai antrean offline.
+      // Duplikasi identitas adalah penolakan data, bukan kegagalan koneksi. Jangan masukkan ke antrean offline.
+      if(isDuplicateIdentityError(e))throw e;
+      // Jika gagal sebelum server membuat ID karena koneksi/server, amankan laporan sebagai antrean offline.
       if(!created){const r=await pwaQueueNewReport(payload,damagePhotos,ktpFile,kkFile);await clearOfflineDraft(false);resetForm(true);showMsg(`Koneksi/server gagal. Laporan diamankan di perangkat sebagai ${r.localId} dan menunggu sinkronisasi.`,true);showSuccessOverlay('Data Berhasil Disimpan',`Laporan diamankan di perangkat sebagai ${r.localId}.`)}
       else {throw e}
     }
-  }catch(e){showMsg(e.message||String(e),false);await saveOfflineDraft(false).catch(()=>{})}
+  }catch(e){
+    if(isDuplicateIdentityError(e)){
+      const msg=duplicateIdentityMessage(e);
+      const target=/No\. KK/i.test(msg)?$('noKK'):$('nik');
+      focusInvalid(target,msg);
+    }else showMsg(e.message||String(e),false);
+    await saveOfflineDraft(false).catch(()=>{})
+  }
   finally{btn.disabled=false;btn.textContent=EDIT_CONTEXT?'Simpan Perubahan':'Kirim Laporan';$('uploadProgress').textContent='';await pwaRefreshSyncStatus()}
 }
 window.addEventListener('sigap-petugas-refreshed',e=>{
@@ -1652,14 +1684,21 @@ async function lookupPublicReports(){
     const r=await gsCall('getPublicSubmittedReports',kecamatan,petugas);
     const rows=(r.rows||[]);
     $('lookupSummary').innerHTML=`Ditemukan <b>${rows.length}</b> laporan berhasil diinput untuk petugas <b>${esc(r.petugas)}</b> di Kecamatan <b>${esc(r.kecamatan)}</b>.`;
-    $('lookupRows').innerHTML=rows.length?rows.map(x=>`<tr><td><b>${esc(x.id)}</b>${x.local?`<br><span class="${x.syncState==='synced'?'localTag':'queuedTag'}">${x.syncState==='synced'?'Tersimpan lokal':'Menunggu sinkron'}</span>`:''}</td><td>${esc(x.timestamp||'-')}</td><td>${esc(x.namaPemilik||'-')}</td><td>${esc(x.desa||'-')}</td><td>${esc(x.alamat||'-')}</td><td>${esc(String(x.jumlahFoto||0))}</td><td>${x.canEdit?'<span class="pill p-wait">Belum Diverifikasi</span>':'<span class="pill p-ok">Terverifikasi</span>'}</td><td>${x.canEdit?`<div class="lookupActionBtns"><button type="button" class="btn ghost" onclick="startEditReport('${escAttr(x.id)}')">Edit</button><button type="button" class="btn red" onclick="deletePublicReportUI('${escAttr(x.id)}',this)">Hapus</button></div>`:'<span class="hint">Terkunci</span>'}</td></tr>`).join(''):'<tr><td colspan="8">Belum ada laporan lengkap yang cocok dengan Kecamatan dan Nama Petugas tersebut.</td></tr>';
+    $('lookupRows').innerHTML=rows.length?rows.map(x=>{const status=String(x.statusVerifikasi||'Belum Diverifikasi');const verified=normText(status)==='terverifikasi';return `<tr><td><b>${esc(x.id)}</b>${x.local?`<br><span class="${x.syncState==='synced'?'localTag':'queuedTag'}">${x.syncState==='synced'?'Tersimpan lokal':'Menunggu sinkron'}</span>`:''}</td><td>${esc(x.timestamp||'-')}</td><td>${esc(x.namaPemilik||'-')}</td><td>${esc(x.desa||'-')}</td><td>${esc(x.alamat||'-')}</td><td>${esc(String(x.jumlahFoto||0))}</td><td>${verified?'<span class="pill p-ok">Terverifikasi</span>':'<span class="pill p-wait">Belum Diverifikasi</span>'}</td></tr>`}).join(''):'<tr><td colspan="7">Belum ada laporan lengkap yang cocok dengan Kecamatan dan Nama Petugas tersebut.</td></tr>';
     box.classList.remove('hide');
   }catch(e){msg.innerHTML=`<div class="notice err">${esc(errText(e))}</div>`}
   finally{btn.disabled=false;btn.textContent='Lihat Data Terinput'}
 }
 
 
+function publicReportMutationDisabled(){
+  const msg='Untuk keamanan data, laporan yang sudah terinput tidak dapat diedit atau dihapus oleh pelapor. Hubungi Admin/Verifikator bila ada data yang perlu diperbaiki.';
+  const el=$('lookupMsg'); if(el)el.innerHTML=`<div class="notice err">${esc(msg)}</div>`;
+  return msg;
+}
+
 async function deletePublicReportUI(id,button){
+  publicReportMutationDisabled(); return;
   const kecamatan=v('lookupKecamatan'), petugas=v('lookupPetugas');
   if(!kecamatan||!petugas){$('lookupMsg').innerHTML='<div class="notice err">Pilih Kecamatan dan Nama Petugas terlebih dahulu.</div>';return}
   const local=await pwaGetReportByAnyId(id).catch(()=>null);
@@ -1698,6 +1737,7 @@ async function deletePublicReportUI(id,button){
 
 
 async function startEditReport(id){
+  publicReportMutationDisabled(); return;
   const kecamatan=v('lookupKecamatan'), petugas=v('lookupPetugas');
   if(!kecamatan||!petugas)return;
   $('lookupMsg').innerHTML='<div class="hint">Membuka laporan untuk diedit...</div>';
@@ -1717,6 +1757,7 @@ function populateEditForm(r){
   $('latitude').value=r.latitude==null?'':r.latitude; $('longitude').value=r.longitude==null?'':r.longitude;
   $('namaPetugas').value=r.petugas||''; $('noHpPetugas').value=r.noHpPetugas||'';
   $('kepemilikanBangunan').value=r.kepemilikanBangunan||''; $('kepemilikanTanah').value=r.kepemilikanTanah||'';
+  $('catatanPetugas').value=r.catatanPetugas||'';
   applyDamageToForm(r.damage||{});
   $('uploadProgress').textContent=`Mode edit: ${Number(r.jumlahFoto||EDIT_CONTEXT.existingPhotoCount||0)} foto lama tetap tersimpan. Foto baru yang dipilih akan ditambahkan.`;
 }
@@ -1751,13 +1792,13 @@ function updateNetworkStatus(){
 }
 
 function collectFormState(){
-  return {kecamatan:v('kecamatan'),desa:v('desa'),namaPemilik:v('namaPemilik'),nik:v('nik'),noKK:v('noKK'),alamat:v('alamat'),latitude:v('latitude'),longitude:v('longitude'),namaPetugas:v('namaPetugas'),noHpPetugas:v('noHpPetugas'),kepemilikanBangunan:v('kepemilikanBangunan'),kepemilikanTanah:v('kepemilikanTanah'),damage:collectDamage()};
+  return {kecamatan:v('kecamatan'),desa:v('desa'),namaPemilik:v('namaPemilik'),nik:v('nik'),noKK:v('noKK'),alamat:v('alamat'),latitude:v('latitude'),longitude:v('longitude'),namaPetugas:v('namaPetugas'),noHpPetugas:v('noHpPetugas'),kepemilikanBangunan:v('kepemilikanBangunan'),kepemilikanTanah:v('kepemilikanTanah'),catatanPetugas:v('catatanPetugas'),damage:collectDamage()};
 }
 
 function applyFormState(st){
   if(!st)return;
   $('kecamatan').value=st.kecamatan||''; updateDesaOptions(); $('desa').value=st.desa||'';
-  ['namaPemilik','nik','noKK','alamat','latitude','longitude','namaPetugas','noHpPetugas','kepemilikanBangunan','kepemilikanTanah'].forEach(id=>{if($(id))$(id).value=st[id]||''});
+  ['namaPemilik','nik','noKK','alamat','latitude','longitude','namaPetugas','noHpPetugas','kepemilikanBangunan','kepemilikanTanah','catatanPetugas'].forEach(id=>{if($(id))$(id).value=st[id]||''});
   applyDamageToForm(st.damage||{});
 }
 
@@ -1818,6 +1859,24 @@ function collectDamage(){
 }
 function checked(name){return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(x=>x.value)}
 function v(id){return $(id).value.trim()}
+function normIdentityValue(x){return String(x||'').replace(/\D/g,'')}
+function isDuplicateIdentityError(e){return /DUPLICATE_IDENTITY:/i.test(errText(e))}
+function duplicateIdentityMessage(e){
+  const s=errText(e);const m=s.match(/DUPLICATE_IDENTITY:\s*(.*)$/i);return m?m[1]:s;
+}
+async function pwaFindLocalIdentityDuplicate(payload,ignoreLocalId='',ignoreServerId=''){
+  const nik=normIdentityValue(payload&&payload.nik), kk=normIdentityValue(payload&&payload.noKK);
+  if(!nik&&!kk)return null;
+  const all=await pwaGetReports();
+  for(const r of all){
+    if(ignoreLocalId&&String(r.localId||'')===String(ignoreLocalId))continue;
+    if(ignoreServerId&&String(r.serverId||'')===String(ignoreServerId))continue;
+    const p=r.payload||{};
+    if(nik&&normIdentityValue(p.nik)===nik)return {field:'nik',id:r.serverId||r.localId||'',nama:p.namaPemilik||''};
+    if(kk&&normIdentityValue(p.noKK)===kk)return {field:'noKK',id:r.serverId||r.localId||'',nama:p.namaPemilik||''};
+  }
+  return null;
+}
 
 async function fileToPayload(file,compress){
   if(!file)return null;
@@ -1950,7 +2009,7 @@ function renderRows(rows){$('adminRows').innerHTML=rows.length?rows.map(r=>`<tr>
 function levelPill(x){const c=x.includes('Berat')?'p-heavy':x.includes('Sedang')?'p-mid':'p-light';return `<span class="pill ${c}">${esc(x)}</span>`}
 function adminFail(e){const t=errText(e);if(t.toLowerCase().includes('sesi')){ADMIN_TOKEN='';openAdminLogin()}else alert(t)}
 
-function openDetail(id){google.script.run.withSuccessHandler(r=>{const coords=(r.latitude!==''&&r.longitude!=='')?`<a class="link" target="_blank" href="https://www.google.com/maps?q=${encodeURIComponent(r.latitude+','+r.longitude)}">${esc(r.koordinat)} ↗</a>`:'-';const photoLinks=(r.fotos||[]).map((u,i)=>`<a class="btn ghost" target="_blank" href="${escAttr(u)}">Foto ${i+1}</a>`).join(' ');const otherFiles=[['KTP',r.ktp],['KK',r.kk],['Folder',r.folder]].filter(x=>x[1]).map(x=>`<a class="btn ghost" target="_blank" href="${escAttr(x[1])}">${esc(x[0])}</a>`).join(' ');const files=[photoLinks,otherFiles].filter(Boolean).join(' ');const dmg=r.damageDetails.length?r.damageDetails.map(x=>`<li><b>${esc(x.part)}</b> — ${esc(x.text)} <b>(${x.count} komponen; bobot ${x.weight}%)</b></li>`).join(''):'<li>Tidak ada item kerusakan yang dipilih.</li>';modal(`<div class="modalbox"><div class="modalhead"><b>Detail ${esc(r.id)}</b><button class="btn ghost" onclick="closeModal()">✕</button></div><div class="modalbody"><div class="detailGrid">${kv('Nama Pemilik',r.namaPemilik)}${kv('NIK / No. KK',(r.nik||'-')+' / '+(r.noKK||'-'))}${kv('Wilayah',[r.kecamatan,r.desa].filter(Boolean).join(' / '))}${kv('Alamat (RT, RW, DUSUN)',r.alamat)}${kv('Koordinat',coords,true)}${kv('Petugas',r.petugas+' / '+r.noHpPetugas)}${kv('Jumlah Foto Kerusakan',String((r.fotos||[]).length))}</div><h3>Data Kerusakan</h3><ul class="damageList">${dmg}</ul><div class="notice ok"><b>Total bobot: ${r.score}%</b></div><h3>Foto & Dokumen</h3><div style="display:flex;gap:8px;flex-wrap:wrap">${files||'<span class="hint">Belum ada berkas.</span>'}</div><hr style="border:0;border-top:1px solid #ddd;margin:18px 0"><div class="grid"><div class="c4"><label>Tingkat Kerusakan *</label><select id="verTingkat" class="field"><option value="">Pilih</option><option ${r.tingkat==='Rusak Ringan'?'selected':''}>Rusak Ringan</option><option ${r.tingkat==='Rusak Sedang'?'selected':''}>Rusak Sedang</option><option ${r.tingkat==='Rusak Berat'?'selected':''}>Rusak Berat</option></select></div><div class="c4"><label>Tanggal Verifikasi</label><input id="verTanggal" type="date" class="field" value="${escAttr(r.tanggalVerifikasi||today())}"></div><div class="c12"><label>Catatan Admin</label><textarea id="verCatatan" class="field" rows="3">${esc(r.catatan||'')}</textarea></div></div><div class="adminVerifyActions">${r.status==='Terverifikasi'?`<button type="button" class="btn red" onclick="cancelVerificationUI('${escAttr(r.id)}',this)">Batalkan Verifikasi</button>`:''}<button type="button" class="btn green" onclick="saveVerification('${escAttr(r.id)}')">${r.status==='Terverifikasi'?'Simpan Perubahan':'Simpan Verifikasi'}</button></div></div></div>`)}).withFailureHandler(adminFail).getReportDetail(ADMIN_TOKEN,id)}
+function openDetail(id){google.script.run.withSuccessHandler(r=>{const coords=(r.latitude!==''&&r.longitude!=='')?`<a class="link" target="_blank" href="https://www.google.com/maps?q=${encodeURIComponent(r.latitude+','+r.longitude)}">${esc(r.koordinat)} ↗</a>`:'-';const photoLinks=(r.fotos||[]).map((u,i)=>`<a class="btn ghost" target="_blank" href="${escAttr(u)}">Foto ${i+1}</a>`).join(' ');const otherFiles=[['KTP',r.ktp],['KK',r.kk],['Folder',r.folder]].filter(x=>x[1]).map(x=>`<a class="btn ghost" target="_blank" href="${escAttr(x[1])}">${esc(x[0])}</a>`).join(' ');const files=[photoLinks,otherFiles].filter(Boolean).join(' ');const dmg=r.damageDetails.length?r.damageDetails.map(x=>`<li><b>${esc(x.part)}</b> — ${esc(x.text)} <b>(${x.count} komponen; bobot ${x.weight}%)</b></li>`).join(''):'<li>Tidak ada item kerusakan yang dipilih.</li>';modal(`<div class="modalbox"><div class="modalhead"><b>Detail ${esc(r.id)}</b><button class="btn ghost" onclick="closeModal()">✕</button></div><div class="modalbody"><div class="detailGrid">${kv('Nama Pemilik',r.namaPemilik)}${kv('NIK / No. KK',(r.nik||'-')+' / '+(r.noKK||'-'))}${kv('Wilayah',[r.kecamatan,r.desa].filter(Boolean).join(' / '))}${kv('Alamat (RT, RW, DUSUN)',r.alamat)}${kv('Koordinat',coords,true)}${kv('Petugas',r.petugas+' / '+r.noHpPetugas)}${kv('Catatan Petugas',r.catatanPetugas||'-')}${kv('Jumlah Foto Kerusakan',String((r.fotos||[]).length))}</div><h3>Data Kerusakan</h3><ul class="damageList">${dmg}</ul><div class="notice ok"><b>Total bobot: ${r.score}%</b></div><h3>Foto & Dokumen</h3><div style="display:flex;gap:8px;flex-wrap:wrap">${files||'<span class="hint">Belum ada berkas.</span>'}</div><hr style="border:0;border-top:1px solid #ddd;margin:18px 0"><div class="grid"><div class="c4"><label>Tingkat Kerusakan *</label><select id="verTingkat" class="field"><option value="">Pilih</option><option ${r.tingkat==='Rusak Ringan'?'selected':''}>Rusak Ringan</option><option ${r.tingkat==='Rusak Sedang'?'selected':''}>Rusak Sedang</option><option ${r.tingkat==='Rusak Berat'?'selected':''}>Rusak Berat</option></select></div><div class="c4"><label>Tanggal Verifikasi</label><input id="verTanggal" type="date" class="field" value="${escAttr(r.tanggalVerifikasi||today())}"></div><div class="c12"><label>Catatan Admin</label><textarea id="verCatatan" class="field" rows="3">${esc(r.catatan||'')}</textarea></div></div><div class="adminVerifyActions">${r.status==='Terverifikasi'?`<button type="button" class="btn red" onclick="cancelVerificationUI('${escAttr(r.id)}',this)">Batalkan Verifikasi</button>`:''}<button type="button" class="btn green" onclick="saveVerification('${escAttr(r.id)}')">${r.status==='Terverifikasi'?'Simpan Perubahan':'Simpan Verifikasi'}</button></div></div></div>`)}).withFailureHandler(adminFail).getReportDetail(ADMIN_TOKEN,id)}
 function saveVerification(id){const tingkat=v('verTingkat');if(!tingkat){alert('Pilih tingkat kerusakan.');return}google.script.run.withSuccessHandler(()=>{closeModal();loadAdmin()}).withFailureHandler(adminFail).verifyReport(ADMIN_TOKEN,id,{tingkat,tanggalVerifikasi:v('verTanggal'),catatan:v('verCatatan')})}
 async function cancelVerificationUI(id,button){
   if(!confirm('Batalkan verifikasi laporan ini?\n\nStatus akan kembali menjadi Belum Diverifikasi dan laporan dapat diedit atau dihapus lagi oleh petugas.'))return;
