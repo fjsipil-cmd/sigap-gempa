@@ -991,6 +991,19 @@ function pwaOpenDb(){return new Promise((resolve,reject)=>{const r=indexedDB.ope
 async function pwaPutReport(obj){const db=await pwaOpenDb();return new Promise((resolve,reject)=>{const tx=db.transaction(PWA_REPORT_STORE,'readwrite');tx.objectStore(PWA_REPORT_STORE).put(obj);tx.oncomplete=()=>{db.close();resolve(obj)};tx.onerror=()=>{db.close();reject(tx.error)}})}
 async function pwaGetReports(){const db=await pwaOpenDb();return new Promise((resolve,reject)=>{const tx=db.transaction(PWA_REPORT_STORE,'readonly'),r=tx.objectStore(PWA_REPORT_STORE).getAll();r.onsuccess=()=>resolve(r.result||[]);r.onerror=()=>reject(r.error);tx.oncomplete=()=>db.close()})}
 async function pwaGetReportByAnyId(id){const all=await pwaGetReports();return all.find(x=>x.localId===id||x.serverId===id)||null}
+async function pwaDeleteReportByAnyId(id){
+  const r=await pwaGetReportByAnyId(id);
+  if(!r)return false;
+  const db=await pwaOpenDb();
+  await new Promise((resolve,reject)=>{
+    const tx=db.transaction(PWA_REPORT_STORE,'readwrite');
+    tx.objectStore(PWA_REPORT_STORE).delete(r.localId);
+    tx.oncomplete=()=>resolve(true);
+    tx.onerror=()=>reject(tx.error);
+  }).finally(()=>db.close());
+  await pwaRefreshSyncStatus();
+  return true;
+}
 function pwaMakeLocalId(){const d=new Date(),p=n=>String(n).padStart(2,'0');return `OFF-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}-${Math.random().toString(36).slice(2,6).toUpperCase()}`}
 async function pwaQueueNewReport(payload,damagePhotos,ktpFile,kkFile){const localId=pwaMakeLocalId();const obj={localId,serverId:'',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),syncState:'pending',verificationStatus:'Belum Diverifikasi',payload,damagePhotos:damagePhotos.map(x=>x.file),ktpFile:ktpFile||null,kkFile:kkFile||null,photoCount:damagePhotos.length,lastSyncError:''};await pwaPutReport(obj);await pwaRefreshSyncStatus();return obj}
 async function pwaUpdateLocalReport(localId,payload,newPhotos,ktpFile,kkFile){const r=await pwaGetReportByAnyId(localId);if(!r)throw new Error('Laporan lokal tidak ditemukan.');r.payload=payload;r.updatedAt=new Date().toISOString();if(r.syncState==='pending'){r.damagePhotos=(r.damagePhotos||[]).concat(newPhotos.map(x=>x.file));r.photoCount=r.damagePhotos.length;if(ktpFile)r.ktpFile=ktpFile;if(kkFile)r.kkFile=kkFile}else{r.extraDamagePhotos=(r.extraDamagePhotos||[]).concat(newPhotos.map(x=>x.file));r.extraKtpFile=ktpFile||r.extraKtpFile||null;r.extraKkFile=kkFile||r.extraKkFile||null;r.syncState='updatePending'}await pwaPutReport(r);await pwaRefreshSyncStatus();return r}
@@ -1450,10 +1463,41 @@ async function lookupPublicReports(){
     const r=await gsCall('getPublicSubmittedReports',kecamatan,petugas);
     const rows=(r.rows||[]);
     $('lookupSummary').innerHTML=`Ditemukan <b>${rows.length}</b> laporan berhasil diinput untuk petugas <b>${esc(r.petugas)}</b> di Kecamatan <b>${esc(r.kecamatan)}</b>.`;
-    $('lookupRows').innerHTML=rows.length?rows.map(x=>`<tr><td><b>${esc(x.id)}</b>${x.local?`<br><span class="${x.syncState==='synced'?'localTag':'queuedTag'}">${x.syncState==='synced'?'Tersimpan lokal':'Menunggu sinkron'}</span>`:''}</td><td>${esc(x.timestamp||'-')}</td><td>${esc(x.namaPemilik||'-')}</td><td>${esc(x.desa||'-')}</td><td>${esc(x.alamat||'-')}</td><td>${esc(String(x.jumlahFoto||0))}</td><td>${x.canEdit?'<span class="pill p-wait">Belum Diverifikasi</span>':'<span class="pill p-ok">Terverifikasi</span>'}</td><td>${x.canEdit?`<button type="button" class="btn ghost" onclick="startEditReport('${escAttr(x.id)}')">Edit</button>`:'<span class="hint">Terkunci</span>'}</td></tr>`).join(''):'<tr><td colspan="8">Belum ada laporan lengkap yang cocok dengan Kecamatan dan Nama Petugas tersebut.</td></tr>';
+    $('lookupRows').innerHTML=rows.length?rows.map(x=>`<tr><td><b>${esc(x.id)}</b>${x.local?`<br><span class="${x.syncState==='synced'?'localTag':'queuedTag'}">${x.syncState==='synced'?'Tersimpan lokal':'Menunggu sinkron'}</span>`:''}</td><td>${esc(x.timestamp||'-')}</td><td>${esc(x.namaPemilik||'-')}</td><td>${esc(x.desa||'-')}</td><td>${esc(x.alamat||'-')}</td><td>${esc(String(x.jumlahFoto||0))}</td><td>${x.canEdit?'<span class="pill p-wait">Belum Diverifikasi</span>':'<span class="pill p-ok">Terverifikasi</span>'}</td><td>${x.canEdit?`<div style="display:flex;gap:5px;flex-wrap:wrap"><button type="button" class="btn ghost" onclick="startEditReport('${escAttr(x.id)}')">Edit</button><button type="button" class="btn red" onclick="deletePublicReportUI('${escAttr(x.id)}')">Hapus</button></div>`:'<span class="hint">Terkunci</span>'}</td></tr>`).join(''):'<tr><td colspan="8">Belum ada laporan lengkap yang cocok dengan Kecamatan dan Nama Petugas tersebut.</td></tr>';
     box.classList.remove('hide');
   }catch(e){msg.innerHTML=`<div class="notice err">${esc(errText(e))}</div>`}
   finally{btn.disabled=false;btn.textContent='Lihat Data Terinput'}
+}
+
+
+async function deletePublicReportUI(id){
+  const kecamatan=v('lookupKecamatan'), petugas=v('lookupPetugas');
+  if(!kecamatan||!petugas)return;
+  const local=await pwaGetReportByAnyId(id).catch(()=>null);
+  const label=local?.payload?.namaPemilik||id;
+  if(!confirm(`Hapus laporan ${label}?\n\nLaporan hanya dapat dihapus sebelum diverifikasi. Data yang sudah dihapus akan dipindahkan ke Sampah Google Drive dan tidak lagi tampil di daftar laporan.`))return;
+
+  $('lookupMsg').innerHTML='<div class="hint">Menghapus laporan...</div>';
+  try{
+    // Laporan yang sama sekali belum tersinkron cukup dihapus dari perangkat.
+    if(local && !local.serverId && (local.syncState==='pending'||!local.syncState)){
+      await pwaDeleteReportByAnyId(id);
+      $('lookupMsg').innerHTML='<div class="notice ok">Laporan lokal berhasil dihapus.</div>';
+      await lookupPublicReports();
+      return;
+    }
+
+    if(!navigator.onLine)throw new Error('Laporan ini sudah tersimpan di server. Hubungkan internet untuk menghapusnya.');
+    if(!pwaBackendUrl())throw new Error('Server belum diatur. Buka menu Server dan masukkan URL Web App /exec.');
+
+    await gsCall('deletePublicReport',kecamatan,petugas,id);
+    await pwaDeleteReportByAnyId(id).catch(()=>false);
+    clearPetugasDeviceCache(kecamatan);
+    $('lookupMsg').innerHTML='<div class="notice ok">Laporan berhasil dihapus.</div>';
+    await lookupPublicReports();
+  }catch(e){
+    $('lookupMsg').innerHTML=`<div class="notice err">${esc(errText(e))}</div>`;
+  }
 }
 
 
@@ -1709,8 +1753,15 @@ function renderRows(rows){$('adminRows').innerHTML=rows.length?rows.map(r=>`<tr>
 function levelPill(x){const c=x.includes('Berat')?'p-heavy':x.includes('Sedang')?'p-mid':'p-light';return `<span class="pill ${c}">${esc(x)}</span>`}
 function adminFail(e){const t=errText(e);if(t.toLowerCase().includes('sesi')){ADMIN_TOKEN='';openAdminLogin()}else alert(t)}
 
-function openDetail(id){google.script.run.withSuccessHandler(r=>{const coords=(r.latitude!==''&&r.longitude!=='')?`<a class="link" target="_blank" href="https://www.google.com/maps?q=${encodeURIComponent(r.latitude+','+r.longitude)}">${esc(r.koordinat)} ↗</a>`:'-';const photoLinks=(r.fotos||[]).map((u,i)=>`<a class="btn ghost" target="_blank" href="${escAttr(u)}">Foto ${i+1}</a>`).join(' ');const otherFiles=[['KTP',r.ktp],['KK',r.kk],['Folder',r.folder]].filter(x=>x[1]).map(x=>`<a class="btn ghost" target="_blank" href="${escAttr(x[1])}">${esc(x[0])}</a>`).join(' ');const files=[photoLinks,otherFiles].filter(Boolean).join(' ');const dmg=r.damageDetails.length?r.damageDetails.map(x=>`<li><b>${esc(x.part)}</b> — ${esc(x.text)} <b>(${x.count} komponen; bobot ${x.weight}%)</b></li>`).join(''):'<li>Tidak ada item kerusakan yang dipilih.</li>';modal(`<div class="modalbox"><div class="modalhead"><b>Detail ${esc(r.id)}</b><button class="btn ghost" onclick="closeModal()">✕</button></div><div class="modalbody"><div class="detailGrid">${kv('Nama Pemilik',r.namaPemilik)}${kv('NIK / No. KK',(r.nik||'-')+' / '+(r.noKK||'-'))}${kv('Wilayah',[r.kecamatan,r.desa].filter(Boolean).join(' / '))}${kv('Alamat (RT, RW, DUSUN)',r.alamat)}${kv('Koordinat',coords,true)}${kv('Petugas',r.petugas+' / '+r.noHpPetugas)}${kv('Jumlah Foto Kerusakan',String((r.fotos||[]).length))}</div><h3>Data Kerusakan</h3><ul class="damageList">${dmg}</ul><div class="notice ok"><b>Total bobot: ${r.score}%</b></div><h3>Foto & Dokumen</h3><div style="display:flex;gap:8px;flex-wrap:wrap">${files||'<span class="hint">Belum ada berkas.</span>'}</div><hr style="border:0;border-top:1px solid #ddd;margin:18px 0"><div class="grid"><div class="c4"><label>Tingkat Kerusakan *</label><select id="verTingkat" class="field"><option value="">Pilih</option><option ${r.tingkat==='Rusak Ringan'?'selected':''}>Rusak Ringan</option><option ${r.tingkat==='Rusak Sedang'?'selected':''}>Rusak Sedang</option><option ${r.tingkat==='Rusak Berat'?'selected':''}>Rusak Berat</option></select></div><div class="c4"><label>Tanggal Verifikasi</label><input id="verTanggal" type="date" class="field" value="${escAttr(r.tanggalVerifikasi||today())}"></div><div class="c12"><label>Catatan Admin</label><textarea id="verCatatan" class="field" rows="3">${esc(r.catatan||'')}</textarea></div></div><div class="submitbar"><button class="btn green" onclick="saveVerification('${escAttr(r.id)}')">Simpan Verifikasi</button></div></div></div>`)}).withFailureHandler(adminFail).getReportDetail(ADMIN_TOKEN,id)}
+function openDetail(id){google.script.run.withSuccessHandler(r=>{const coords=(r.latitude!==''&&r.longitude!=='')?`<a class="link" target="_blank" href="https://www.google.com/maps?q=${encodeURIComponent(r.latitude+','+r.longitude)}">${esc(r.koordinat)} ↗</a>`:'-';const photoLinks=(r.fotos||[]).map((u,i)=>`<a class="btn ghost" target="_blank" href="${escAttr(u)}">Foto ${i+1}</a>`).join(' ');const otherFiles=[['KTP',r.ktp],['KK',r.kk],['Folder',r.folder]].filter(x=>x[1]).map(x=>`<a class="btn ghost" target="_blank" href="${escAttr(x[1])}">${esc(x[0])}</a>`).join(' ');const files=[photoLinks,otherFiles].filter(Boolean).join(' ');const dmg=r.damageDetails.length?r.damageDetails.map(x=>`<li><b>${esc(x.part)}</b> — ${esc(x.text)} <b>(${x.count} komponen; bobot ${x.weight}%)</b></li>`).join(''):'<li>Tidak ada item kerusakan yang dipilih.</li>';modal(`<div class="modalbox"><div class="modalhead"><b>Detail ${esc(r.id)}</b><button class="btn ghost" onclick="closeModal()">✕</button></div><div class="modalbody"><div class="detailGrid">${kv('Nama Pemilik',r.namaPemilik)}${kv('NIK / No. KK',(r.nik||'-')+' / '+(r.noKK||'-'))}${kv('Wilayah',[r.kecamatan,r.desa].filter(Boolean).join(' / '))}${kv('Alamat (RT, RW, DUSUN)',r.alamat)}${kv('Koordinat',coords,true)}${kv('Petugas',r.petugas+' / '+r.noHpPetugas)}${kv('Jumlah Foto Kerusakan',String((r.fotos||[]).length))}</div><h3>Data Kerusakan</h3><ul class="damageList">${dmg}</ul><div class="notice ok"><b>Total bobot: ${r.score}%</b></div><h3>Foto & Dokumen</h3><div style="display:flex;gap:8px;flex-wrap:wrap">${files||'<span class="hint">Belum ada berkas.</span>'}</div><hr style="border:0;border-top:1px solid #ddd;margin:18px 0"><div class="grid"><div class="c4"><label>Tingkat Kerusakan *</label><select id="verTingkat" class="field"><option value="">Pilih</option><option ${r.tingkat==='Rusak Ringan'?'selected':''}>Rusak Ringan</option><option ${r.tingkat==='Rusak Sedang'?'selected':''}>Rusak Sedang</option><option ${r.tingkat==='Rusak Berat'?'selected':''}>Rusak Berat</option></select></div><div class="c4"><label>Tanggal Verifikasi</label><input id="verTanggal" type="date" class="field" value="${escAttr(r.tanggalVerifikasi||today())}"></div><div class="c12"><label>Catatan Admin</label><textarea id="verCatatan" class="field" rows="3">${esc(r.catatan||'')}</textarea></div></div><div class="submitbar">${r.status==='Terverifikasi'?`<button class="btn red" onclick="cancelVerificationUI('${escAttr(r.id)}')">Batalkan Verifikasi</button>`:''}<button class="btn green" onclick="saveVerification('${escAttr(r.id)}')">Simpan Verifikasi</button></div></div></div>`)}).withFailureHandler(adminFail).getReportDetail(ADMIN_TOKEN,id)}
 function saveVerification(id){const tingkat=v('verTingkat');if(!tingkat){alert('Pilih tingkat kerusakan.');return}google.script.run.withSuccessHandler(()=>{closeModal();loadAdmin()}).withFailureHandler(adminFail).verifyReport(ADMIN_TOKEN,id,{tingkat,tanggalVerifikasi:v('verTanggal'),catatan:v('verCatatan')})}
+function cancelVerificationUI(id){
+  if(!confirm('Batalkan verifikasi laporan ini?\n\nStatus akan kembali menjadi Belum Diverifikasi dan laporan dapat diedit atau dihapus lagi oleh petugas.'))return;
+  google.script.run.withSuccessHandler(()=>{
+    closeModal();
+    loadAdmin();
+  }).withFailureHandler(adminFail).cancelVerification(ADMIN_TOKEN,id);
+}
 
 function showVillageSummary(){if(!ADMIN_DATA)return;const rows=ADMIN_DATA.stats.byVillage.map(x=>`<tr><td>${esc(x.desa)}</td><td><b>${x.total}</b></td></tr>`).join('');modal(`<div class="modalbox loginbox"><div class="modalhead"><b>Rekap Laporan per Desa</b><button class="btn ghost" onclick="closeModal()">✕</button></div><div class="modalbody"><table class="table" style="min-width:0"><thead><tr><th>Desa</th><th>Total Laporan</th></tr></thead><tbody>${rows||'<tr><td colspan="2">Belum ada data</td></tr>'}</tbody></table></div></div>`)}
 function exportAdminExcel(){
