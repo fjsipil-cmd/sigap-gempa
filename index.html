@@ -903,6 +903,18 @@ body:not(.admin-mode) #adminView{display:none!important}
 }
 </style>
 
+
+<style id="v30-petugas-combo">
+.petugasCombo{position:relative;width:100%}
+.petugasSuggestions{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:1200;max-height:220px;overflow:auto;background:#0d2840;border:1px solid rgba(50,205,230,.7);border-radius:10px;box-shadow:0 12px 28px rgba(0,0,0,.35);padding:4px}
+.petugasSuggestions.hide{display:none!important}
+.petugasSuggestion{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:10px 11px;border:0;background:transparent;color:#eef9ff;text-align:left;border-radius:7px;cursor:pointer;font:inherit}
+.petugasSuggestion:hover,.petugasSuggestion:focus{background:rgba(31,194,215,.17);outline:none}
+.petugasSuggestion .pname{font-weight:600;font-size:12px}
+.petugasSuggestion .php{font-weight:400;font-size:10px;color:#9bb6c7;white-space:nowrap}
+.petugasSuggestionEmpty{padding:10px 11px;color:#90a9b9;font-size:11px}
+@media(max-width:980px){.petugasSuggestions{max-height:190px}.petugasSuggestion{padding:9px 10px}.petugasSuggestion .pname{font-size:12px}.petugasSuggestion .php{font-size:10px}}
+</style>
 </head>
 <body>
   <header class="top"><div class="topin"><div class="brand"><img class="brandMark" src="logo-manggarai.png" alt="Logo Kabupaten Manggarai"><span class="brandCopy"><b>SIGAP GEMPA FLORES</b><small>Sistem Pendataan Kerusakan Rumah Akibat Gempa</small></span></div><div class="nav"><button class="btn light" onclick="showPublic()">⌂ Beranda</button><button id="installBtn" class="btn light" onclick="installPwa()">⬇ Pasang Aplikasi</button><button class="btn light" onclick="syncPendingReports()">↻ Sinkron Data</button><button class="btn light" onclick="openPwaSettings()">⚙ Server</button><button class="btn gold" onclick="openAdminLogin()">🔐 Admin</button></div></div></header>
@@ -960,7 +972,7 @@ body:not(.admin-mode) #adminView{display:none!important}
       <section class="card damageSection"><div class="cardhead damageSectionHead">4. Data Kerusakan Rumah</div><div class="cardbody"><div class="damageWrap"><table class="damageTable"><thead><tr><th style="width:190px">Bagian Bangunan</th><th>Jenis Kerusakan — pilih satu</th><th style="width:155px">Jumlah Komponen</th><th style="width:100px">Bobot (%)</th></tr></thead><tbody id="damageRows"></tbody></table></div><div class="totalWeight"><span>Total Bobot Kerusakan</span><strong id="totalDamageWeight">0%</strong></div></div></section>
 
       <section class="card"><div class="cardhead">5. Petugas dan kepemilikan aset</div><div class="cardbody"><div class="grid">
-        <div class="c6"><label class="req">Nama Petugas</label><input id="namaPetugas" class="field" required autocomplete="off" list="petugasHistoryList" oninput="onEntryPetugasInput()" onchange="onEntryPetugasInput(true)" placeholder="Ketik atau pilih nama petugas"><datalist id="petugasHistoryList"></datalist><div class="hint compactHiddenHint" id="petugasHistoryHint"></div></div>
+        <div class="c6"><label class="req">Nama Petugas</label><div class="petugasCombo"><input id="namaPetugas" class="field" required autocomplete="off" onfocus="showEntryPetugasSuggestions()" oninput="onEntryPetugasInput()" onchange="onEntryPetugasInput(true)" onblur="setTimeout(hideEntryPetugasSuggestions,180)" placeholder="Ketik nama petugas"><div id="petugasSuggestions" class="petugasSuggestions hide"></div></div><div class="hint compactHiddenHint" id="petugasHistoryHint"></div></div>
         <div class="c6"><label class="req">No. HP Petugas</label><input id="noHpPetugas" class="field" inputmode="tel" required autocomplete="tel" placeholder="08xxxxxxxxxx"></div>
         <div class="c6"><label>Kepemilikan Bangunan</label><select id="kepemilikanBangunan" class="field"><option value="">Pilih</option><option>Sendiri</option><option>Pihak Lain</option></select></div>
         <div class="c6"><label>Kepemilikan Tanah</label><select id="kepemilikanTanah" class="field"><option value="">Pilih</option><option>Sendiri</option><option>Pihak Lain</option></select></div>
@@ -1003,6 +1015,7 @@ body:not(.admin-mode) #adminView{display:none!important}
 
 <script>
 // ===== SIGAP GEMPA FLORES: OFFLINE-FIRST PWA LAYER =====
+window.SIGAP_BUILD='V30';
 const PWA_OFFLINE_CONFIG = {
   appName:'SIGAP GEMPA FLORES - Formulir Rumah',
   defaults:{provinsi:'Nusa Tenggara Timur',kabKota:'Kabupaten Manggarai'},
@@ -1268,72 +1281,98 @@ function updateDesaOptions(){
 
 let ENTRY_PETUGAS_HISTORY=[];
 let ENTRY_PETUGAS_AUTO_NAME='';
+let ENTRY_PETUGAS_AUTO_PHONE='';
+const LOCAL_PETUGAS_HISTORY_KEY='sigap_petugas_history_v30';
 
+function readStoredPetugasHistory(){
+  try{
+    const arr=JSON.parse(localStorage.getItem(LOCAL_PETUGAS_HISTORY_KEY)||'[]');
+    return Array.isArray(arr)?arr:[];
+  }catch(e){return []}
+}
+function writeStoredPetugasHistory(items){
+  try{localStorage.setItem(LOCAL_PETUGAS_HISTORY_KEY,JSON.stringify(items.slice(0,80)))}catch(e){}
+}
+function rememberPetugasLocal(name,phone){
+  name=String(name||'').trim(); phone=String(phone||'').trim();
+  if(!name)return;
+  const key=normText(name), now=Date.now();
+  const items=readStoredPetugasHistory().filter(x=>normText(x&&x.nama)!==key);
+  items.unshift({nama:name,noHp:phone,updatedAt:now});
+  writeStoredPetugasHistory(items);
+  const old=ENTRY_PETUGAS_HISTORY.find(x=>normText(x.nama)===key);
+  ENTRY_PETUGAS_HISTORY=[{nama:name,noHp:phone||old?.noHp||'',updatedAt:now},...ENTRY_PETUGAS_HISTORY.filter(x=>normText(x.nama)!==key)]
+    .sort((a,b)=>String(a.nama||'').localeCompare(String(b.nama||''),'id'));
+}
 async function getLocalPetugasNames(){
-  // Poin 5 memakai histori pada perangkat ini. Simpan nama + nomor HP terakhir untuk tiap petugas.
-  const all=await pwaGetReports();
-  const items=[...all].sort((a,b)=>Number(a.createdAt||0)-Number(b.createdAt||0));
+  // Histori Poin 5 hanya dari perangkat/browser ini. Gabungkan histori khusus + laporan lokal.
   const map=new Map();
-  for(const r of items){
-    const p=r.payload||{};
-    const name=String(p.namaPetugas||'').trim();
-    if(!name)continue;
-    const key=normText(name);
-    map.set(key,{nama:name,noHp:String(p.noHpPetugas||'').trim(),createdAt:Number(r.createdAt||0)});
+  for(const x of readStoredPetugasHistory()){
+    const name=String(x&&x.nama||'').trim(); if(!name)continue;
+    map.set(normText(name),{nama:name,noHp:String(x.noHp||'').trim(),updatedAt:Number(x.updatedAt||0)});
   }
-  return [...map.values()].sort((a,b)=>a.nama.localeCompare(b.nama,'id'));
+  try{
+    const all=await pwaGetReports();
+    const items=[...all].sort((a,b)=>Number(a.createdAt||0)-Number(b.createdAt||0));
+    for(const r of items){
+      const p=r.payload||{}; const name=String(p.namaPetugas||'').trim(); if(!name)continue;
+      const key=normText(name), prev=map.get(key), ts=Number(r.createdAt||0);
+      if(!prev || ts>=Number(prev.updatedAt||0))map.set(key,{nama:name,noHp:String(p.noHpPetugas||'').trim(),updatedAt:ts});
+    }
+  }catch(e){}
+  const out=[...map.values()].sort((a,b)=>a.nama.localeCompare(b.nama,'id'));
+  writeStoredPetugasHistory(out.map(x=>({nama:x.nama,noHp:x.noHp,updatedAt:x.updatedAt||Date.now()})));
+  return out;
 }
-
-function renderEntryPetugasOptions(){
-  const list=$('petugasHistoryList');
-  if(!list)return;
-  list.innerHTML=ENTRY_PETUGAS_HISTORY.map(x=>`<option value="${escAttr(x.nama)}"></option>`).join('');
-}
-
 function findEntryPetugasHistory(name){
-  const key=normText(name);
-  if(!key)return null;
+  const key=normText(name); if(!key)return null;
   return ENTRY_PETUGAS_HISTORY.find(x=>normText(x.nama)===key)||null;
 }
-
+function filteredEntryPetugasHistory(query){
+  const q=normText(query||'');
+  const arr=ENTRY_PETUGAS_HISTORY.filter(x=>!q || normText(x.nama).includes(q));
+  return arr.slice(0,12);
+}
+function renderEntryPetugasSuggestions(forceOpen=false){
+  const box=$('petugasSuggestions'), input=$('namaPetugas'); if(!box||!input)return;
+  const items=filteredEntryPetugasHistory(input.value);
+  if(!items.length){
+    box.innerHTML='<div class="petugasSuggestionEmpty">Belum ada nama yang cocok. Ketik nama petugas langsung.</div>';
+  }else{
+    box.innerHTML=items.map(x=>`<button type="button" class="petugasSuggestion" onmousedown="event.preventDefault()" onclick="chooseEntryPetugas('${escAttr(x.nama)}')"><span class="pname">${esc(x.nama)}</span><span class="php">${esc(x.noHp||'')}</span></button>`).join('');
+  }
+  if(forceOpen || document.activeElement===input)box.classList.remove('hide');
+}
+function showEntryPetugasSuggestions(){renderEntryPetugasSuggestions(true)}
+function hideEntryPetugasSuggestions(){const box=$('petugasSuggestions');if(box)box.classList.add('hide')}
+function chooseEntryPetugas(name){
+  const input=$('namaPetugas'), hp=$('noHpPetugas'); if(!input||!hp)return;
+  const found=findEntryPetugasHistory(name); input.value=found?found.nama:name;
+  if(found){hp.value=found.noHp||'';ENTRY_PETUGAS_AUTO_NAME=normText(found.nama);ENTRY_PETUGAS_AUTO_PHONE=found.noHp||''}
+  hideEntryPetugasSuggestions();
+  input.dispatchEvent(new Event('change',{bubbles:true}));
+}
 async function loadEntryPetugasHistory(){
-  const hint=$('petugasHistoryHint');
-  if(hint)hint.textContent='';
+  const hint=$('petugasHistoryHint'); if(hint)hint.textContent='';
   try{
     ENTRY_PETUGAS_HISTORY=await getLocalPetugasNames();
-    renderEntryPetugasOptions();
-    if(hint)hint.textContent=ENTRY_PETUGAS_HISTORY.length?`${ENTRY_PETUGAS_HISTORY.length} nama petugas tersimpan di perangkat ini.`:'Belum ada histori petugas. Ketik nama petugas langsung.';
+    if(hint)hint.textContent=ENTRY_PETUGAS_HISTORY.length?`${ENTRY_PETUGAS_HISTORY.length} nama petugas tersimpan di perangkat ini.`:'Belum ada histori. Ketik nama petugas langsung.';
     onEntryPetugasInput(true);
-  }catch(e){
-    ENTRY_PETUGAS_HISTORY=[];
-    renderEntryPetugasOptions();
-    if(hint)hint.textContent='Ketik nama petugas langsung.';
-  }
+  }catch(e){ENTRY_PETUGAS_HISTORY=[];if(hint)hint.textContent='Ketik nama petugas langsung.'}
 }
-
 function onEntryPetugasInput(force=false){
-  const nameEl=$('namaPetugas'), hpEl=$('noHpPetugas');
-  if(!nameEl||!hpEl)return;
-  const typed=String(nameEl.value||'').trim();
-  const found=findEntryPetugasHistory(typed);
+  const nameEl=$('namaPetugas'), hpEl=$('noHpPetugas'); if(!nameEl||!hpEl)return;
+  const typed=String(nameEl.value||'').trim(); const found=findEntryPetugasHistory(typed);
   if(found){
-    if(force || ENTRY_PETUGAS_AUTO_NAME!==normText(found.nama) || !String(hpEl.value||'').trim()){
-      hpEl.value=found.noHp||'';
-    }
-    ENTRY_PETUGAS_AUTO_NAME=normText(found.nama);
-    return;
+    if(force || ENTRY_PETUGAS_AUTO_NAME!==normText(found.nama) || !String(hpEl.value||'').trim())hpEl.value=found.noHp||'';
+    ENTRY_PETUGAS_AUTO_NAME=normText(found.nama); ENTRY_PETUGAS_AUTO_PHONE=found.noHp||'';
+  }else if(ENTRY_PETUGAS_AUTO_NAME){
+    if(String(hpEl.value||'').trim()===String(ENTRY_PETUGAS_AUTO_PHONE||'').trim())hpEl.value='';
+    ENTRY_PETUGAS_AUTO_NAME=''; ENTRY_PETUGAS_AUTO_PHONE='';
   }
-  // Jika pengguna berganti dari nama histori ke nama baru, kosongkan nomor yang sebelumnya terisi otomatis.
-  if(ENTRY_PETUGAS_AUTO_NAME){
-    hpEl.value='';
-    ENTRY_PETUGAS_AUTO_NAME='';
-  }
+  renderEntryPetugasSuggestions(false);
 }
-
-function applyPetugasHistory(){
-  // Histori perangkat dipakai sebagai saran Nama Petugas dan pengisian otomatis No. HP.
-  onEntryPetugasInput(true);
-}
+function applyPetugasHistory(){onEntryPetugasInput(true)}
 
 async function loadLookupPetugas(selectedName=''){
   const kecamatan=v('lookupKecamatan'), sel=$('lookupPetugas'), hint=$('lookupPetugasHint');
@@ -1538,6 +1577,8 @@ async function submitReport(ev){
   };
   const ktpFile=getDocFile('ktp'), kkFile=getDocFile('kk');
   const submittedKecamatan=payload.kecamatan, submittedPetugas=payload.namaPetugas;
+  // Simpan histori petugas lokal pada perangkat ini untuk autocomplete berikutnya.
+  rememberPetugasLocal(payload.namaPetugas,payload.noHpPetugas);
   try{
     // Laporan lokal/edit lokal selalu disimpan ke perangkat terlebih dahulu.
     if(EDIT_CONTEXT && EDIT_CONTEXT.localId){
@@ -1731,6 +1772,7 @@ function scheduleTextDraft(){
 
 async function saveOfflineDraft(showNotice=true){
   const state=collectFormState();
+  if(showNotice)rememberPetugasLocal(state.namaPetugas,state.noHpPetugas);
   const damage={...OFFLINE_DRAFT_FILES.damage};
   const ktp=getDocFile('ktp'), kk=getDocFile('kk'), updatedAt=Date.now();
   try{localStorage.setItem(TEXT_DRAFT_KEY,JSON.stringify({updatedAt,state}))}catch(e){}
