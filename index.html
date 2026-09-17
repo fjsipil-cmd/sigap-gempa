@@ -1011,7 +1011,7 @@ body:not(.admin-mode) #adminView{display:none!important}
   <main id="adminView" class="wrap hide">
     <button type="button" class="btn ghost adminBackBtn" onclick="showPublic()">← Kembali ke Form Pendataan</button>
     <section class="hero"><div><span class="badge">DASHBOARD ADMIN</span><h1>Verifikasi Laporan Kerusakan Rumah</h1></div></section>
-    <div id="adminStats" class="stats" style="margin-top:16px"></div><div id="adminFilterBar" class="adminFilterBar hide"></div>
+    <div id="adminStats" class="stats" style="margin-top:16px"></div><div class="notice">Panduan kategori otomatis: Ringan A &lt;20% | Ringan B 20-30% | Sedang &gt;30-70% | Berat &gt;70%</div><div id="adminFilterBar" class="adminFilterBar hide"></div>
     <div class="toolbar"><input id="searchAdmin" class="field" placeholder="Cari ID, nama, NIK, desa, alamat, petugas..." onkeydown="if(event.key==='Enter')loadAdmin(true)"><button class="btn green" onclick="loadAdmin(true)">Cari / Refresh</button><button class="btn ghost" onclick="showVillageSummary()">Rekap Desa</button><button class="btn gold" id="exportExcelBtn" onclick="exportAdminExcel()">⬇ Download Excel</button><button class="btn ghost" onclick="showSystemInfo()">Database</button><button class="btn ghost" onclick="openChangePassword()">Ganti Password</button><button class="btn red" onclick="adminLogout()">Logout</button></div>
     <div class="tableWrap"><table class="table"><thead><tr><th>ID</th><th>Tanggal</th><th>Nama Pemilik</th><th>Desa/Kelurahan</th><th>Petugas</th><th>Bobot (%)</th><th>Tingkat Kerusakan</th><th>Status</th><th>Aksi</th></tr></thead><tbody id="adminRows"></tbody></table></div>
   </main>
@@ -1957,18 +1957,22 @@ function loadAdmin(resetQuick=false){
 function adminFilterMeta(key){
   const m={
     all:['Semua Laporan','total'],
-    belum:['Belum Diverifikasi','belum'],
-    ringan:['Rusak Ringan','ringan'],
+    totalrusak:['Rusak Total','totalrusak'],
+    ringanA:['Rusak Ringan A','ringanA'],
+    ringanB:['Rusak Ringan B','ringanB'],
     sedang:['Rusak Sedang','sedang'],
-    berat:['Rusak Berat','berat']
+    berat:['Rusak Berat','berat'],
+    belum:['Belum Diverifikasi','belum']
   };
   return m[key]||m.all
 }
 function filterAdminRows(rows){
   if(ADMIN_QUICK_FILTER==='belum')return rows.filter(r=>r.status!=='Terverifikasi');
-  if(ADMIN_QUICK_FILTER==='ringan')return rows.filter(r=>r.tingkat==='Rusak Ringan');
-  if(ADMIN_QUICK_FILTER==='sedang')return rows.filter(r=>r.tingkat==='Rusak Sedang');
-  if(ADMIN_QUICK_FILTER==='berat')return rows.filter(r=>r.tingkat==='Rusak Berat');
+  if(ADMIN_QUICK_FILTER==='totalrusak')return rows.filter(r=>r.tingkat==='RUSAK TOTAL');
+  if(ADMIN_QUICK_FILTER==='ringanA')return rows.filter(r=>r.tingkat==='RUSAK RINGAN A');
+  if(ADMIN_QUICK_FILTER==='ringanB')return rows.filter(r=>r.tingkat==='RUSAK RINGAN B');
+  if(ADMIN_QUICK_FILTER==='sedang')return rows.filter(r=>r.tingkat==='RUSAK SEDANG');
+  if(ADMIN_QUICK_FILTER==='berat')return rows.filter(r=>r.tingkat==='RUSAK BERAT');
   return rows
 }
 function setAdminQuickFilter(key){
@@ -1988,10 +1992,12 @@ function clearAdminQuickFilter(){setAdminQuickFilter('all')}
 function renderStats(s){
   const items=[
     ['all','Total Laporan',s.total],
-    ['belum','Belum Diverifikasi',s.belum],
-    ['ringan','Rusak Ringan',s.ringan],
+    ['totalrusak','Rusak Total Laporan',s.totalrusak],
+    ['ringanA','Rusak Ringan A',s.ringanA],
+    ['ringanB','Rusak Ringan B',s.ringanB],
     ['sedang','Rusak Sedang',s.sedang],
-    ['berat','Rusak Berat',s.berat]
+    ['berat','Rusak Berat',s.berat],
+    ['belum','Belum Verifikasi',s.belum]
   ];
   $('adminStats').innerHTML=items.map(x=>`<button type="button" class="stat adminStat ${ADMIN_QUICK_FILTER===x[0]?'active':''}" onclick="setAdminQuickFilter('${x[0]}')" title="Tampilkan ${escAttr(x[1])}"><small>${esc(x[1])}</small><strong>${x[2]}</strong></button>`).join('')
 }
@@ -2009,9 +2015,18 @@ function renderRows(rows){$('adminRows').innerHTML=rows.length?rows.map(r=>`<tr>
 function levelPill(x){const c=x.includes('Berat')?'p-heavy':x.includes('Sedang')?'p-mid':'p-light';return `<span class="pill ${c}">${esc(x)}</span>`}
 function adminFail(e){const t=errText(e);if(t.toLowerCase().includes('sesi')){ADMIN_TOKEN='';openAdminLogin()}else alert(t)}
 
-function openDetail(id){google.script.run.withSuccessHandler(r=>{const coords=(r.latitude!==''&&r.longitude!=='')?`<a class="link" target="_blank" href="https://www.google.com/maps?q=${encodeURIComponent(r.latitude+','+r.longitude)}">${esc(r.koordinat)} ↗</a>`:'-';const photoLinks=(r.fotos||[]).map((u,i)=>`<a class="btn ghost" target="_blank" href="${escAttr(u)}">Foto ${i+1}</a>`).join(' ');const otherFiles=[['KTP',r.ktp],['KK',r.kk],['Folder',r.folder]].filter(x=>x[1]).map(x=>`<a class="btn ghost" target="_blank" href="${escAttr(x[1])}">${esc(x[0])}</a>`).join(' ');const files=[photoLinks,otherFiles].filter(Boolean).join(' ');const dmg=r.damageDetails.length?r.damageDetails.map(x=>`<li><b>${esc(x.part)}</b> — ${esc(x.text)} <b>(${x.count} komponen; bobot ${x.weight}%)</b></li>`).join(''):'<li>Tidak ada item kerusakan yang dipilih.</li>';modal(`<div class="modalbox"><div class="modalhead"><b>Detail ${esc(r.id)}</b><button class="btn ghost" onclick="closeModal()">✕</button></div><div class="modalbody"><div class="detailGrid">${kv('Nama Pemilik',r.namaPemilik)}${kv('NIK / No. KK',(r.nik||'-')+' / '+(r.noKK||'-'))}${kv('Wilayah',[r.kecamatan,r.desa].filter(Boolean).join(' / '))}${kv('Alamat (RT, RW, DUSUN)',r.alamat)}${kv('Koordinat',coords,true)}${kv('Petugas',r.petugas+' / '+r.noHpPetugas)}${kv('Catatan Petugas',r.catatanPetugas||'-')}${kv('Jumlah Foto Kerusakan',String((r.fotos||[]).length))}</div><h3>Data Kerusakan</h3><ul class="damageList">${dmg}</ul><div class="notice ok"><b>Total bobot: ${r.score}%</b></div><h3>Foto & Dokumen</h3><div style="display:flex;gap:8px;flex-wrap:wrap">${files||'<span class="hint">Belum ada berkas.</span>'}</div><hr style="border:0;border-top:1px solid #ddd;margin:18px 0"><div class="grid"><div class="c4"><label>Tingkat Kerusakan *</label><small style="display:block;color:#8aa0b5;margin-bottom:6px">Panduan persentase: Ringan A &lt;20% | Ringan B 20-30% | Sedang &gt;30-70% | Berat &gt;70%</small><input id="verTingkat" class="field" value="${escAttr(r.tingkat||autoLevelFromScore(r.score))}" readonly><small style="display:block;color:#8aa0b5;margin-top:6px">Penilaian tingkat kerusakan dihitung otomatis berdasarkan bobot kerusakan sistem.</small></div><div class="c4"><label>Tanggal Verifikasi</label><input id="verTanggal" type="date" class="field" value="${escAttr(r.tanggalVerifikasi||today())}"></div><div class="c12"><label>Catatan Admin</label><textarea id="verCatatan" class="field" rows="3">${esc(r.catatan||'')}</textarea></div></div><div class="adminVerifyActions">${r.status==='Terverifikasi'?`<button type="button" class="btn red" onclick="cancelVerificationUI('${escAttr(r.id)}',this)">Batalkan Verifikasi</button>`:''}<button type="button" class="btn green" onclick="saveVerification('${escAttr(r.id)}')">${r.status==='Terverifikasi'?'Simpan Perubahan':'Simpan Verifikasi'}</button></div></div></div>`)}).withFailureHandler(adminFail).getReportDetail(ADMIN_TOKEN,id)}
+function openDetail(id){google.script.run.withSuccessHandler(r=>{const coords=(r.latitude!==''&&r.longitude!=='')?`<a class="link" target="_blank" href="https://www.google.com/maps?q=${encodeURIComponent(r.latitude+','+r.longitude)}">${esc(r.koordinat)} ↗</a>`:'-';const photoLinks=(r.fotos||[]).map((u,i)=>`<a class="btn ghost" target="_blank" href="${escAttr(u)}">Foto ${i+1}</a>`).join(' ');const otherFiles=[['KTP',r.ktp],['KK',r.kk],['Folder',r.folder]].filter(x=>x[1]).map(x=>`<a class="btn ghost" target="_blank" href="${escAttr(x[1])}">${esc(x[0])}</a>`).join(' ');const files=[photoLinks,otherFiles].filter(Boolean).join(' ');const dmg=r.damageDetails.length?r.damageDetails.map(x=>`<li><b>${esc(x.part)}</b> — ${esc(x.text)} <b>(${x.count} komponen; bobot ${x.weight}%)</b></li>`).join(''):'<li>Tidak ada item kerusakan yang dipilih.</li>';modal(`<div class="modalbox"><div class="modalhead"><b>Detail ${esc(r.id)}</b><button class="btn ghost" onclick="closeModal()">✕</button></div><div class="modalbody"><div class="detailGrid">${kv('Nama Pemilik',r.namaPemilik)}${kv('NIK / No. KK',(r.nik||'-')+' / '+(r.noKK||'-'))}${kv('Wilayah',[r.kecamatan,r.desa].filter(Boolean).join(' / '))}${kv('Alamat (RT, RW, DUSUN)',r.alamat)}${kv('Koordinat',coords,true)}${kv('Petugas',r.petugas+' / '+r.noHpPetugas)}${kv('Catatan Petugas',r.catatanPetugas||'-')}${kv('Jumlah Foto Kerusakan',String((r.fotos||[]).length))}</div><h3>Data Kerusakan</h3><ul class="damageList">${dmg}</ul><div class="notice ok"><b>Total bobot: ${r.score}%</b></div><h3>Foto & Dokumen</h3><div style="display:flex;gap:8px;flex-wrap:wrap">${files||'<span class="hint">Belum ada berkas.</span>'}</div><hr style="border:0;border-top:1px solid #ddd;margin:18px 0"><div class="grid"><div class="c4"><label>Tingkat Kerusakan *</label><small style="display:block;color:#8aa0b5;margin-bottom:6px">Panduan persentase: Ringan A &lt;20% | Ringan B 20-30% | Sedang &gt;30-70% | Berat &gt;70%</small><input id="verTingkat" class="field" value="${escAttr(r.tingkat||autoLevelFromScore(r.score))}" readonly><small style="display:block;color:#8aa0b5;margin-top:6px">Penilaian tingkat kerusakan dihitung otomatis berdasarkan bobot kerusakan sistem.</small></div><div class="c4"><label>Tanggal Verifikasi</label><input id="verTanggal" type="date" class="field" value="${escAttr(r.tanggalVerifikasi||today())}"></div><div class="c12"><label>Catatan Admin</label><textarea id="verCatatan" class="field" rows="3">${esc(r.catatan||'')}</textarea></div></div><div class="adminVerifyActions">${r.status==='Terverifikasi'?`<button type="button" class="btn red" onclick="cancelVerificationUI('${escAttr(r.id)}',this)">Batalkan Verifikasi</button>`:''}<button type="button" class="btn green" onclick="saveVerification('${escAttr(r.id)}')">${r.status==='Terverifikasi'?'Simpan Perubahan':'Simpan Verifikasi'}</button><button type="button" class="btn red" onclick="editPetugas('${escAttr(r.id)}')">Edit Petugas</button></div></div></div>`)}).withFailureHandler(adminFail).getReportDetail(ADMIN_TOKEN,id)}
 function autoLevelFromScore(score){const n=Number(score||0);if(n<20)return 'RUSAK RINGAN A';if(n<=30)return 'RUSAK RINGAN B';if(n<=70)return 'RUSAK SEDANG';return 'RUSAK BERAT'}
 function saveVerification(id){const tingkat=v('verTingkat');google.script.run.withSuccessHandler(()=>{closeModal();loadAdmin()}).withFailureHandler(adminFail).verifyReport(ADMIN_TOKEN,id,{tingkat,tanggalVerifikasi:v('verTanggal'),catatan:v('verCatatan')})}
+function editPetugas(id){
+  const catatan=prompt('Masukkan catatan perbaikan untuk petugas:');
+  if(catatan===null) return;
+  google.script.run.withSuccessHandler(()=>{
+    closeModal();
+    loadAdmin();
+    alert('Laporan dikembalikan ke petugas untuk perbaikan.');
+  }).withFailureHandler(adminFail).requestEditPetugas(ADMIN_TOKEN,id,catatan);
+}
 async function cancelVerificationUI(id,button){
   if(!confirm('Batalkan verifikasi laporan ini?\n\nStatus akan kembali menjadi Belum Diverifikasi dan laporan dapat diedit atau dihapus lagi oleh petugas.'))return;
   const oldText=button?button.textContent:'';
