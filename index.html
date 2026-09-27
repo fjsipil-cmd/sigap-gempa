@@ -930,7 +930,7 @@ body:not(.admin-mode) #adminView{display:none!important}
   <main id="publicView" class="wrap">
     <div id="pendingSyncAlert" class="pendingSyncAlert hide" role="status" aria-live="polite">
       <div class="pendingCopy"><div class="pendingIcon">⚠</div><div class="pendingWords"><strong id="pendingSyncTitle">Data belum disinkronkan</strong><span id="pendingSyncText"></span></div></div>
-      <button id="pendingSyncBtn" type="button" class="btn gold" onclick="syncPendingReports()">↻ Sinkronkan Sekarang</button>
+      <button id="pendingSyncBtn" type="button" class="btn gold" onclick="syncPendingReports()">↻ Sinkronkan Sekarang</button><button id="deleteFailedSyncBtn" type="button" class="btn red" style="display:none" onclick="deleteFailedSyncReports()">🗑 Hapus Gagal</button>
     </div>
     <section class="hero"><div class="heroInner"><img class="heroSeal" src="logo-manggarai.png" alt="Logo Kabupaten Manggarai"><span class="badge">PEMERINTAH KABUPATEN MANGGARAI</span><h1>SIGAP <em>GEMPA FLORES</em></h1><h2 class="heroSubtitle">Sistem Pendataan Kerusakan Rumah Akibat Gempa</h2><div class="heroStats"><div><strong id="heroLocalCount">0</strong><small>Laporan perangkat</small></div><div><strong id="heroPendingCount">0</strong><small>Belum sinkron</small></div><div><strong id="heroNetState">Online</strong><small>Jaringan</small></div></div><div class="heroControlRow"><div class="netbar"><span id="netDot" class="netdot"></span><b id="netText">Online</b></div><div class="desktopHeroNav" aria-label="Menu utama desktop"><button class="btn light" onclick="showPublic()">⌂ Beranda</button><button id="installBtnDesktop" class="btn light" onclick="installPwa()">⬇ Pasang Aplikasi</button><button class="btn light" onclick="syncPendingReports()">↻ Sinkron Data</button><button class="btn light" onclick="openPwaSettings()">⚙ Server</button><button class="btn gold" onclick="openAdminLogin()">🔐 Admin</button></div></div><div id="syncStatus" class="syncBadge">Memeriksa...</div></div></section>
     <div id="draftBanner" class="draftbox hide"></div>
@@ -1120,6 +1120,20 @@ async function pwaDeleteReportByAnyId(id){
   await pwaRefreshSyncStatus();
   return true;
 }
+async function deleteFailedSyncReports(){
+  const all=await pwaGetReports();
+  const failed=all.filter(r=>(r.syncState==='pending'||r.syncState==='updatePending')&&r.lastSyncError);
+  if(!failed.length){alert('Tidak ada laporan yang berstatus gagal sinkron.');await pwaRefreshSyncStatus();return}
+  const names=failed.map((r,i)=>`${i+1}. ${r.payload?.namaPemilik||r.localId}`).join('\n');
+  const warning='Hapus laporan berikut HANYA dari penyimpanan perangkat?\n\n'+names+'\n\nPERINGATAN: tindakan ini tidak menghapus data yang mungkin sudah sempat dibuat di Google Sheet/Drive. Gunakan hanya untuk laporan yang memang ingin dibuang dan tidak perlu dipulihkan.\n\nLanjutkan?';
+  if(!confirm(warning))return;
+  let deleted=0;
+  for(const r of failed){
+    try{if(await pwaDeleteReportByAnyId(r.localId))deleted++;}catch(e){console.error('Gagal menghapus laporan lokal',r.localId,e)}
+  }
+  await pwaRefreshSyncStatus();
+  alert(`${deleted} laporan gagal sinkron telah dihapus dari perangkat.`);
+}
 function pwaMakeLocalId(){const d=new Date(),p=n=>String(n).padStart(2,'0');return `OFF-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}-${p(d.getHours())}${p(d.getMinutes())}${p(d.getSeconds())}-${Math.random().toString(36).slice(2,6).toUpperCase()}`}
 async function pwaQueueNewReport(payload,damagePhotos,ktpFile,kkFile){const localId=pwaMakeLocalId();const obj={localId,serverId:'',createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),syncState:'pending',verificationStatus:'Belum Diverifikasi',payload,damagePhotos:damagePhotos.map(x=>x.file),ktpFile:ktpFile||null,kkFile:kkFile||null,photoCount:damagePhotos.length,lastSyncError:''};await pwaPutReport(obj);await pwaRefreshSyncStatus();return obj}
 async function pwaUpdateLocalReport(localId,payload,newPhotos,ktpFile,kkFile){const r=await pwaGetReportByAnyId(localId);if(!r)throw new Error('Laporan lokal tidak ditemukan.');r.payload=payload;r.updatedAt=new Date().toISOString();if(r.syncState==='pending'){r.damagePhotos=(r.damagePhotos||[]).concat(newPhotos.map(x=>x.file));r.photoCount=r.damagePhotos.length;if(ktpFile)r.ktpFile=ktpFile;if(kkFile)r.kkFile=kkFile}else{r.extraDamagePhotos=(r.extraDamagePhotos||[]).concat(newPhotos.map(x=>x.file));r.extraKtpFile=ktpFile||r.extraKtpFile||null;r.extraKkFile=kkFile||r.extraKkFile||null;r.syncState='updatePending'}await pwaPutReport(r);await pwaRefreshSyncStatus();return r}
@@ -1128,6 +1142,7 @@ async function pwaRefreshSyncStatus(){
   let all=[];
   try{all=await pwaGetReports()}catch(e){}
   const n=all.filter(x=>x.syncState==='pending'||x.syncState==='updatePending').length;
+  const failedCount=all.filter(x=>(x.syncState==='pending'||x.syncState==='updatePending')&&x.lastSyncError).length;
   const backend=!!pwaBackendUrl();
   const online=!!navigator.onLine;
   if(el){
@@ -1145,6 +1160,8 @@ async function pwaRefreshSyncStatus(){
   const title=document.getElementById('pendingSyncTitle');
   const text=document.getElementById('pendingSyncText');
   const btn=document.getElementById('pendingSyncBtn');
+  const delBtn=document.getElementById('deleteFailedSyncBtn');
+  if(delBtn){delBtn.style.display=failedCount?'inline-flex':'none';delBtn.textContent=failedCount?`🗑 Hapus ${failedCount} Gagal`: '🗑 Hapus Gagal';}
   if(alertBox){
     alertBox.classList.toggle('hide',n===0);
     alertBox.classList.toggle('offline',n>0&&!online);
